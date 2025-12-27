@@ -12,8 +12,8 @@ const Navigation: FC<NavigationProps> = ({ currentView, setCurrentView, isMenuOp
     const desktopNavItems: NavItem[] = [
         { id: 'home', label: 'Trang chủ' },
         { id: 'bio-match', label: 'Bio-Match' },
+        { id: 'bio-magazine', label: 'Bio-Magazine' },
         { id: 'science-corner', label: 'Góc Khoa Học' },
-        { id: 'bio-magazine', label: 'Tạp chí' },
         { id: 'achievements', label: 'Thành tích' },
         { id: 'resources', label: 'Tài nguyên' },
         { id: 'contact', label: 'Liên hệ' },
@@ -22,8 +22,8 @@ const Navigation: FC<NavigationProps> = ({ currentView, setCurrentView, isMenuOp
     const mobileNavItems: NavItem[] = [
         { id: 'home', label: 'Trang chủ' },
         { id: 'bio-match', label: 'Bio-Match' },
+        { id: 'bio-magazine', label: 'Bio-Magazine' },
         { id: 'science-corner', label: 'Góc Khoa Học' },
-        { id: 'bio-magazine', label: 'Tạp chí' },
         { id: 'achievements', label: 'Thành tích' },
         { id: 'resources', label: 'Tài nguyên' },
         { id: 'contact', label: 'Liên hệ' }

@@ -46,9 +46,21 @@ const AppContent: FC = () => {
     const [scrolled, setScrolled] = useState<boolean>(false);
     const [showSuccessToast, setShowSuccessToast] = useState<boolean>(false);
     const [isToastAnimating, setIsToastAnimating] = useState<boolean>(false);
+    const [successMessage, setSuccessMessage] = useState<{ title: string, desc: string }>({ title: '', desc: '' });
 
-    const handleIdeaSubmitSuccess = () => {
-        setIsIdeaModalOpen(false);
+    const handleSubmitSuccess = (type: 'idea' | 'magazine') => {
+        if (type === 'idea') {
+            setSuccessMessage({
+                title: 'Đã gửi ý tưởng thành công!',
+                desc: 'Cảm ơn bạn đã chia sẻ với BIOSCIZONE'
+            });
+            setIsIdeaModalOpen(false);
+        } else {
+            setSuccessMessage({
+                title: 'Đã gửi bài báo thành công!',
+                desc: 'Công trình của bạn đang được xét duyệt'
+            });
+        }
         setShowSuccessToast(true);
         setIsToastAnimating(false);
         // Small delay to allow DOM to render before animating in
@@ -109,7 +121,7 @@ const AppContent: FC = () => {
                         <Route path="/" element={<HomeView setCurrentView={setCurrentView} onIdeaClick={() => setIsIdeaModalOpen(true)} />} />
                         <Route path="/bio-match" element={<BioMatchView />} />
                         <Route path="/science-corner" element={<ScienceCornerView />} />
-                        <Route path="/bio-magazine" element={<BioMagazineView />} />
+                        <Route path="/bio-magazine" element={<BioMagazineView onMagazineSubmitSuccess={() => handleSubmitSuccess('magazine')} />} />
                         <Route path="/achievements" element={<AchievementsView />} />
                         <Route path="/resources" element={<ResourcesView />} />
                         <Route path="/contact" element={<ContactView />} />
@@ -124,7 +136,7 @@ const AppContent: FC = () => {
             <IdeaModal
                 isOpen={isIdeaModalOpen}
                 onClose={() => setIsIdeaModalOpen(false)}
-                onSubmitSuccess={handleIdeaSubmitSuccess}
+                onSubmitSuccess={() => handleSubmitSuccess('idea')}
             />
 
             {/* Success Toast - Bottom Right */}
@@ -133,8 +145,8 @@ const AppContent: FC = () => {
                     <div className="bg-green-500 text-white px-6 py-4 rounded-xl shadow-2xl flex items-center gap-3">
                         <CheckCircle size={24} />
                         <div>
-                            <p className="font-bold">Đã gửi ý tưởng thành công!</p>
-                            <p className="text-sm opacity-90">Cảm ơn bạn đã chia sẻ với BIOSCIZONE</p>
+                            <p className="font-bold">{successMessage.title}</p>
+                            <p className="text-sm opacity-90">{successMessage.desc}</p>
                         </div>
                     </div>
                 </div>
