@@ -135,7 +135,7 @@ const BioMatchView: FC = () => {
                                             ))}
                                         </div>
                                         <button className="w-full py-2.5 border border-[#0066CC] text-[#0066CC] rounded-lg font-bold text-sm hover:bg-[#0066CC] hover:text-white transition flex items-center justify-center gap-2">
-                                            <Send size={16} className="transform -rotate-45 mb-0.5" /> Liên hệ ngay
+                                            <Send size={16} className="transform -rotate-45 mt-1.5" /> Liên hệ ngay
                                         </button>
                                     </div>
                                 </div>

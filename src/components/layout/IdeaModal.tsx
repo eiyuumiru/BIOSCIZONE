@@ -81,7 +81,7 @@ const IdeaModal: FC<IdeaModalProps> = ({ isOpen, onClose }) => {
                             type="submit"
                             className="flex-[2] py-4 bg-[#0066CC] hover:bg-[#0055AA] text-white font-bold rounded-xl shadow-lg shadow-blue-500/20 transition transform hover:-translate-y-1 flex items-center justify-center gap-2"
                         >
-                            Gửi ý tưởng <Send size={18} className="transform -rotate-45 mb-1" />
+                            Gửi ý tưởng <Send size={18} className="transform -rotate-45 mt-1.5" />
                         </button>
                     </div>
                 </form>
