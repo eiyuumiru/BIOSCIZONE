@@ -46,7 +46,7 @@ const Footer = ({ setCurrentView }) => (
                     <div className="p-2 bg-white/10 rounded-full hover:bg-[#0099FF] text-white cursor-pointer transition"><Youtube size={18} /></div>
                 </div>
                 <p className="text-xs text-gray-500">
-                    © 2026 Đoàn khoa Sinh học - Công nghệ Sinh học.<br />Trường ĐH Khoa học Tự nhiên, ĐHQG-HCM.
+                    © 2026 Đoàn khoa Sinh học - Công nghệ Sinh học.<br />Trường ĐH Khoa học tự nhiên, ĐHQG-HCM.
                 </p>
             </div>
         </div>

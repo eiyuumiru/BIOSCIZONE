@@ -47,7 +47,7 @@ const HomeView = ({ setCurrentView, onIdeaClick }) => (
                         Nền tảng kết nối NCKH
                     </h2>
                     <h1 className={`text-4xl md:text-5xl lg:text-6xl font-extrabold text-[#000033] mb-6 leading-tight ${styles.fonts.heading}`}>
-                        Khám phá Tri thức <br />
+                        <span className="block mb-2">Khám phá Tri thức</span>
                         <span className="text-[#0099FF]">Kết nối Đam mê</span>
                     </h1>
                     <p className={`text-gray-600 text-lg mb-8 max-w-lg leading-relaxed ${styles.fonts.body}`}>
