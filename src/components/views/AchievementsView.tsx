@@ -1,10 +1,10 @@
-import React from 'react';
+import type { FC } from 'react';
 import {
     Trophy
 } from 'lucide-react';
-import { styles, achievementsItems } from '../../data.jsx';
+import { styles, achievementsItems } from '../../data';
 
-const AchievementsView = () => (
+const AchievementsView: FC = () => (
     <div className="min-h-screen pt-28 pb-20 bg-[#EDEDED]">
         <div className="container mx-auto px-4 max-w-5xl">
             <div className="text-center mb-16">

@@ -1,17 +1,17 @@
-import React from 'react';
+import type { FC } from 'react';
 import {
     PlayCircle,
     Share2,
     ArrowRight
 } from 'lucide-react';
-import { styles, scienceCornerItems } from '../../data.jsx';
+import { styles, scienceCornerItems } from '../../data';
 
-const ScienceCornerView = () => (
+const ScienceCornerView: FC = () => (
     <div className="min-h-screen pt-28 pb-20 bg-[#EDEDED]">
         <div className="container mx-auto px-4 max-w-6xl">
             <div className="text-center mb-12">
                 <h2 className={`text-3xl font-extrabold text-[#000033] mb-4 ${styles.fonts.heading}`}>SCIENCE CORNER</h2>
-                <p className="text-gray-600 max-w-2xl mx-auto">Nơi chia sẻ kinh nghiệm NCKH từ sinh viên và các video khoa học thú vị.</p>
+                <p className="text-gray-600 max-w-2xl mx-auto">Nơi chia sẻ kinh nghiệm Nghiên cứu khoa học từ sinh viên và các video khoa học thú vị.</p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">

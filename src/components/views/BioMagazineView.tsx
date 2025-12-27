@@ -1,18 +1,18 @@
-import React from 'react';
+import type { FC } from 'react';
 import {
     FileBadge,
     FileText,
     ArrowRight
 } from 'lucide-react';
-import { styles, bioMagazineItems } from '../../data.jsx';
+import { styles, bioMagazineItems } from '../../data';
 
-const BioMagazineView = () => (
+const BioMagazineView: FC = () => (
     <div className="min-h-screen pt-28 pb-20 bg-[#EDEDED]">
         <div className="container mx-auto px-4 max-w-5xl">
             <div className="flex flex-col md:flex-row justify-between items-end mb-10 border-b border-gray-300 pb-4">
                 <div>
                     <h2 className={`text-3xl font-extrabold text-[#000033] ${styles.fonts.heading}`}>BIO-MAGAZINE</h2>
-                    <p className="text-gray-600 mt-2">Tổng hợp bài báo, tạp chí NCKH của Giảng viên & Sinh viên.</p>
+                    <p className="text-gray-600 mt-2">Tổng hợp bài báo, tạp chí Nghiên cứu khoa học của Giảng viên & Sinh viên.</p>
                 </div>
                 <button className="mt-4 md:mt-0 px-6 py-2 bg-[#000033] text-white font-bold rounded hover:bg-[#0066CC] transition flex items-center gap-2">
                     <FileBadge size={16} /> Gửi bài đăng

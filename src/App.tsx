@@ -1,4 +1,4 @@
-import React, { Suspense, lazy, useEffect } from 'react';
+import { Suspense, lazy, useEffect, useState, type FC } from 'react';
 import { BrowserRouter, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import { Dna } from 'lucide-react';
 
@@ -16,10 +16,10 @@ const AchievementsView = lazy(() => import('./components/views/AchievementsView'
 const ResourcesView = lazy(() => import('./components/views/ResourcesView'));
 const ContactView = lazy(() => import('./components/views/ContactView'));
 
-import { styles } from './data.jsx';
+import { styles } from './data';
 
 // Loading component for Suspense fallback
-const LoadingSpinner = () => (
+const LoadingSpinner: FC = () => (
     <div className="min-h-screen flex items-center justify-center bg-[#EDEDED]">
         <div className="text-center">
             <Dna className="w-12 h-12 text-[#0099FF] animate-spin mx-auto mb-4" />
@@ -29,7 +29,7 @@ const LoadingSpinner = () => (
 );
 
 // Scroll to top on route change
-const ScrollToTop = () => {
+const ScrollToTop: FC = () => {
     const { pathname } = useLocation();
     useEffect(() => {
         window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -38,22 +38,22 @@ const ScrollToTop = () => {
 };
 
 // Main App content with routing
-const AppContent = () => {
+const AppContent: FC = () => {
     const navigate = useNavigate();
     const location = useLocation();
-    const [isMenuOpen, setIsMenuOpen] = React.useState(false);
-    const [isIdeaModalOpen, setIsIdeaModalOpen] = React.useState(false);
-    const [scrolled, setScrolled] = React.useState(false);
+    const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
+    const [isIdeaModalOpen, setIsIdeaModalOpen] = useState<boolean>(false);
+    const [scrolled, setScrolled] = useState<boolean>(false);
 
     // Get current view from pathname
-    const getCurrentView = () => {
+    const getCurrentView = (): string => {
         const path = location.pathname;
         if (path === '/') return 'home';
         return path.slice(1); // Remove leading '/'
     };
 
     // Navigate to a view
-    const setCurrentView = (view) => {
+    const setCurrentView = (view: string): void => {
         if (view === 'home') {
             navigate('/');
         } else {
@@ -64,7 +64,7 @@ const AppContent = () => {
 
     // Handle Scroll for Header Effect
     useEffect(() => {
-        const handleScroll = () => {
+        const handleScroll = (): void => {
             setScrolled(window.scrollY > 20);
         };
         window.addEventListener('scroll', handleScroll);
@@ -110,7 +110,7 @@ const AppContent = () => {
 };
 
 // App wrapper with Router
-const App = () => {
+const App: FC = () => {
     return (
         <BrowserRouter>
             <AppContent />

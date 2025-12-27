@@ -1,10 +1,10 @@
-import React from 'react';
+import type { FC } from 'react';
 import {
     ArrowRight
 } from 'lucide-react';
-import { styles, resourcesList } from '../../data.jsx';
+import { styles, resourcesList } from '../../data';
 
-const ResourcesView = () => (
+const ResourcesView: FC = () => (
     <div className="min-h-screen pt-28 pb-20 bg-[#EDEDED]">
         <div className="container mx-auto px-4 max-w-4xl">
             <div className="text-center mb-16">

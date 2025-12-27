@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState, type FC } from 'react';
 import {
     Filter,
     Users,
@@ -9,15 +9,20 @@ import {
     Phone,
     ArrowRight
 } from 'lucide-react';
-import { styles, bioBuddies, labInfo } from '../../data.jsx';
+import { styles, bioBuddies, labInfo } from '../../data';
 
-const BioMatchView = () => {
-    const [activeTab, setActiveTab] = useState('buddy');
-    const [openLabId, setOpenLabId] = useState(null);
-    const [selectedCourse, setSelectedCourse] = useState('All');
-    const [selectedFields, setSelectedFields] = useState([]);
+type TabType = 'buddy' | 'info';
 
-    const toggleField = (field) => {
+const BioMatchView: FC = () => {
+    const [activeTab, setActiveTab] = useState<TabType>('buddy');
+    const [openLabId, setOpenLabId] = useState<number | null>(null);
+    const [selectedCourse, setSelectedCourse] = useState<string>('All');
+    const [selectedFields, setSelectedFields] = useState<string[]>([]);
+
+    const courseOptions = ['All', 'K20', 'K21', 'K22', 'K23', 'K24', 'K25', 'Khác'];
+    const fieldOptions = ['Di truyền', 'Sinh học phân tử', 'Sinh hóa', 'Vi sinh', 'Sinh lý thực vật', 'Sinh lý động vật', 'Sinh thái - Tiến hóa', 'Khác'];
+
+    const toggleField = (field: string): void => {
         if (selectedFields.includes(field)) {
             setSelectedFields(selectedFields.filter(f => f !== field));
         } else {
@@ -58,7 +63,7 @@ const BioMatchView = () => {
                                     <div>
                                         <label className="text-xs font-bold text-gray-400 uppercase mb-3 block tracking-wider">Khóa sinh viên</label>
                                         <div className="flex flex-wrap gap-2">
-                                            {['All', 'K20', 'K21', 'K22', 'K23', 'K24', 'K25', 'Khác'].map(k => (
+                                            {courseOptions.map(k => (
                                                 <label key={k} className="cursor-pointer">
                                                     <input
                                                         type="radio"
@@ -77,7 +82,7 @@ const BioMatchView = () => {
                                     <div>
                                         <label className="text-xs font-bold text-gray-400 uppercase mb-3 block tracking-wider">Hướng nghiên cứu</label>
                                         <div className="space-y-3">
-                                            {['Di truyền', 'Sinh học phân tử', 'Sinh hóa', 'Vi sinh', 'Sinh lý thực vật', 'Sinh lý động vật', 'Sinh thái - Tiến hóa', 'Khác'].map(k => (
+                                            {fieldOptions.map(k => (
                                                 <label key={k} className="flex items-center gap-3 text-sm text-gray-700 cursor-pointer hover:text-[#0066CC] group">
                                                     <div className={`w-4 h-4 rounded border flex items-center justify-center transition ${selectedFields.includes(k) ? 'border-[#0066CC] bg-[#E6F4FF]' : 'border-gray-300 group-hover:border-[#0066CC]'}`}>
                                                         <input

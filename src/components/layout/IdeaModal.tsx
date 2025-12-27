@@ -1,12 +1,13 @@
-import React from 'react';
+import type { FC } from 'react';
 import {
     X,
     Lightbulb,
     Send
 } from 'lucide-react';
-import { styles } from '../../data.jsx';
+import { styles } from '../../data';
+import type { IdeaModalProps } from '../../types';
 
-const IdeaModal = ({ isOpen, onClose }) => {
+const IdeaModal: FC<IdeaModalProps> = ({ isOpen, onClose }) => {
     if (!isOpen) return null;
 
     return (
@@ -64,7 +65,7 @@ const IdeaModal = ({ isOpen, onClose }) => {
 
                         <div className="space-y-2">
                             <label className="text-xs font-bold text-gray-500 uppercase ml-1">Mô tả ngắn gọn ý tưởng</label>
-                            <textarea rows="4" placeholder="Ý tưởng của bạn giải quyết vấn đề gì? Phương pháp dự kiến?" className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0099FF]/20 focus:bg-white transition resize-none"></textarea>
+                            <textarea rows={4} placeholder="Ý tưởng của bạn giải quyết vấn đề gì? Phương pháp dự kiến?" className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0099FF]/20 focus:bg-white transition resize-none"></textarea>
                         </div>
                     </div>
 

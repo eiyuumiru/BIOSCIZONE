@@ -1,4 +1,4 @@
-import React from 'react';
+import type { FC } from 'react';
 import {
     Mail,
     Phone,
@@ -8,9 +8,9 @@ import {
     Youtube,
     Linkedin
 } from 'lucide-react';
-import { styles } from '../../data.jsx';
+import { styles } from '../../data';
 
-const ContactView = () => (
+const ContactView: FC = () => (
     <div className="min-h-screen pt-28 pb-20 bg-[#EDEDED]">
         <div className="container mx-auto px-4 max-w-6xl">
             <div className="text-center mb-16">
@@ -88,7 +88,7 @@ const ContactView = () => (
                             </div>
                             <div className="space-y-2">
                                 <label className="text-xs font-bold text-gray-500 uppercase ml-1">Nội dung</label>
-                                <textarea rows="5" placeholder="Nhập nội dung tin nhắn..." className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0099FF]/20 focus:bg-white transition resize-none"></textarea>
+                                <textarea rows={5} placeholder="Nhập nội dung tin nhắn..." className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0099FF]/20 focus:bg-white transition resize-none"></textarea>
                             </div>
                             <button type="submit" className="w-full md:w-auto px-10 py-4 bg-[#0066CC] hover:bg-[#0055AA] text-white font-bold rounded-xl shadow-lg shadow-blue-500/20 transition transform hover:-translate-y-1 flex items-center justify-center gap-2">
                                 Gửi ngay <Send size={18} className="transform -rotate-45 mb-1" />

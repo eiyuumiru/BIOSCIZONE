@@ -1,13 +1,14 @@
-import React from 'react';
+import type { FC } from 'react';
 import {
     Dna,
     Facebook,
     Mail,
     Youtube
 } from 'lucide-react';
-import { styles } from '../../data.jsx';
+import { styles } from '../../data';
+import type { FooterProps } from '../../types';
 
-const Footer = ({ setCurrentView }) => (
+const Footer: FC<FooterProps> = ({ setCurrentView }) => (
     <footer className="bg-[#000033] text-gray-400 py-16 font-['Inter']">
         <div className="container mx-auto px-4 grid grid-cols-1 md:grid-cols-4 gap-8">
             <div className="md:col-span-1">
@@ -33,7 +34,7 @@ const Footer = ({ setCurrentView }) => (
                 <h5 className={`text-white font-bold mb-6 uppercase text-xs tracking-widest ${styles.fonts.heading}`}>Hỗ trợ</h5>
                 <ul className="space-y-3 text-sm">
                     <li><button onClick={() => setCurrentView('resources')} className="hover:text-[#0099FF] transition">Hướng dẫn APA</button></li>
-                    <li><button onClick={() => setCurrentView('resources')} className="hover:text-[#0099FF] transition">Quy trình NCKH</button></li>
+                    <li><button onClick={() => setCurrentView('resources')} className="hover:text-[#0099FF] transition">Quy trình Nghiên cứu khoa học</button></li>
                     <li><button className="hover:text-[#0099FF] transition">Góp ý hệ thống</button></li>
                 </ul>
             </div>
