@@ -14,6 +14,16 @@ import { styles, bioBuddies, labInfo } from '../../data.jsx';
 const BioMatchView = () => {
     const [activeTab, setActiveTab] = useState('buddy');
     const [openLabId, setOpenLabId] = useState(null);
+    const [selectedCourse, setSelectedCourse] = useState('All');
+    const [selectedFields, setSelectedFields] = useState([]);
+
+    const toggleField = (field) => {
+        if (selectedFields.includes(field)) {
+            setSelectedFields(selectedFields.filter(f => f !== field));
+        } else {
+            setSelectedFields([...selectedFields, field]);
+        }
+    };
 
     return (
         <div className="min-h-screen pt-28 pb-20 bg-[#EDEDED]">
@@ -48,9 +58,15 @@ const BioMatchView = () => {
                                     <div>
                                         <label className="text-xs font-bold text-gray-400 uppercase mb-3 block tracking-wider">Khóa sinh viên</label>
                                         <div className="flex flex-wrap gap-2">
-                                            {['K21', 'K22', 'K23', 'Tất cả'].map(k => (
+                                            {['All', 'K20', 'K21', 'K22', 'K23', 'K24', 'K25', 'Khác'].map(k => (
                                                 <label key={k} className="cursor-pointer">
-                                                    <input type="checkbox" className="peer sr-only" />
+                                                    <input
+                                                        type="radio"
+                                                        name="course"
+                                                        className="peer sr-only"
+                                                        checked={selectedCourse === k}
+                                                        onChange={() => setSelectedCourse(k)}
+                                                    />
                                                     <span className="px-3 py-1 rounded-md text-sm border border-gray-200 text-gray-600 peer-checked:bg-[#0066CC] peer-checked:text-white peer-checked:border-[#0066CC] transition hover:border-[#0066CC]">
                                                         {k}
                                                     </span>
@@ -61,10 +77,16 @@ const BioMatchView = () => {
                                     <div>
                                         <label className="text-xs font-bold text-gray-400 uppercase mb-3 block tracking-wider">Hướng nghiên cứu</label>
                                         <div className="space-y-3">
-                                            {['Di truyền', 'Vi sinh', 'Hóa sinh', 'Thực vật', 'Sinh thái'].map(k => (
+                                            {['Di truyền', 'Sinh học phân tử', 'Sinh hóa', 'Vi sinh', 'Sinh lý thực vật', 'Sinh lý động vật', 'Sinh thái - Tiến hóa', 'Khác'].map(k => (
                                                 <label key={k} className="flex items-center gap-3 text-sm text-gray-700 cursor-pointer hover:text-[#0066CC] group">
-                                                    <div className="w-4 h-4 rounded border border-gray-300 flex items-center justify-center group-hover:border-[#0066CC]">
-                                                        <div className="w-2 h-2 rounded bg-[#0066CC] opacity-0 group-hover:opacity-100 transition"></div>
+                                                    <div className={`w-4 h-4 rounded border flex items-center justify-center transition ${selectedFields.includes(k) ? 'border-[#0066CC] bg-[#E6F4FF]' : 'border-gray-300 group-hover:border-[#0066CC]'}`}>
+                                                        <input
+                                                            type="checkbox"
+                                                            className="sr-only"
+                                                            checked={selectedFields.includes(k)}
+                                                            onChange={() => toggleField(k)}
+                                                        />
+                                                        <div className={`w-2 h-2 rounded bg-[#0066CC] transition ${selectedFields.includes(k) ? 'opacity-100 scale-100' : 'opacity-0 scale-50 group-hover:opacity-30'}`}></div>
                                                     </div>
                                                     {k}
                                                 </label>

@@ -47,9 +47,12 @@ const IdeaModal = ({ isOpen, onClose }) => {
                                 <label className="text-xs font-bold text-gray-500 uppercase ml-1">Lĩnh vực</label>
                                 <select className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0099FF]/20 focus:bg-white transition">
                                     <option>Di truyền</option>
-                                    <option>Vi sinh</option>
+                                    <option>Sinh học phân tử</option>
                                     <option>Sinh hóa</option>
-                                    <option>Thực vật</option>
+                                    <option>Vi sinh</option>
+                                    <option>Sinh lý thực vật</option>
+                                    <option>Sinh lý động vật</option>
+                                    <option>Sinh thái - Tiến hóa</option>
                                     <option>Khác</option>
                                 </select>
                             </div>

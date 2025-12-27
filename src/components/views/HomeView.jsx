@@ -8,7 +8,8 @@ import {
     Dna,
     Video,
     FileBadge,
-    Users
+    Users,
+    Sparkles
 } from 'lucide-react';
 import { styles } from '../../data.jsx';
 
@@ -37,6 +38,10 @@ const HomeView = ({ setCurrentView, onIdeaClick }) => (
              50% { transform: translateY(-50px) translateX(20px); opacity: 0.3; }
              100% { transform: translateY(-100px) translateX(0); opacity: 0.1; }
            }
+           @keyframes shimmer {
+             0% { transform: translateX(-100%); }
+             100% { transform: translateX(100%); }
+           }
          `}</style>
             </div>
 
@@ -64,9 +69,14 @@ const HomeView = ({ setCurrentView, onIdeaClick }) => (
 
                         <button
                             onClick={onIdeaClick}
-                            className="bg-white border-2 border-[#0066CC] text-[#0066CC] hover:bg-[#E6F4FF] px-8 py-4 rounded-lg font-bold shadow-md transition transform hover:-translate-y-1 inline-flex items-center justify-center gap-2"
+                            className="group relative px-8 py-4 rounded-lg font-bold text-[#0066CC] transition-all duration-300 transform hover:-translate-y-1 overflow-hidden bg-white/40 backdrop-blur-md border border-[#0099FF]/40 shadow-[0_0_20px_rgba(0,153,255,0.3)] hover:shadow-[0_0_35px_rgba(0,153,255,0.6)] hover:bg-white/70 hover:border-[#0099FF]"
                         >
-                            <Lightbulb size={20} /> Gửi ý tưởng
+                            <span className="relative z-10 flex items-center gap-2">
+                                <Sparkles size={18} className="text-[#0099FF] animate-pulse" />
+                                Gửi ý tưởng
+                            </span>
+                            {/* Shining effect overlay */}
+                            <div className="absolute inset-0 -translate-x-full group-hover:animate-[shimmer_1.5s_infinite] bg-gradient-to-r from-transparent via-white/60 to-transparent z-0"></div>
                         </button>
                     </div>
                 </div>
