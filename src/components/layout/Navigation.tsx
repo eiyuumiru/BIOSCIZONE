@@ -41,13 +41,13 @@ const Navigation: FC<NavigationProps> = ({ currentView, setCurrentView, isMenuOp
                 <div className="flex justify-between items-center">
                     {/* Logo Section */}
                     <div
-                        className="flex items-center space-x-3 cursor-pointer group"
-                        onClick={() => setCurrentView('home')}
+                        className="flex items-center space-x-2 md:space-x-3 cursor-pointer group"
+                        onClick={() => { setCurrentView('home'); setIsMenuOpen(false); }}
                     >
-                        <div className="relative w-10 h-10 flex items-center justify-center">
-                            <Dna className="text-[#0099FF] w-8 h-8 animate-[spin_10s_linear_infinite]" />
+                        <div className="relative w-8 h-8 md:w-10 md:h-10 flex items-center justify-center">
+                            <Dna className="text-[#0099FF] w-6 h-6 md:w-8 md:h-8 animate-[spin_10s_linear_infinite]" />
                         </div>
-                        <span className={`font-bold text-xl md:text-2xl tracking-tight text-white ${styles.fonts.heading}`}>BIOSCIZONE</span>
+                        <span className={`font-bold text-lg md:text-2xl tracking-tight text-white ${styles.fonts.heading}`}>BIOSCIZONE</span>
                     </div>
 
                     {/* Desktop Nav */}
@@ -93,7 +93,7 @@ const Navigation: FC<NavigationProps> = ({ currentView, setCurrentView, isMenuOp
                             </button>
                         ))}
                         <button
-                            onClick={onIdeaClick}
+                            onClick={() => { onIdeaClick(); setIsMenuOpen(false); }}
                             className="w-full bg-[#0066CC] text-white py-3 rounded-full font-bold mt-2 shadow-lg text-center"
                         >
                             Gửi ý tưởng nghiên cứu

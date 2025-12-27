@@ -54,19 +54,19 @@ const HomeView: FC<HomeViewProps> = ({ setCurrentView, onIdeaClick }) => {
 
                 <div className="container mx-auto px-4 grid grid-cols-1 md:grid-cols-2 gap-12 items-center relative z-10 h-full">
                     {/* Left Column: Text */}
-                    <div className="text-left animate-fade-in-up pl-4 md:pl-0">
-                        <h2 className={`text-[#0066CC] font-bold text-sm tracking-widest uppercase mb-4 ${styles.fonts.heading}`}>
+                    <div className="text-center md:text-left animate-fade-in-up px-4 md:pl-0">
+                        <h2 className={`text-[#0066CC] font-bold text-xs md:text-sm tracking-widest uppercase mb-4 mt-8 md:mt-0 ${styles.fonts.heading}`}>
                             Nền tảng kết nối Nghiên cứu khoa học
                         </h2>
                         <h1 className={`text-4xl md:text-5xl lg:text-6xl font-extrabold text-[#000033] mb-6 leading-tight ${styles.fonts.heading}`}>
                             <span className="block mb-2">Khám phá Tri thức</span>
                             <span className="text-[#0099FF]">Kết nối Đam mê</span>
                         </h1>
-                        <p className={`text-gray-600 text-lg mb-8 max-w-lg leading-relaxed ${styles.fonts.body}`}>
+                        <p className={`text-gray-600 text-base md:text-lg mb-8 max-w-lg mx-auto md:mx-0 leading-relaxed ${styles.fonts.body}`}>
                             Mạng lưới kết nối sinh viên, giảng viên và các nguồn lực nghiên cứu khoa học hàng đầu tại Khoa SH-CNSH.
                         </p>
 
-                        <div className="flex flex-col sm:flex-row gap-4">
+                        <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
                             <button
                                 onClick={() => setCurrentView('bio-match')}
                                 className="bg-[#0066CC] hover:bg-[#0055AA] text-white px-8 py-4 rounded-lg font-bold shadow-xl shadow-blue-500/20 transition transform hover:-translate-y-1 inline-flex items-center justify-center gap-2"
@@ -78,7 +78,7 @@ const HomeView: FC<HomeViewProps> = ({ setCurrentView, onIdeaClick }) => {
                                 onClick={onIdeaClick}
                                 className="group relative px-8 py-4 rounded-lg font-bold text-[#0066CC] transition-all duration-300 transform hover:-translate-y-1 overflow-hidden bg-white/40 backdrop-blur-md border border-[#0099FF]/40 shadow-[0_0_20px_rgba(0,153,255,0.3)] hover:shadow-[0_0_35px_rgba(0,153,255,0.6)] hover:bg-white/70 hover:border-[#0099FF]"
                             >
-                                <span className="relative z-10 flex items-center gap-2">
+                                <span className="relative z-10 flex items-center justify-center gap-2">
                                     <Sparkles size={18} className="text-[#0099FF] animate-pulse" />
                                     Gửi ý tưởng
                                 </span>
@@ -89,30 +89,32 @@ const HomeView: FC<HomeViewProps> = ({ setCurrentView, onIdeaClick }) => {
                     </div>
 
                     {/* Right Column: DNA Orbital Animation - 2.5x larger */}
-                    <div className="relative h-[700px] flex items-center justify-center overflow-visible">
-                        {/* DNA Axis / Central Hub - scaled 2.5x */}
-                        <div className="w-[640px] h-[640px] rounded-full border-2 border-dashed border-[#0099FF]/30 flex items-center justify-center relative animate-[spin_20s_linear_infinite]">
-                            <div className="absolute w-full h-full rounded-full border border-gray-200 opacity-50 scale-125"></div>
-                        </div>
+                    <div className="relative h-[400px] md:h-[700px] flex items-center justify-center overflow-visible">
+                        <div className="scale-[0.45] md:scale-100 flex items-center justify-center relative">
+                            {/* DNA Axis / Central Hub - scaled 2.5x */}
+                            <div className="w-[640px] h-[640px] rounded-full border-2 border-dashed border-[#0099FF]/30 flex items-center justify-center relative animate-[spin_20s_linear_infinite]">
+                                <div className="absolute w-full h-full rounded-full border border-gray-200 opacity-50 scale-125"></div>
+                            </div>
 
-                        {/* Central Logo - scaled up */}
-                        <div className="absolute bg-white p-10 rounded-full shadow-xl z-20">
-                            <Dna className="text-[#000033] w-24 h-24" />
-                        </div>
+                            {/* Central Logo - scaled up */}
+                            <div className="absolute bg-white p-10 rounded-full shadow-xl z-20">
+                                <Dna className="text-[#000033] w-24 h-24" />
+                            </div>
 
-                        {/* Orbiting Icons - scaled 2.5x */}
-                        <div className="absolute animate-[spin_10s_linear_infinite] w-[640px] h-[640px] z-10">
-                            <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-white p-5 rounded-full shadow-lg text-[#0066CC]">
-                                <Microscope size={40} />
-                            </div>
-                            <div className="absolute top-1/2 -right-8 transform -translate-y-1/2 bg-white p-5 rounded-full shadow-lg text-[#0099FF]">
-                                <Beaker size={40} />
-                            </div>
-                            <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 bg-white p-5 rounded-full shadow-lg text-[#000033]">
-                                <Users size={40} />
-                            </div>
-                            <div className="absolute top-1/2 -left-8 transform -translate-y-1/2 bg-white p-5 rounded-full shadow-lg text-[#0066CC]">
-                                <Share2 size={40} />
+                            {/* Orbiting Icons - scaled 2.5x */}
+                            <div className="absolute animate-[spin_10s_linear_infinite] w-[640px] h-[640px] z-10">
+                                <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-white p-5 rounded-full shadow-lg text-[#0066CC]">
+                                    <Microscope size={40} />
+                                </div>
+                                <div className="absolute top-1/2 -right-8 transform -translate-y-1/2 bg-white p-5 rounded-full shadow-lg text-[#0099FF]">
+                                    <Beaker size={40} />
+                                </div>
+                                <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 bg-white p-5 rounded-full shadow-lg text-[#000033]">
+                                    <Users size={40} />
+                                </div>
+                                <div className="absolute top-1/2 -left-8 transform -translate-y-1/2 bg-white p-5 rounded-full shadow-lg text-[#0066CC]">
+                                    <Share2 size={40} />
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -121,7 +123,7 @@ const HomeView: FC<HomeViewProps> = ({ setCurrentView, onIdeaClick }) => {
 
             {/* VỀ BIOSCIZONE Section */}
             <section className="py-20 bg-white">
-                <div className="container mx-auto px-4 max-w-4xl text-center">
+                <div className="container mx-auto px-6 md:px-4 max-w-4xl text-center">
                     <h2 className={`text-3xl md:text-4xl font-extrabold mb-8 ${styles.fonts.heading}`}>
                         <span className="text-[#000033]">VỀ </span>
                         <span className="text-[#0099FF]">BIOSCIZONE</span>
@@ -148,7 +150,7 @@ const HomeView: FC<HomeViewProps> = ({ setCurrentView, onIdeaClick }) => {
                             onClick={onIdeaClick}
                             className="group relative px-8 py-4 rounded-lg font-bold text-[#0066CC] transition-all duration-300 transform hover:-translate-y-1 overflow-hidden bg-white/40 backdrop-blur-md border border-[#0099FF]/40 shadow-[0_0_20px_rgba(0,153,255,0.3)] hover:shadow-[0_0_35px_rgba(0,153,255,0.6)] hover:bg-white/70 hover:border-[#0099FF]"
                         >
-                            <span className="relative z-10 flex items-center gap-2">
+                            <span className="relative z-10 flex items-center justify-center gap-2">
                                 <Sparkles size={18} className="text-[#0099FF] animate-pulse" />
                                 Gửi ý tưởng
                             </span>

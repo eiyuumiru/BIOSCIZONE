@@ -75,7 +75,7 @@ const IdeaModal: FC<IdeaModalProps> = ({ isOpen, onClose, onSubmitSuccess }) => 
                             <input type="text" placeholder="VD: Nghiên cứu ứng dụng vi tảo trong..." className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0099FF]/20 focus:bg-white transition" />
                         </div>
 
-                        <div className="grid grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div className="space-y-2">
                                 <label className="text-xs font-bold text-gray-500 uppercase ml-1">Lĩnh vực</label>
                                 <select className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0099FF]/20 focus:bg-white transition">
@@ -101,17 +101,17 @@ const IdeaModal: FC<IdeaModalProps> = ({ isOpen, onClose, onSubmitSuccess }) => 
                         </div>
                     </div>
 
-                    <div className="flex gap-4 pt-2">
+                    <div className="flex flex-col md:flex-row gap-3 pt-2">
                         <button
                             type="button"
                             onClick={handleClose}
-                            className="flex-1 py-4 border-2 border-gray-100 text-gray-500 font-bold rounded-xl hover:bg-gray-50 transition"
+                            className="w-full md:flex-1 py-4 border-2 border-gray-100 text-gray-500 font-bold rounded-xl hover:bg-gray-50 transition order-2 md:order-1"
                         >
                             Hủy bỏ
                         </button>
                         <button
                             type="submit"
-                            className="flex-[2] py-4 bg-[#0066CC] hover:bg-[#0055AA] text-white font-bold rounded-xl shadow-lg shadow-blue-500/20 transition transform hover:-translate-y-1 flex items-center justify-center gap-2"
+                            className="w-full md:flex-[2] py-4 bg-[#0066CC] hover:bg-[#0055AA] text-white font-bold rounded-xl shadow-lg shadow-blue-500/20 transition transform hover:-translate-y-1 flex items-center justify-center gap-2 order-1 md:order-2"
                         >
                             Gửi ý tưởng <Send size={18} className="transform -rotate-45 mt-1.5" />
                         </button>

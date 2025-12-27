@@ -9,8 +9,8 @@ import { styles } from '../../data';
 import type { FooterProps } from '../../types';
 
 const Footer: FC<FooterProps> = ({ setCurrentView }) => (
-    <footer className="bg-[#000033] text-gray-400 py-16 font-['Inter']">
-        <div className="container mx-auto px-4 grid grid-cols-1 md:grid-cols-4 gap-8">
+    <footer className="bg-[#000033] text-gray-400 py-10 md:py-16 font-['Inter']">
+        <div className="container mx-auto px-6 md:px-4 grid grid-cols-1 md:grid-cols-4 gap-8">
             <div className="md:col-span-1">
                 <div className="flex items-center gap-2 mb-6">
                     <Dna className="text-[#0099FF] w-6 h-6" />
@@ -27,7 +27,7 @@ const Footer: FC<FooterProps> = ({ setCurrentView }) => (
             </div>
 
             <div>
-                <h5 className={`text-white font-bold mb-6 uppercase text-xs tracking-widest ${styles.fonts.heading}`}>Khám phá</h5>
+                <h5 className={`text-white font-bold mb-4 md:mb-6 uppercase text-xs tracking-widest ${styles.fonts.heading}`}>Khám phá</h5>
                 <ul className="space-y-3 text-sm">
                     <li><button onClick={() => setCurrentView('bio-match')} className="hover:text-[#0099FF] transition">Bio-Match</button></li>
                     <li><button onClick={() => setCurrentView('science-corner')} className="hover:text-[#0099FF] transition">Science Corner</button></li>
@@ -36,7 +36,7 @@ const Footer: FC<FooterProps> = ({ setCurrentView }) => (
             </div>
 
             <div>
-                <h5 className={`text-white font-bold mb-6 uppercase text-xs tracking-widest ${styles.fonts.heading}`}>Hỗ trợ</h5>
+                <h5 className={`text-white font-bold mb-4 md:mb-6 uppercase text-xs tracking-widest ${styles.fonts.heading}`}>Hỗ trợ</h5>
                 <ul className="space-y-3 text-sm">
                     <li><button onClick={() => setCurrentView('resources')} className="hover:text-[#0099FF] transition">Hướng dẫn APA</button></li>
                     <li><button onClick={() => setCurrentView('resources')} className="hover:text-[#0099FF] transition">Quy trình Nghiên cứu khoa học</button></li>
@@ -44,7 +44,7 @@ const Footer: FC<FooterProps> = ({ setCurrentView }) => (
             </div>
 
             <div>
-                <h5 className={`text-white font-bold mb-6 uppercase text-xs tracking-widest ${styles.fonts.heading}`}>Kết nối</h5>
+                <h5 className={`text-white font-bold mb-4 md:mb-6 uppercase text-xs tracking-widest ${styles.fonts.heading}`}>Kết nối</h5>
                 <div className="flex space-x-4 mb-6">
                     <a href="https://www.facebook.com/DoanKhoa.LienChiHoi.KhoaSinhHoc.DHKHTN" target="_blank" rel="noopener noreferrer" className="p-2 bg-white/10 rounded-full hover:bg-[#0099FF] text-white cursor-pointer transition"><Facebook size={18} /></a>
                     <a href="mailto:dkshcnsh.hcmus@gmail.com" className="p-2 bg-white/10 rounded-full hover:bg-[#0099FF] text-white cursor-pointer transition"><Mail size={18} /></a>
