@@ -20,9 +20,9 @@ const Footer: FC<FooterProps> = ({ setCurrentView }) => (
                     "Kết nối đam mê khoa học, kiến tạo tương lai nghiên cứu cho sinh viên."
                 </p>
                 {/* Partner Logos */}
-                <div className="flex items-center justify-center gap-4">
-                    <img src="/logo-khoa-sinh.png" alt="Khoa Sinh học - CNSH" className="h-16 w-auto" />
-                    <img src="/logo-doan-tncs.png" alt="Đoàn TNCS Hồ Chí Minh" className="h-16 w-auto" />
+                <div className="flex items-center gap-4">
+                    <img src="/logo-khoa-sinh.png" alt="Khoa Sinh học - CNSH" className="h-24 w-auto" />
+                    <img src="/logo-doan-tncs.png" alt="Đoàn TNCS Hồ Chí Minh" className="h-20 w-auto" />
                 </div>
             </div>
 
