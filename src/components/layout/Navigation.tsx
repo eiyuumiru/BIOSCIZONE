@@ -16,6 +16,7 @@ const Navigation: FC<NavigationProps> = ({ currentView, setCurrentView, isMenuOp
         { id: 'bio-magazine', label: 'Tạp chí' },
         { id: 'achievements', label: 'Thành tích' },
         { id: 'resources', label: 'Tài nguyên' },
+        { id: 'contact', label: 'Liên hệ' },
     ];
 
     const mobileNavItems: NavItem[] = [

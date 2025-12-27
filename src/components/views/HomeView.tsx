@@ -88,39 +88,77 @@ const HomeView: FC<HomeViewProps> = ({ setCurrentView, onIdeaClick }) => {
                         </div>
                     </div>
 
-                    {/* Right Column: DNA Orbital Animation */}
-                    <div className="relative h-[400px] flex items-center justify-center">
-                        {/* DNA Axis / Central Hub */}
-                        <div className="w-64 h-64 rounded-full border-2 border-dashed border-[#0099FF]/30 flex items-center justify-center relative animate-[spin_20s_linear_infinite]">
+                    {/* Right Column: DNA Orbital Animation - 2.5x larger */}
+                    <div className="relative h-[700px] flex items-center justify-center overflow-visible">
+                        {/* DNA Axis / Central Hub - scaled 2.5x */}
+                        <div className="w-[640px] h-[640px] rounded-full border-2 border-dashed border-[#0099FF]/30 flex items-center justify-center relative animate-[spin_20s_linear_infinite]">
                             <div className="absolute w-full h-full rounded-full border border-gray-200 opacity-50 scale-125"></div>
                         </div>
 
-                        {/* Central Logo */}
-                        <div className="absolute bg-white p-6 rounded-full shadow-xl z-20">
-                            <Dna className="text-[#000033] w-12 h-12" />
+                        {/* Central Logo - scaled up */}
+                        <div className="absolute bg-white p-10 rounded-full shadow-xl z-20">
+                            <Dna className="text-[#000033] w-24 h-24" />
                         </div>
 
-                        {/* Orbiting Icons */}
-                        <div className="absolute animate-[spin_10s_linear_infinite] w-64 h-64 z-10">
-                            <div className="absolute -top-6 left-1/2 transform -translate-x-1/2 bg-white p-3 rounded-full shadow-md text-[#0066CC]">
-                                <Microscope size={24} />
+                        {/* Orbiting Icons - scaled 2.5x */}
+                        <div className="absolute animate-[spin_10s_linear_infinite] w-[640px] h-[640px] z-10">
+                            <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-white p-5 rounded-full shadow-lg text-[#0066CC]">
+                                <Microscope size={40} />
                             </div>
-                            <div className="absolute top-1/2 -right-6 transform -translate-y-1/2 bg-white p-3 rounded-full shadow-md text-[#0099FF]">
-                                <Beaker size={24} />
+                            <div className="absolute top-1/2 -right-8 transform -translate-y-1/2 bg-white p-5 rounded-full shadow-lg text-[#0099FF]">
+                                <Beaker size={40} />
                             </div>
-                            <div className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 bg-white p-3 rounded-full shadow-md text-[#000033]">
-                                <Users size={24} />
+                            <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 bg-white p-5 rounded-full shadow-lg text-[#000033]">
+                                <Users size={40} />
                             </div>
-                            <div className="absolute top-1/2 -left-6 transform -translate-y-1/2 bg-white p-3 rounded-full shadow-md text-[#0066CC]">
-                                <Share2 size={24} />
+                            <div className="absolute top-1/2 -left-8 transform -translate-y-1/2 bg-white p-5 rounded-full shadow-lg text-[#0066CC]">
+                                <Share2 size={40} />
                             </div>
                         </div>
                     </div>
                 </div>
             </section>
 
-            {/* Quick Access Grid */}
+            {/* VỀ BIOSCIZONE Section */}
             <section className="py-20 bg-white">
+                <div className="container mx-auto px-4 max-w-4xl text-center">
+                    <h2 className={`text-3xl md:text-4xl font-extrabold mb-8 ${styles.fonts.heading}`}>
+                        <span className="text-[#000033]">VỀ </span>
+                        <span className="text-[#0099FF]">BIOSCIZONE</span>
+                    </h2>
+                    <div className={`text-gray-700 text-base md:text-lg leading-relaxed mb-10 text-justify ${styles.fonts.body}`}>
+                        <p className="mb-4">
+                            Nằm trong khuôn khổ công trình thanh niên "BIO-RESEARCH" của Đoàn khoa Sinh học - Công nghệ Sinh học nhiệm kỳ 2025 - 2027, BIOSCIZONE ra đời với sứ mệnh tiên phong số hóa toàn diện hành trình nghiên cứu của sinh viên Khoa Sinh học – Công nghệ Sinh học.
+                        </p>
+                        <p className="mb-4">
+                            Chúng tôi kiến tạo một hệ sinh thái học thuật trực tuyến, nơi công nghệ trở thành đòn bẩy cho trí tuệ. Tại BIOSCIZONE, mọi rào cản thông tin được xóa bỏ nhờ kho dữ liệu mở về quy trình và kỹ năng chuyên sâu. Đặc biệt, với tính năng Bio-Match, chúng tôi thiết lập một mạng lưới kết nối đa chiều: từ sự cộng hưởng giữa sinh viên với sinh viên, đến sự bảo trợ chuyên môn từ Giảng viên và Cựu sinh viên.
+                        </p>
+                        <p>
+                            Hơn cả một công cụ, BIOSCIZONE là lời khẳng định về thế hệ sinh viên Khoa học tự nhiên hiện đại: Làm chủ công nghệ - Vững vàng chuyên môn - Sẵn sàng kết nối. Đây chính là bệ phóng để những ý tưởng từ phòng thí nghiệm vươn mình trở thành giải pháp thực tiễn cho cuộc sống.
+                        </p>
+                    </div>
+                    <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                        <button
+                            onClick={() => setCurrentView('bio-match')}
+                            className="bg-[#0066CC] hover:bg-[#0055AA] text-white px-8 py-4 rounded-lg font-bold shadow-xl shadow-blue-500/20 transition transform hover:-translate-y-1 inline-flex items-center justify-center gap-2"
+                        >
+                            Tìm đồng đội ngay <ArrowRight size={20} />
+                        </button>
+                        <button
+                            onClick={onIdeaClick}
+                            className="group relative px-8 py-4 rounded-lg font-bold text-[#0066CC] transition-all duration-300 transform hover:-translate-y-1 overflow-hidden bg-white/40 backdrop-blur-md border border-[#0099FF]/40 shadow-[0_0_20px_rgba(0,153,255,0.3)] hover:shadow-[0_0_35px_rgba(0,153,255,0.6)] hover:bg-white/70 hover:border-[#0099FF]"
+                        >
+                            <span className="relative z-10 flex items-center gap-2">
+                                <Sparkles size={18} className="text-[#0099FF] animate-pulse" />
+                                Gửi ý tưởng
+                            </span>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            {/* Quick Access Grid */}
+            <section className="py-20 bg-[#EDEDED]">
                 <div className="container mx-auto px-4">
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                         {quickAccessCards.map((card, idx) => (
@@ -131,9 +169,9 @@ const HomeView: FC<HomeViewProps> = ({ setCurrentView, onIdeaClick }) => {
                                     else if (card.title === "Bio-Magazine") setCurrentView('bio-magazine');
                                     else setCurrentView('bio-match');
                                 }}
-                                className="bg-[#EDEDED]/30 p-8 rounded-2xl hover:bg-white border border-transparent hover:border-[#0099FF]/30 hover:shadow-xl transition-all duration-300 group cursor-pointer"
+                                className="bg-white p-8 rounded-2xl hover:bg-white border border-transparent hover:border-[#0099FF]/30 hover:shadow-xl transition-all duration-300 group cursor-pointer"
                             >
-                                <div className="w-14 h-14 bg-white rounded-xl flex items-center justify-center text-[#0066CC] mb-6 shadow-sm group-hover:bg-[#0066CC] group-hover:text-white transition">
+                                <div className="w-14 h-14 bg-[#EDEDED] rounded-xl flex items-center justify-center text-[#0066CC] mb-6 shadow-sm group-hover:bg-[#0066CC] group-hover:text-white transition">
                                     {card.icon}
                                 </div>
                                 <h3 className={`text-xl font-bold text-[#000033] mb-3 ${styles.fonts.heading}`}>{card.title}</h3>

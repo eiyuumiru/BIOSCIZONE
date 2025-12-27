@@ -1,12 +1,10 @@
 import type { FC } from 'react';
 import {
     Mail,
-    Phone,
     MapPin,
     Send,
     Facebook,
-    Youtube,
-    Linkedin
+    Youtube
 } from 'lucide-react';
 import { styles } from '../../data';
 
@@ -31,17 +29,7 @@ const ContactView: FC = () => (
                                 </div>
                                 <div>
                                     <p className="text-xs font-bold text-gray-400 uppercase">Email</p>
-                                    <p className="text-sm font-medium text-gray-700">bioscizone@hcmus.edu.vn</p>
-                                </div>
-                            </div>
-
-                            <div className="flex items-start gap-4">
-                                <div className="w-10 h-10 bg-[#E6F4FF] rounded-lg flex items-center justify-center text-[#0066CC] shrink-0">
-                                    <Phone size={20} />
-                                </div>
-                                <div>
-                                    <p className="text-xs font-bold text-gray-400 uppercase">Điện thoại</p>
-                                    <p className="text-sm font-medium text-gray-700">028 3835 4321</p>
+                                    <p className="text-sm font-medium text-gray-700">dkshcnsh.hcmus@gmail.com</p>
                                 </div>
                             </div>
 
@@ -51,7 +39,7 @@ const ContactView: FC = () => (
                                 </div>
                                 <div>
                                     <p className="text-xs font-bold text-gray-400 uppercase">Địa chỉ</p>
-                                    <p className="text-sm font-medium text-gray-700">227 Nguyễn Văn Cừ, Phường 4, Quận 5, TP.HCM</p>
+                                    <p className="text-sm font-medium text-gray-700">227 Nguyễn Văn Cừ, Phường Chợ Quán, TP.HCM</p>
                                 </div>
                             </div>
                         </div>
@@ -59,9 +47,8 @@ const ContactView: FC = () => (
                         <div className="mt-10 pt-10 border-t border-gray-100">
                             <h4 className="text-xs font-bold text-gray-400 uppercase mb-4 tracking-widest">Mạng xã hội</h4>
                             <div className="flex gap-4">
-                                <div className="p-2.5 bg-gray-50 rounded-full hover:bg-[#0099FF] hover:text-white transition cursor-pointer text-[#000033]"><Facebook size={20} /></div>
+                                <a href="https://www.facebook.com/DoanKhoa.LienChiHoi.KhoaSinhHoc.DHKHTN" target="_blank" rel="noopener noreferrer" className="p-2.5 bg-gray-50 rounded-full hover:bg-[#0099FF] hover:text-white transition cursor-pointer text-[#000033]"><Facebook size={20} /></a>
                                 <div className="p-2.5 bg-gray-50 rounded-full hover:bg-[#0099FF] hover:text-white transition cursor-pointer text-[#000033]"><Youtube size={20} /></div>
-                                <div className="p-2.5 bg-gray-50 rounded-full hover:bg-[#0099FF] hover:text-white transition cursor-pointer text-[#000033]"><Linkedin size={20} /></div>
                             </div>
                         </div>
                     </div>
