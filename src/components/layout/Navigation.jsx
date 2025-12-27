@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-    Atom,
+    Dna,
     X,
     Menu,
     Lightbulb
@@ -23,7 +23,7 @@ const Navigation = ({ currentView, setCurrentView, isMenuOpen, setIsMenuOpen, sc
                     onClick={() => setCurrentView('home')}
                 >
                     <div className="relative w-10 h-10 flex items-center justify-center">
-                        <Atom className="text-[#0099FF] w-8 h-8 animate-[spin_10s_linear_infinite]" />
+                        <Dna className="text-[#0099FF] w-8 h-8 animate-[spin_10s_linear_infinite]" />
                     </div>
                     <span className={`font-bold text-xl md:text-2xl tracking-tight text-white ${styles.fonts.heading}`}>BIOSCIZONE</span>
                 </div>

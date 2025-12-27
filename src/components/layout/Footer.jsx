@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-    Atom,
+    Dna,
     Facebook,
     Mail,
     Youtube
@@ -12,7 +12,7 @@ const Footer = ({ setCurrentView }) => (
         <div className="container mx-auto px-4 grid grid-cols-1 md:grid-cols-4 gap-8">
             <div className="md:col-span-1">
                 <div className="flex items-center gap-2 mb-6">
-                    <Atom className="text-[#0099FF] w-6 h-6" />
+                    <Dna className="text-[#0099FF] w-6 h-6" />
                     <h4 className={`text-white text-xl font-bold ${styles.fonts.heading}`}>BIOSCIZONE</h4>
                 </div>
                 <p className="text-sm mb-4 leading-relaxed italic">

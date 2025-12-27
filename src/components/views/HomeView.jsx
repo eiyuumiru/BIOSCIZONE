@@ -5,7 +5,7 @@ import {
     Microscope,
     Beaker,
     Share2,
-    Atom,
+    Dna,
     Video,
     FileBadge,
     Users
@@ -71,30 +71,31 @@ const HomeView = ({ setCurrentView, onIdeaClick }) => (
                     </div>
                 </div>
 
-                {/* Right Column: Visual Animation */}
-                <div className="relative h-[500px] flex items-center justify-center">
-                    <div className="w-[300px] h-[300px] md:w-[400px] md:h-[400px] relative">
-                        <div className="absolute inset-0 rounded-full border border-[#0099FF]/20 animate-[spin_30s_linear_infinite]"></div>
-                        <div className="absolute inset-8 rounded-full border border-[#0066CC]/20 animate-[spin_20s_linear_infinite_reverse]"></div>
+                {/* Right Column: DNA Orbital Animation */}
+                <div className="relative h-[400px] flex items-center justify-center">
+                    {/* DNA Axis / Central Hub */}
+                    <div className="w-64 h-64 rounded-full border-2 border-dashed border-[#0099FF]/30 flex items-center justify-center relative animate-[spin_20s_linear_infinite]">
+                        <div className="absolute w-full h-full rounded-full border border-gray-200 opacity-50 scale-125"></div>
+                    </div>
 
-                        <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-6 animate-bounce">
-                            <div className="bg-white p-4 rounded-2xl shadow-lg text-[#0066CC]">
-                                <Microscope size={32} strokeWidth={1.5} />
-                            </div>
-                        </div>
-                        <div className="absolute bottom-10 right-0 animate-pulse">
-                            <div className="bg-white p-4 rounded-2xl shadow-lg text-[#0099FF]">
-                                <Beaker size={32} strokeWidth={1.5} />
-                            </div>
-                        </div>
-                        <div className="absolute bottom-10 left-0 animate-pulse delay-700">
-                            <div className="bg-white p-4 rounded-2xl shadow-lg text-[#000033]">
-                                <Share2 size={32} strokeWidth={1.5} />
-                            </div>
-                        </div>
+                    {/* Central Logo */}
+                    <div className="absolute bg-white p-6 rounded-full shadow-xl z-20">
+                        <Dna className="text-[#000033] w-12 h-12" />
+                    </div>
 
-                        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-                            <Atom size={80} className="text-[#000033] opacity-80" strokeWidth={1} />
+                    {/* Orbiting Icons */}
+                    <div className="absolute animate-[spin_10s_linear_infinite] w-64 h-64 z-10">
+                        <div className="absolute -top-6 left-1/2 transform -translate-x-1/2 bg-white p-3 rounded-full shadow-md text-[#0066CC]">
+                            <Microscope size={24} />
+                        </div>
+                        <div className="absolute top-1/2 -right-6 transform -translate-y-1/2 bg-white p-3 rounded-full shadow-md text-[#0099FF]">
+                            <Beaker size={24} />
+                        </div>
+                        <div className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 bg-white p-3 rounded-full shadow-md text-[#000033]">
+                            <Users size={24} />
+                        </div>
+                        <div className="absolute top-1/2 -left-6 transform -translate-y-1/2 bg-white p-3 rounded-full shadow-md text-[#0066CC]">
+                            <Share2 size={24} />
                         </div>
                     </div>
                 </div>

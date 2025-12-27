@@ -1,6 +1,6 @@
 import React, { Suspense, lazy, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
-import { Atom } from 'lucide-react';
+import { Dna } from 'lucide-react';
 
 // Layout Components (always loaded)
 import Navigation from './components/layout/Navigation';
@@ -22,7 +22,7 @@ import { styles } from './data.jsx';
 const LoadingSpinner = () => (
     <div className="min-h-screen flex items-center justify-center bg-[#EDEDED]">
         <div className="text-center">
-            <Atom className="w-12 h-12 text-[#0099FF] animate-spin mx-auto mb-4" />
+            <Dna className="w-12 h-12 text-[#0099FF] animate-spin mx-auto mb-4" />
             <p className="text-gray-500 font-medium">Đang tải...</p>
         </div>
     </div>
