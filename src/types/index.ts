@@ -92,6 +92,7 @@ export interface FooterProps {
 export interface IdeaModalProps {
     isOpen: boolean;
     onClose: () => void;
+    onSubmitSuccess: () => void;
 }
 
 export interface HomeViewProps {

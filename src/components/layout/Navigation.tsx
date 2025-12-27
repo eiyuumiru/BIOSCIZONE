@@ -66,7 +66,7 @@ const Navigation: FC<NavigationProps> = ({ currentView, setCurrentView, isMenuOp
 
                         <button
                             onClick={onIdeaClick}
-                            className="bg-[#0066CC] hover:bg-[#0055AA] text-white px-5 py-2 rounded-full text-xs font-bold shadow-md transition transform hover:scale-105 flex items-center gap-2 whitespace-nowrap"
+                            className="bg-[#0066CC] hover:bg-[#0055AA] text-white px-5 py-2.5 rounded-full text-xs font-bold shadow-md transition transform hover:scale-105 flex items-center justify-center gap-2 whitespace-nowrap -mt-1"
                         >
                             <Lightbulb size={14} /> Ý tưởng
                         </button>

@@ -1,4 +1,4 @@
-import type { FC } from 'react';
+import { useState, useEffect, type FC } from 'react';
 import {
     X,
     Lightbulb,
@@ -7,17 +7,49 @@ import {
 import { styles } from '../../data';
 import type { IdeaModalProps } from '../../types';
 
-const IdeaModal: FC<IdeaModalProps> = ({ isOpen, onClose }) => {
-    if (!isOpen) return null;
+const IdeaModal: FC<IdeaModalProps> = ({ isOpen, onClose, onSubmitSuccess }) => {
+    const [isVisible, setIsVisible] = useState(false);
+    const [isAnimating, setIsAnimating] = useState(false);
+
+    useEffect(() => {
+        if (isOpen && !isVisible) {
+            setIsVisible(true);
+            // Small delay to allow DOM to render before animating
+            requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
+                    setIsAnimating(true);
+                });
+            });
+        }
+    }, [isOpen, isVisible]);
+
+    const handleClose = () => {
+        setIsAnimating(false);
+        setTimeout(() => {
+            setIsVisible(false);
+            onClose();
+        }, 300);
+    };
+
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        onSubmitSuccess();
+        setIsAnimating(false);
+        setTimeout(() => {
+            setIsVisible(false);
+        }, 300);
+    };
+
+    if (!isVisible) return null;
 
     return (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center px-4">
+        <div className={`fixed inset-0 z-[100] flex items-center justify-center px-4 transition-opacity duration-300 ${isAnimating ? 'opacity-100' : 'opacity-0'}`}>
             <div
-                className="absolute inset-0 bg-[#000033]/60 backdrop-blur-sm transition-opacity"
-                onClick={onClose}
+                className={`absolute inset-0 bg-[#000033]/60 backdrop-blur-sm transition-opacity duration-300 ${isAnimating ? 'opacity-100' : 'opacity-0'}`}
+                onClick={handleClose}
             ></div>
 
-            <div className="bg-white w-full max-w-xl rounded-2xl shadow-2xl relative z-10 overflow-hidden animate-in fade-in zoom-in duration-300">
+            <div className={`bg-white w-full max-w-xl rounded-2xl shadow-2xl relative z-10 overflow-hidden transition-all duration-300 ${isAnimating ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}`}>
                 <div className="bg-[#000033] p-6 text-white flex justify-between items-center">
                     <div className="flex items-center gap-3">
                         <div className="w-10 h-10 bg-[#0099FF] rounded-lg flex items-center justify-center">
@@ -29,14 +61,14 @@ const IdeaModal: FC<IdeaModalProps> = ({ isOpen, onClose }) => {
                         </div>
                     </div>
                     <button
-                        onClick={onClose}
+                        onClick={handleClose}
                         className="p-2 hover:bg-white/10 rounded-full transition"
                     >
                         <X size={24} />
                     </button>
                 </div>
 
-                <form className="p-8 space-y-6">
+                <form className="p-8 space-y-6" onSubmit={handleSubmit}>
                     <div className="space-y-4">
                         <div className="space-y-2">
                             <label className="text-xs font-bold text-gray-500 uppercase ml-1">Tên ý tưởng / Đề tài dự kiến</label>
@@ -72,7 +104,7 @@ const IdeaModal: FC<IdeaModalProps> = ({ isOpen, onClose }) => {
                     <div className="flex gap-4 pt-2">
                         <button
                             type="button"
-                            onClick={onClose}
+                            onClick={handleClose}
                             className="flex-1 py-4 border-2 border-gray-100 text-gray-500 font-bold rounded-xl hover:bg-gray-50 transition"
                         >
                             Hủy bỏ

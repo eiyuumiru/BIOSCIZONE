@@ -1,6 +1,6 @@
 import { Suspense, lazy, useEffect, useState, type FC } from 'react';
 import { BrowserRouter, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
-import { Dna } from 'lucide-react';
+import { Dna, CheckCircle } from 'lucide-react';
 
 // Layout Components (always loaded)
 import Navigation from './components/layout/Navigation';
@@ -44,6 +44,26 @@ const AppContent: FC = () => {
     const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
     const [isIdeaModalOpen, setIsIdeaModalOpen] = useState<boolean>(false);
     const [scrolled, setScrolled] = useState<boolean>(false);
+    const [showSuccessToast, setShowSuccessToast] = useState<boolean>(false);
+    const [isToastAnimating, setIsToastAnimating] = useState<boolean>(false);
+
+    const handleIdeaSubmitSuccess = () => {
+        setIsIdeaModalOpen(false);
+        setShowSuccessToast(true);
+        setIsToastAnimating(false);
+        // Small delay to allow DOM to render before animating in
+        requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+                setIsToastAnimating(true);
+            });
+        });
+        setTimeout(() => {
+            setIsToastAnimating(false); // Start fade out
+            setTimeout(() => {
+                setShowSuccessToast(false);
+            }, 300); // Fade out duration
+        }, 5000); // Display for 5 seconds
+    };
 
     // Get current view from pathname
     const getCurrentView = (): string => {
@@ -104,7 +124,21 @@ const AppContent: FC = () => {
             <IdeaModal
                 isOpen={isIdeaModalOpen}
                 onClose={() => setIsIdeaModalOpen(false)}
+                onSubmitSuccess={handleIdeaSubmitSuccess}
             />
+
+            {/* Success Toast - Bottom Right */}
+            {showSuccessToast && (
+                <div className={`fixed bottom-6 right-6 z-[200] transition-all duration-300 ${isToastAnimating ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+                    <div className="bg-green-500 text-white px-6 py-4 rounded-xl shadow-2xl flex items-center gap-3">
+                        <CheckCircle size={24} />
+                        <div>
+                            <p className="font-bold">Đã gửi ý tưởng thành công!</p>
+                            <p className="text-sm opacity-90">Cảm ơn bạn đã chia sẻ với BIOSCIZONE</p>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
