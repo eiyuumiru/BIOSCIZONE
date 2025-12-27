@@ -10,7 +10,7 @@ import type { FooterProps } from '../../types';
 
 const Footer: FC<FooterProps> = ({ setCurrentView }) => (
     <footer className="bg-[#000033] text-gray-400 py-10 md:py-16 font-['Inter']">
-        <div className="container mx-auto px-6 md:px-4 grid grid-cols-1 md:grid-cols-4 gap-8">
+        <div className="container mx-auto px-8 md:px-12 lg:px-20 grid grid-cols-1 md:grid-cols-4 gap-8">
             <div className="md:col-span-1">
                 <div className="flex items-center gap-2 mb-6">
                     <Dna className="text-[#0099FF] w-6 h-6" />

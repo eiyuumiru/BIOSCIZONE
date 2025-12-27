@@ -52,34 +52,34 @@ const HomeView: FC<HomeViewProps> = ({ setCurrentView, onIdeaClick }) => {
          `}</style>
                 </div>
 
-                <div className="container mx-auto px-4 grid grid-cols-1 md:grid-cols-2 gap-12 items-center relative z-10 h-full">
+                <div className="container mx-auto px-8 md:px-12 lg:px-20 grid grid-cols-1 md:grid-cols-[1.1fr,0.9fr] gap-4 md:gap-8 items-center relative z-10 h-full">
                     {/* Left Column: Text */}
                     <div className="text-center md:text-left animate-fade-in-up px-4 md:pl-0">
-                        <h2 className={`text-[#0066CC] font-bold text-xs md:text-sm tracking-widest uppercase mb-4 mt-8 md:mt-0 ${styles.fonts.heading}`}>
+                        <h2 className={`text-[#0066CC] font-bold text-[10px] md:text-xs tracking-widest uppercase mb-4 mt-8 md:mt-0 ${styles.fonts.heading}`}>
                             Nền tảng kết nối Nghiên cứu khoa học
                         </h2>
-                        <h1 className={`text-4xl md:text-5xl lg:text-6xl font-extrabold text-[#000033] mb-6 leading-tight ${styles.fonts.heading}`}>
+                        <h1 className={`text-3xl md:text-4xl lg:text-5xl font-extrabold text-[#000033] mb-6 leading-tight ${styles.fonts.heading}`}>
                             <span className="block mb-2">Khám phá Tri thức</span>
                             <span className="text-[#0099FF]">Kết nối Đam mê</span>
                         </h1>
-                        <p className={`text-gray-600 text-base md:text-lg mb-8 max-w-lg mx-auto md:mx-0 leading-relaxed ${styles.fonts.body}`}>
+                        <p className={`text-gray-600 text-sm md:text-base mb-8 max-w-md mx-auto md:mx-0 leading-relaxed ${styles.fonts.body}`}>
                             Mạng lưới kết nối sinh viên, giảng viên và các nguồn lực nghiên cứu khoa học hàng đầu tại Khoa SH-CNSH.
                         </p>
 
                         <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
                             <button
                                 onClick={() => setCurrentView('bio-match')}
-                                className="bg-[#0066CC] hover:bg-[#0055AA] text-white px-8 py-4 rounded-lg font-bold shadow-xl shadow-blue-500/20 transition transform hover:-translate-y-1 inline-flex items-center justify-center gap-2"
+                                className="bg-[#0066CC] hover:bg-[#0055AA] text-white px-6 py-3.5 rounded-lg font-bold shadow-xl shadow-blue-500/20 transition transform hover:-translate-y-1 inline-flex items-center justify-center gap-2 text-sm md:text-base"
                             >
-                                Tìm đồng đội ngay <ArrowRight size={20} />
+                                Tìm đồng đội ngay <ArrowRight size={18} />
                             </button>
 
                             <button
                                 onClick={onIdeaClick}
-                                className="group relative px-8 py-4 rounded-lg font-bold text-[#0066CC] transition-all duration-300 transform hover:-translate-y-1 overflow-hidden bg-white/40 backdrop-blur-md border border-[#0099FF]/40 shadow-[0_0_20px_rgba(0,153,255,0.3)] hover:shadow-[0_0_35px_rgba(0,153,255,0.6)] hover:bg-white/70 hover:border-[#0099FF]"
+                                className="group relative px-6 py-3.5 rounded-lg font-bold text-[#0066CC] transition-all duration-300 transform hover:-translate-y-1 overflow-hidden bg-white/40 backdrop-blur-md border border-[#0099FF]/40 shadow-[0_0_20px_rgba(0,153,255,0.3)] hover:shadow-[0_0_35px_rgba(0,153,255,0.6)] hover:bg-white/70 hover:border-[#0099FF] text-sm md:text-base"
                             >
                                 <span className="relative z-10 flex items-center justify-center gap-2">
-                                    <Sparkles size={18} className="text-[#0099FF] animate-pulse" />
+                                    <Sparkles size={16} className="text-[#0099FF] animate-pulse" />
                                     Gửi ý tưởng
                                 </span>
                                 {/* Shining effect overlay */}
@@ -89,31 +89,31 @@ const HomeView: FC<HomeViewProps> = ({ setCurrentView, onIdeaClick }) => {
                     </div>
 
                     {/* Right Column: DNA Orbital Animation - 2.5x larger */}
-                    <div className="relative h-[400px] md:h-[700px] flex items-center justify-center overflow-visible">
-                        <div className="scale-[0.45] md:scale-100 flex items-center justify-center relative">
-                            {/* DNA Axis / Central Hub - scaled 2.5x */}
-                            <div className="w-[640px] h-[640px] rounded-full border-2 border-dashed border-[#0099FF]/30 flex items-center justify-center relative animate-[spin_20s_linear_infinite]">
+                    <div className="relative h-[350px] md:h-[500px] flex items-center justify-center overflow-visible">
+                        <div className="scale-[0.4] md:scale-[0.7] lg:scale-90 flex items-center justify-center relative">
+                            {/* DNA Axis / Central Hub */}
+                            <div className="w-[500px] h-[500px] rounded-full border-2 border-dashed border-[#0099FF]/30 flex items-center justify-center relative animate-[spin_20s_linear_infinite]">
                                 <div className="absolute w-full h-full rounded-full border border-gray-200 opacity-50 scale-125"></div>
                             </div>
 
-                            {/* Central Logo - scaled up */}
-                            <div className="absolute bg-white p-10 rounded-full border border-[#0099FF]/40 shadow-[0_0_20px_rgba(0,153,255,0.3)] z-20">
-                                <Dna className="text-[#0099FF] w-24 h-24" />
+                            {/* Central Logo */}
+                            <div className="absolute bg-white p-8 rounded-full border border-[#0099FF]/40 shadow-[0_0_20px_rgba(0,153,255,0.3)] z-20">
+                                <Dna className="text-[#0099FF] w-16 h-16" />
                             </div>
 
-                            {/* Orbiting Icons - scaled 2.5x */}
-                            <div className="absolute animate-[spin_10s_linear_infinite] w-[640px] h-[640px] z-10">
-                                <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-white p-5 rounded-full shadow-lg text-[#0099FF]">
-                                    <Microscope size={40} />
+                            {/* Orbiting Icons */}
+                            <div className="absolute animate-[spin_10s_linear_infinite] w-[500px] h-[500px] z-10">
+                                <div className="absolute -top-6 left-1/2 transform -translate-x-1/2 bg-white p-4 rounded-full shadow-lg text-[#0099FF]">
+                                    <Microscope size={32} />
                                 </div>
-                                <div className="absolute top-1/2 -right-8 transform -translate-y-1/2 bg-white p-5 rounded-full shadow-lg text-[#0099FF]">
-                                    <Beaker size={40} />
+                                <div className="absolute top-1/2 -right-6 transform -translate-y-1/2 bg-white p-4 rounded-full shadow-lg text-[#0099FF]">
+                                    <Beaker size={32} />
                                 </div>
-                                <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 bg-white p-5 rounded-full shadow-lg text-[#0099FF]">
-                                    <Users size={40} />
+                                <div className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 bg-white p-4 rounded-full shadow-lg text-[#0099FF]">
+                                    <Users size={32} />
                                 </div>
-                                <div className="absolute top-1/2 -left-8 transform -translate-y-1/2 bg-white p-5 rounded-full shadow-lg text-[#0099FF]">
-                                    <Share2 size={40} />
+                                <div className="absolute top-1/2 -left-6 transform -translate-y-1/2 bg-white p-4 rounded-full shadow-lg text-[#0099FF]">
+                                    <Share2 size={32} />
                                 </div>
                             </div>
                         </div>
@@ -123,7 +123,7 @@ const HomeView: FC<HomeViewProps> = ({ setCurrentView, onIdeaClick }) => {
 
             {/* VỀ BIOSCIZONE Section */}
             <section className="py-20 bg-white">
-                <div className="container mx-auto px-6 md:px-4 max-w-4xl text-center">
+                <div className="container mx-auto px-8 md:px-12 lg:px-20 max-w-4xl text-center">
                     <h2 className={`text-3xl md:text-4xl font-extrabold mb-8 ${styles.fonts.heading}`}>
                         <span className="text-[#000033]">VỀ </span>
                         <span className="text-[#0099FF]">BIOSCIZONE</span>
@@ -161,7 +161,7 @@ const HomeView: FC<HomeViewProps> = ({ setCurrentView, onIdeaClick }) => {
 
             {/* Quick Access Grid */}
             <section className="py-20 bg-[#EDEDED]">
-                <div className="container mx-auto px-4">
+                <div className="container mx-auto px-8 md:px-12 lg:px-20">
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                         {quickAccessCards.map((card, idx) => (
                             <div

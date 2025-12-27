@@ -6,7 +6,7 @@ import { styles, achievementsItems } from '../../data';
 
 const AchievementsView: FC = () => (
     <div className="min-h-screen pt-28 pb-20 bg-[#EDEDED]">
-        <div className="container mx-auto px-4 max-w-5xl">
+        <div className="container mx-auto px-8 md:px-12 lg:px-20 max-w-5xl">
             <div className="text-center mb-16">
                 <h2 className={`text-3xl md:text-4xl font-extrabold text-[#000033] ${styles.fonts.heading}`}>BẢNG VÀNG THÀNH TÍCH</h2>
                 <p className="text-gray-500 mt-4">Vinh danh những nỗ lực nghiên cứu không ngừng nghỉ.</p>

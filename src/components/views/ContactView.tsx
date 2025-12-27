@@ -10,7 +10,7 @@ import { styles } from '../../data';
 
 const ContactView: FC = () => (
     <div className="min-h-screen pt-28 pb-20 bg-[#EDEDED]">
-        <div className="container mx-auto px-4 max-w-6xl">
+        <div className="container mx-auto px-8 md:px-12 lg:px-20 max-w-6xl">
             <div className="text-center mb-16">
                 <h2 className={`text-3xl md:text-4xl font-extrabold text-[#000033] ${styles.fonts.heading}`}>Liên hệ với chúng tôi</h2>
                 <p className="text-gray-500 mt-4 max-w-lg mx-auto">Mọi thắc mắc và đóng góp ý kiến, vui lòng gửi tin nhắn hoặc liên hệ trực tiếp qua thông tin bên dưới.</p>

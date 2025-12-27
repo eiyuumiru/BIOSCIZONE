@@ -6,7 +6,7 @@ import { styles, resourcesList } from '../../data';
 
 const ResourcesView: FC = () => (
     <div className="min-h-screen pt-28 pb-20 bg-[#EDEDED]">
-        <div className="container mx-auto px-4 max-w-4xl">
+        <div className="container mx-auto px-8 md:px-12 lg:px-20 max-w-4xl">
             <div className="text-center mb-16">
                 <h2 className={`text-3xl md:text-4xl font-extrabold text-[#000033] ${styles.fonts.heading}`}>Hướng dẫn & Tài nguyên</h2>
                 <p className="text-gray-500 mt-4 max-w-lg mx-auto">Tổng hợp các kiến thức, kỹ năng và công cụ cần thiết cho hành trình nghiên cứu khoa học của bạn.</p>

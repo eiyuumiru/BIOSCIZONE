@@ -8,7 +8,7 @@ import { styles, bioMagazineItems } from '../../data';
 
 const BioMagazineView: FC = () => (
     <div className="min-h-screen pt-28 pb-20 bg-[#EDEDED]">
-        <div className="container mx-auto px-4 max-w-5xl">
+        <div className="container mx-auto px-8 md:px-12 lg:px-20 max-w-5xl">
             <div className="flex flex-col md:flex-row justify-between items-end mb-10 border-b border-gray-300 pb-4">
                 <div>
                     <h2 className={`text-3xl font-extrabold text-[#000033] ${styles.fonts.heading}`}>BIO-MAGAZINE</h2>

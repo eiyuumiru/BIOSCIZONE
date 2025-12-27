@@ -32,7 +32,7 @@ const BioMatchView: FC = () => {
 
     return (
         <div className="min-h-screen pt-28 pb-20 bg-[#EDEDED]">
-            <div className="container mx-auto px-4">
+            <div className="container mx-auto px-8 md:px-12 lg:px-20">
                 <div className="flex justify-center mb-10">
                     <div className="bg-white p-1.5 rounded-full shadow-sm inline-flex border border-gray-200">
                         <button

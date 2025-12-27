@@ -8,7 +8,7 @@ import { styles, scienceCornerItems } from '../../data';
 
 const ScienceCornerView: FC = () => (
     <div className="min-h-screen pt-28 pb-20 bg-[#EDEDED]">
-        <div className="container mx-auto px-4 max-w-6xl">
+        <div className="container mx-auto px-8 md:px-12 lg:px-20 max-w-6xl">
             <div className="text-center mb-12">
                 <h2 className={`text-3xl font-extrabold text-[#000033] mb-4 ${styles.fonts.heading}`}>SCIENCE CORNER</h2>
                 <p className="text-gray-600 max-w-2xl mx-auto">Nơi chia sẻ kinh nghiệm Nghiên cứu khoa học từ sinh viên và các video khoa học thú vị.</p>
