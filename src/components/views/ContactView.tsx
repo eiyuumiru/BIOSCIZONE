@@ -39,7 +39,16 @@ const ContactView: FC = () => (
                                 </div>
                                 <div>
                                     <p className="text-xs font-bold text-gray-400 uppercase">Địa chỉ</p>
-                                    <p className="text-sm font-medium text-gray-700">227 Nguyễn Văn Cừ, Phường Chợ Quán, TP.HCM</p>
+                                    <div className="space-y-3">
+                                        <p className="text-sm font-medium text-gray-700">
+                                            <span className="font-bold block">Cơ sở 1:</span>
+                                            227 đường Nguyễn Văn Cừ, Phường Chợ Quán, Thành phố Hồ Chí Minh
+                                        </p>
+                                        <p className="text-sm font-medium text-gray-700">
+                                            <span className="font-bold block">Cơ sở 2:</span>
+                                            Khu đô thị Đại học Quốc gia Thành phố Hồ Chí Minh, Phường Đông Hoà, Thành phố Hồ Chí Minh
+                                        </p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -70,6 +79,10 @@ const ContactView: FC = () => (
                                 </div>
                             </div>
                             <div className="space-y-2">
+                                <label className="text-xs font-bold text-gray-500 uppercase ml-1">Mã số sinh viên (MSSV)</label>
+                                <input type="text" placeholder="Nhập mã số sinh viên của bạn" className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0099FF]/20 focus:bg-white transition" />
+                            </div>
+                            <div className="space-y-2">
                                 <label className="text-xs font-bold text-gray-500 uppercase ml-1">Chủ đề</label>
                                 <input type="text" placeholder="Bạn muốn liên hệ về việc gì?" className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0099FF]/20 focus:bg-white transition" />
                             </div>
@@ -78,7 +91,7 @@ const ContactView: FC = () => (
                                 <textarea rows={5} placeholder="Nhập nội dung tin nhắn..." className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0099FF]/20 focus:bg-white transition resize-none"></textarea>
                             </div>
                             <button type="submit" className="w-full md:w-auto px-10 py-4 bg-[#0066CC] hover:bg-[#0055AA] text-white font-bold rounded-xl shadow-lg shadow-blue-500/20 transition transform hover:-translate-y-1 flex items-center justify-center gap-2">
-                                Gửi ngay <Send size={18} className="transform -rotate-45 mb-1" />
+                                <Send size={16} className="transform -rotate-45 mt-1.5" /> Gửi ngay
                             </button>
                         </form>
                     </div>

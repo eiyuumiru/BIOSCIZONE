@@ -49,7 +49,7 @@ const IdeaModal: FC<IdeaModalProps> = ({ isOpen, onClose, onSubmitSuccess }) => 
                 onClick={handleClose}
             ></div>
 
-            <div className={`bg-white w-full max-w-xl rounded-2xl shadow-2xl relative z-10 overflow-hidden transition-all duration-300 ${isAnimating ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}`}>
+            <div className={`bg-white w-full max-w-6xl rounded-2xl shadow-2xl relative z-10 overflow-hidden transition-all duration-300 ${isAnimating ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}`}>
                 <div className="bg-[#000033] p-6 text-white flex justify-between items-center">
                     <div className="flex items-center gap-3">
                         <div className="w-10 h-10 bg-[#0099FF] rounded-lg flex items-center justify-center">
@@ -68,40 +68,83 @@ const IdeaModal: FC<IdeaModalProps> = ({ isOpen, onClose, onSubmitSuccess }) => 
                     </button>
                 </div>
 
-                <form className="p-8 space-y-6" onSubmit={handleSubmit}>
-                    <div className="space-y-4">
-                        <div className="space-y-2">
-                            <label className="text-xs font-bold text-gray-500 uppercase ml-1">Tên ý tưởng / Đề tài dự kiến</label>
-                            <input type="text" placeholder="VD: Nghiên cứu ứng dụng vi tảo trong..." className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0099FF]/20 focus:bg-white transition" />
+                <form className="p-6 md:p-8 space-y-8 max-h-[80vh] overflow-y-auto" onSubmit={handleSubmit}>
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
+                        {/* Personal Information Section */}
+                        <div className="space-y-4 flex flex-col">
+                            <h4 className="text-sm font-bold text-[#000033] uppercase border-b border-gray-100 pb-2">Thông tin cá nhân</h4>
+                            <div className="space-y-4 flex-grow">
+                                <div className="space-y-2">
+                                    <label className="text-xs font-bold text-gray-500 uppercase ml-1">Họ và tên</label>
+                                    <input type="text" placeholder="Nhập tên của bạn" className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0099FF]/20 focus:bg-white transition" />
+                                </div>
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div className="space-y-2">
+                                        <label className="text-xs font-bold text-gray-500 uppercase ml-1">MSSV</label>
+                                        <input type="text" placeholder="Nhập mã số sinh viên" className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0099FF]/20 focus:bg-white transition" />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <label className="text-xs font-bold text-gray-500 uppercase ml-1">Khóa</label>
+                                        <select className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0099FF]/20 focus:bg-white transition">
+                                            <option>K20</option>
+                                            <option>K21</option>
+                                            <option>K22</option>
+                                            <option>K23</option>
+                                            <option>K24</option>
+                                            <option>K25</option>
+                                            <option>Khác</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div className="space-y-2">
+                                    <label className="text-xs font-bold text-gray-500 uppercase ml-1">Email</label>
+                                    <input type="email" placeholder="Nhập địa chỉ email" className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0099FF]/20 focus:bg-white transition" />
+                                </div>
+                                <div className="space-y-2">
+                                    <label className="text-xs font-bold text-gray-500 uppercase ml-1">Số điện thoại</label>
+                                    <input type="tel" placeholder="Nhập số điện thoại" className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0099FF]/20 focus:bg-white transition" />
+                                </div>
+                            </div>
                         </div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div className="space-y-2">
-                                <label className="text-xs font-bold text-gray-500 uppercase ml-1">Lĩnh vực</label>
-                                <select className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0099FF]/20 focus:bg-white transition">
-                                    <option>Di truyền</option>
-                                    <option>Sinh học phân tử</option>
-                                    <option>Sinh hóa</option>
-                                    <option>Vi sinh</option>
-                                    <option>Sinh lý thực vật</option>
-                                    <option>Sinh lý động vật</option>
-                                    <option>Sinh thái - Tiến hóa</option>
-                                    <option>Khác</option>
-                                </select>
-                            </div>
-                            <div className="space-y-2">
-                                <label className="text-xs font-bold text-gray-500 uppercase ml-1">Đối tượng nghiên cứu</label>
-                                <input type="text" placeholder="VD: Vi khuẩn, Nấm..." className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0099FF]/20 focus:bg-white transition" />
-                            </div>
-                        </div>
+                        {/* Idea Details Section */}
+                        <div className="space-y-4 flex flex-col">
+                            <h4 className="text-sm font-bold text-[#000033] uppercase border-b border-gray-100 pb-2">Thông tin ý tưởng</h4>
+                            <div className="space-y-4 flex flex-col flex-grow">
+                                <div className="space-y-2">
+                                    <label className="text-xs font-bold text-gray-500 uppercase ml-1">Tên ý tưởng / Đề tài dự kiến</label>
+                                    <input type="text" placeholder="VD: Nghiên cứu ứng dụng vi tảo trong..." className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0099FF]/20 focus:bg-white transition" />
+                                </div>
 
-                        <div className="space-y-2">
-                            <label className="text-xs font-bold text-gray-500 uppercase ml-1">Mô tả ngắn gọn ý tưởng</label>
-                            <textarea rows={4} placeholder="Ý tưởng của bạn giải quyết vấn đề gì? Phương pháp dự kiến?" className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0099FF]/20 focus:bg-white transition resize-none"></textarea>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div className="space-y-2">
+                                        <label className="text-xs font-bold text-gray-500 uppercase ml-1">Lĩnh vực</label>
+                                        <select className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0099FF]/20 focus:bg-white transition">
+                                            <option>Di truyền</option>
+                                            <option>Sinh học phân tử</option>
+                                            <option>Sinh hóa</option>
+                                            <option>Vi sinh</option>
+                                            <option>Sinh lý thực vật</option>
+                                            <option>Sinh lý động vật</option>
+                                            <option>Sinh thái - Tiến hóa</option>
+                                            <option>Khác</option>
+                                        </select>
+                                    </div>
+                                    <div className="space-y-2">
+                                        <label className="text-xs font-bold text-gray-500 uppercase ml-1">Đối tượng nghiên cứu</label>
+                                        <input type="text" placeholder="VD: Vi khuẩn, Nấm..." className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0099FF]/20 focus:bg-white transition" />
+                                    </div>
+                                </div>
+
+                                <div className="space-y-2 flex-grow flex flex-col">
+                                    <label className="text-xs font-bold text-gray-500 uppercase ml-1">Mô tả ngắn gọn ý tưởng</label>
+                                    <textarea placeholder="Ý tưởng của bạn giải quyết vấn đề gì? Phương pháp dự kiến?" className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0099FF]/20 focus:bg-white transition resize-none flex-grow min-h-[120px]"></textarea>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
-                    <div className="flex flex-col md:flex-row gap-3 pt-2">
+                    <div className="flex flex-col md:flex-row gap-3 pt-4 border-t border-gray-100">
                         <button
                             type="button"
                             onClick={handleClose}
@@ -111,9 +154,9 @@ const IdeaModal: FC<IdeaModalProps> = ({ isOpen, onClose, onSubmitSuccess }) => 
                         </button>
                         <button
                             type="submit"
-                            className="w-full md:flex-[2] py-4 bg-[#0066CC] hover:bg-[#0055AA] text-white font-bold rounded-xl shadow-lg shadow-blue-500/20 transition transform hover:-translate-y-1 flex items-center justify-center gap-2 order-1 md:order-2"
+                            className="w-full md:flex-1 py-4 bg-[#0066CC] hover:bg-[#0055AA] text-white font-bold rounded-xl shadow-lg shadow-blue-500/20 transition transform hover:-translate-y-1 flex items-center justify-center gap-2 order-1 md:order-2"
                         >
-                            Gửi ý tưởng <Send size={18} className="transform -rotate-45 mt-1.5" />
+                            <Send size={16} className="transform -rotate-45 mt-1.5" /> Gửi ngay
                         </button>
                     </div>
                 </form>
