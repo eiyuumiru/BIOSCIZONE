@@ -97,8 +97,8 @@ const HomeView: FC<HomeViewProps> = ({ setCurrentView, onIdeaClick }) => {
                             </div>
 
                             {/* Central Logo - scaled up */}
-                            <div className="absolute bg-white p-10 rounded-full shadow-xl z-20">
-                                <Dna className="text-[#000033] w-24 h-24" />
+                            <div className="absolute bg-white p-10 rounded-full border border-[#0099FF]/40 shadow-[0_0_20px_rgba(0,153,255,0.3)] z-20">
+                                <Dna className="text-[#0099FF] w-24 h-24" />
                             </div>
 
                             {/* Orbiting Icons - scaled 2.5x */}
