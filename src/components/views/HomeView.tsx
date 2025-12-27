@@ -103,16 +103,16 @@ const HomeView: FC<HomeViewProps> = ({ setCurrentView, onIdeaClick }) => {
 
                             {/* Orbiting Icons - scaled 2.5x */}
                             <div className="absolute animate-[spin_10s_linear_infinite] w-[640px] h-[640px] z-10">
-                                <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-white p-5 rounded-full shadow-lg text-[#0066CC]">
+                                <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-white p-5 rounded-full shadow-lg text-[#0099FF]">
                                     <Microscope size={40} />
                                 </div>
                                 <div className="absolute top-1/2 -right-8 transform -translate-y-1/2 bg-white p-5 rounded-full shadow-lg text-[#0099FF]">
                                     <Beaker size={40} />
                                 </div>
-                                <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 bg-white p-5 rounded-full shadow-lg text-[#000033]">
+                                <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 bg-white p-5 rounded-full shadow-lg text-[#0099FF]">
                                     <Users size={40} />
                                 </div>
-                                <div className="absolute top-1/2 -left-8 transform -translate-y-1/2 bg-white p-5 rounded-full shadow-lg text-[#0066CC]">
+                                <div className="absolute top-1/2 -left-8 transform -translate-y-1/2 bg-white p-5 rounded-full shadow-lg text-[#0099FF]">
                                     <Share2 size={40} />
                                 </div>
                             </div>
