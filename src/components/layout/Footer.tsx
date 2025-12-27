@@ -48,7 +48,7 @@ const Footer: FC<FooterProps> = ({ setCurrentView }) => (
                 <div className="flex space-x-4 mb-6">
                     <a href="https://www.facebook.com/DoanKhoa.LienChiHoi.KhoaSinhHoc.DHKHTN" target="_blank" rel="noopener noreferrer" className="p-2 bg-white/10 rounded-full hover:bg-[#0099FF] text-white cursor-pointer transition"><Facebook size={18} /></a>
                     <a href="mailto:dkshcnsh.hcmus@gmail.com" className="p-2 bg-white/10 rounded-full hover:bg-[#0099FF] text-white cursor-pointer transition"><Mail size={18} /></a>
-                    <div className="p-2 bg-white/10 rounded-full hover:bg-[#0099FF] text-white cursor-pointer transition"><Youtube size={18} /></div>
+                    <a href="https://www.youtube.com/@oankhoasinhhoc-congnghes-vi1xt" target="_blank" rel="noopener noreferrer" className="p-2 bg-white/10 rounded-full hover:bg-[#0099FF] text-white cursor-pointer transition"><Youtube size={18} /></a>
                 </div>
                 <p className="text-sm text-white leading-relaxed">
                     <span className="whitespace-nowrap block font-bold">© Đoàn khoa Sinh học - Công nghệ Sinh học</span>

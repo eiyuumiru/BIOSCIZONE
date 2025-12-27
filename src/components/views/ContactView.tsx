@@ -48,7 +48,7 @@ const ContactView: FC = () => (
                             <h4 className="text-xs font-bold text-gray-400 uppercase mb-4 tracking-widest">Mạng xã hội</h4>
                             <div className="flex gap-4">
                                 <a href="https://www.facebook.com/DoanKhoa.LienChiHoi.KhoaSinhHoc.DHKHTN" target="_blank" rel="noopener noreferrer" className="p-2.5 bg-gray-50 rounded-full hover:bg-[#0099FF] hover:text-white transition cursor-pointer text-[#000033]"><Facebook size={20} /></a>
-                                <div className="p-2.5 bg-gray-50 rounded-full hover:bg-[#0099FF] hover:text-white transition cursor-pointer text-[#000033]"><Youtube size={20} /></div>
+                                <a href="https://www.youtube.com/@oankhoasinhhoc-congnghes-vi1xt" target="_blank" rel="noopener noreferrer" className="p-2.5 bg-gray-50 rounded-full hover:bg-[#0099FF] hover:text-white transition cursor-pointer text-[#000033]"><Youtube size={20} /></a>
                             </div>
                         </div>
                     </div>
