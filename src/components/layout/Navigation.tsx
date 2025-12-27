@@ -22,10 +22,10 @@ const Navigation: FC<NavigationProps> = ({ currentView, setCurrentView, isMenuOp
     const mobileNavItems: NavItem[] = [
         { id: 'home', label: 'Trang chủ' },
         { id: 'bio-match', label: 'Bio-Match' },
-        { id: 'science-corner', label: 'Science Corner' },
-        { id: 'bio-magazine', label: 'Bio-Magazine' },
-        { id: 'achievements', label: 'Thành tích Nghiên cứu khoa học' },
-        { id: 'resources', label: 'Hướng dẫn & Tài nguyên' },
+        { id: 'science-corner', label: 'Góc Khoa Học' },
+        { id: 'bio-magazine', label: 'Tạp chí' },
+        { id: 'achievements', label: 'Thành tích' },
+        { id: 'resources', label: 'Tài nguyên' },
         { id: 'contact', label: 'Liên hệ' }
     ];
 
@@ -94,7 +94,7 @@ const Navigation: FC<NavigationProps> = ({ currentView, setCurrentView, isMenuOp
                         ))}
                         <button
                             onClick={onIdeaClick}
-                            className="w-full bg-[#0066CC] text-white py-3 rounded-full font-bold mt-2 shadow-lg"
+                            className="w-full bg-[#0066CC] text-white py-3 rounded-full font-bold mt-2 shadow-lg text-center"
                         >
                             Gửi ý tưởng nghiên cứu
                         </button>
