@@ -63,13 +63,13 @@ const HomeView: FC<HomeViewProps> = ({ setCurrentView, onIdeaClick }) => {
                             <span className="text-[#0099FF]">Kết nối Đam mê</span>
                         </h1>
                         <p className={`text-gray-600 text-sm md:text-base mb-8 max-w-md mx-auto md:mx-0 leading-relaxed ${styles.fonts.body}`}>
-                            Mạng lưới kết nối sinh viên, giảng viên và các nguồn lực nghiên cứu khoa học hàng đầu tại Khoa SH-CNSH.
+                            Mạng lưới kết nối sinh viên, giảng viên và các nguồn lực nghiên cứu khoa học hàng đầu tại Khoa Sinh học - Công nghệ Sinh học, Trường Đại học Khoa học tự nhiên, ĐHQG-HCM.
                         </p>
 
                         <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
                             <button
                                 onClick={() => setCurrentView('bio-match')}
-                                className="bg-[#0066CC] hover:bg-[#0055AA] text-white px-6 py-3.5 rounded-lg font-bold shadow-xl shadow-blue-500/20 transition transform hover:-translate-y-1 inline-flex items-center justify-center gap-2 text-sm md:text-base"
+                                className="bg-[#0066CC] hover:bg-[#0055AA] text-white px-6 py-3.5 rounded-lg font-bold shadow-xl shadow-blue-500/20 transition transform hover:-translate-y-1 inline-flex items-center justify-center gap-2 text-sm md:text-base w-full sm:w-auto"
                             >
                                 Tìm đồng đội ngay <ArrowRight size={18} />
                             </button>
@@ -130,7 +130,7 @@ const HomeView: FC<HomeViewProps> = ({ setCurrentView, onIdeaClick }) => {
                     </h2>
                     <div className={`text-gray-700 text-base md:text-lg leading-relaxed mb-10 text-justify ${styles.fonts.body}`}>
                         <p className="mb-4">
-                            Nằm trong khuôn khổ công trình thanh niên "BIO-RESEARCH" của Đoàn khoa Sinh học - Công nghệ Sinh học nhiệm kỳ 2025 - 2027, BIOSCIZONE ra đời với sứ mệnh tiên phong số hóa toàn diện hành trình nghiên cứu của sinh viên Khoa Sinh học – Công nghệ Sinh học.
+                            Nằm trong khuôn khổ công trình thanh niên “BIO-RESEARCH” của Đoàn khoa Sinh học - Công nghệ Sinh học nhiệm kỳ 2025 - 2027, BIOSCIZONE ra đời với sứ mệnh tiên phong số hóa toàn diện hành trình nghiên cứu của sinh viên Khoa Sinh học – Công nghệ Sinh học, Trường Đại học Khoa học tự nhiên, ĐHQG-HCM.
                         </p>
                         <p className="mb-4">
                             Chúng tôi kiến tạo một hệ sinh thái học thuật trực tuyến, nơi công nghệ trở thành đòn bẩy cho trí tuệ. Tại BIOSCIZONE, mọi rào cản thông tin được xóa bỏ nhờ kho dữ liệu mở về quy trình và kỹ năng chuyên sâu. Đặc biệt, với tính năng Bio-Match, chúng tôi thiết lập một mạng lưới kết nối đa chiều: từ sự cộng hưởng giữa sinh viên với sinh viên, đến sự bảo trợ chuyên môn từ Giảng viên và Cựu sinh viên.
@@ -142,7 +142,7 @@ const HomeView: FC<HomeViewProps> = ({ setCurrentView, onIdeaClick }) => {
                     <div className="flex flex-col sm:flex-row gap-4 justify-center">
                         <button
                             onClick={() => setCurrentView('bio-match')}
-                            className="bg-[#0066CC] hover:bg-[#0055AA] text-white px-8 py-4 rounded-lg font-bold shadow-xl shadow-blue-500/20 transition transform hover:-translate-y-1 inline-flex items-center justify-center gap-2"
+                            className="bg-[#0066CC] hover:bg-[#0055AA] text-white px-8 py-4 rounded-lg font-bold shadow-xl shadow-blue-500/20 transition transform hover:-translate-y-1 inline-flex items-center justify-center gap-2 w-full sm:w-auto"
                         >
                             Tìm đồng đội ngay <ArrowRight size={20} />
                         </button>
