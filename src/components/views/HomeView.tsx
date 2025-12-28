@@ -92,8 +92,8 @@ const HomeView: FC<HomeViewProps> = ({ setCurrentView, onIdeaClick }) => {
                     <div className="relative h-[350px] md:h-[500px] flex items-center justify-center overflow-visible">
                         <div className="scale-[0.4] md:scale-[0.7] lg:scale-90 flex items-center justify-center relative">
                             {/* DNA Axis / Central Hub */}
-                            <div className="w-[500px] h-[500px] rounded-full border-2 border-dashed border-[#0099FF]/30 flex items-center justify-center relative animate-[spin_20s_linear_infinite]">
-                                <div className="absolute w-full h-full rounded-full border border-gray-200 opacity-50 scale-125"></div>
+                            <div className="w-[500px] h-[500px] rounded-full border-2 border-dashed border-[#000080]/40 flex items-center justify-center relative animate-[spin_20s_linear_infinite]">
+                                <div className="absolute w-full h-full rounded-full border border-[#33CCFF] opacity-30 scale-125"></div>
                             </div>
 
                             {/* Central Logo */}
