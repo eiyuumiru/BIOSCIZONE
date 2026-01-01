@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 from datetime import timedelta
 from typing import List
-import libsql_client
+import libsql
 from ..database import get_db
 from ..auth import (
     authenticate_user, 
@@ -17,7 +17,7 @@ router = APIRouter()
 
 # Authentication
 @router.post("/login", response_model=Token)
-async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(), db: libsql_client.Client = Depends(get_db)):
+async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(), db: libsql.Connection = Depends(get_db)):
     # Simple check against settings/DB for demo
     # In a real app, you'd check encrypted pass in DB
     if form_data.username != settings.ADMIN_USERNAME or form_data.password != settings.ADMIN_PASSWORD:
@@ -35,17 +35,18 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
 
 # Content Management
 @router.get("/pending", response_model=List[BioBuddyResponse])
-def get_pending_buddies(db: libsql_client.Client = Depends(get_db), current_user: str = Depends(get_current_user)):
+def get_pending_buddies(db: libsql.Connection = Depends(get_db), current_user: str = Depends(get_current_user)):
     rs = db.execute("SELECT * FROM bio_buddies WHERE status = 'pending'")
-    return [dict(row) for row in rs.rows]
+    columns = [col[0] for col in rs.description]
+    return [dict(zip(columns, row)) for row in rs.fetchall()]
 
 @router.patch("/approve-buddy/{id}")
-def approve_buddy(id: int, db: libsql_client.Client = Depends(get_db), current_user: str = Depends(get_current_user)):
+def approve_buddy(id: int, db: libsql.Connection = Depends(get_db), current_user: str = Depends(get_current_user)):
     db.execute("UPDATE bio_buddies SET status = 'approved' WHERE id = ?", [id])
     return {"message": "Buddy approved"}
 
 @router.post("/articles", response_model=ArticleResponse)
-def create_article(article: ArticleCreate, db: libsql_client.Client = Depends(get_db), current_user: str = Depends(get_current_user)):
+def create_article(article: ArticleCreate, db: libsql.Connection = Depends(get_db), current_user: str = Depends(get_current_user)):
     query = """
     INSERT INTO articles (category, title, content, author, external_link, file_url, publication_date)
     VALUES (?, ?, ?, ?, ?, ?, ?)
@@ -56,9 +57,13 @@ def create_article(article: ArticleCreate, db: libsql_client.Client = Depends(ge
     ])
     # Fetch latest to return
     rs = db.execute("SELECT * FROM articles WHERE id = last_insert_rowid()")
-    return dict(rs.rows[0])
+    columns = [col[0] for col in rs.description]
+    first_row = rs.fetchone()
+    if not first_row:
+        raise HTTPException(status_code=500, detail="Failed to create article")
+    return dict(zip(columns, first_row))
 
 @router.delete("/articles/{id}")
-def delete_article(id: int, db: libsql_client.Client = Depends(get_db), current_user: str = Depends(get_current_user)):
+def delete_article(id: int, db: libsql.Connection = Depends(get_db), current_user: str = Depends(get_current_user)):
     db.execute("DELETE FROM articles WHERE id = ?", [id])
     return {"message": "Article deleted"}
