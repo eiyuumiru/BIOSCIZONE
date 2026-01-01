@@ -10,15 +10,18 @@ import {
     getFeedbacks, markFeedbackRead,
     type FeedbackAPI, type ArticleCreateData
 } from '../../services/adminApi';
-import { type BioBuddyAPI, type ArticleAPI } from '../../services/api';
+import { getBuddies, type BioBuddyAPI, type ArticleAPI } from '../../services/api';
 import { styles } from '../../data';
 
 type TabType = 'buddies' | 'articles' | 'feedbacks';
+type BuddySubTab = 'pending' | 'approved';
 
 const AdminDashboardView: FC = () => {
     const navigate = useNavigate();
     const [activeTab, setActiveTab] = useState<TabType>('buddies');
-    const [buddies, setBuddies] = useState<BioBuddyAPI[]>([]);
+    const [buddySubTab, setBuddySubTab] = useState<BuddySubTab>('pending');
+    const [pendingBuddies, setPendingBuddies] = useState<BioBuddyAPI[]>([]);
+    const [approvedBuddies, setApprovedBuddies] = useState<BioBuddyAPI[]>([]);
     const [articles, setArticles] = useState<ArticleAPI[]>([]);
     const [feedbacks, setFeedbacks] = useState<FeedbackAPI[]>([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -40,8 +43,12 @@ const AdminDashboardView: FC = () => {
         setIsLoading(true);
         try {
             if (activeTab === 'buddies') {
-                const data = await getPendingBuddies();
-                setBuddies(data);
+                const [pending, approved] = await Promise.all([
+                    getPendingBuddies(),
+                    getBuddies()
+                ]);
+                setPendingBuddies(pending);
+                setApprovedBuddies(approved);
             } else if (activeTab === 'articles') {
                 const data = await getAllArticles();
                 setArticles(data);
@@ -67,7 +74,11 @@ const AdminDashboardView: FC = () => {
     const handleApproveBuddy = async (id: number) => {
         try {
             await approveBuddy(id);
-            setBuddies(buddies.filter(b => b.id !== id));
+            const approvedItem = pendingBuddies.find(b => b.id === id);
+            setPendingBuddies(pendingBuddies.filter(b => b.id !== id));
+            if (approvedItem) {
+                setApprovedBuddies([approvedItem, ...approvedBuddies]);
+            }
         } catch (error) {
             console.error('Failed to approve buddy:', error);
         }
@@ -77,7 +88,8 @@ const AdminDashboardView: FC = () => {
         if (!confirm('Xác nhận xóa yêu cầu này?')) return;
         try {
             await deleteBuddy(id);
-            setBuddies(buddies.filter(b => b.id !== id));
+            setPendingBuddies(pendingBuddies.filter(b => b.id !== id));
+            setApprovedBuddies(approvedBuddies.filter(b => b.id !== id));
         } catch (error) {
             console.error('Failed to delete buddy:', error);
         }
@@ -103,7 +115,7 @@ const AdminDashboardView: FC = () => {
     };
 
     const tabs = [
-        { id: 'buddies' as TabType, label: 'Bio-Buddies', icon: Users, count: buddies.length },
+        { id: 'buddies' as TabType, label: 'Bio-Buddies', icon: Users, count: pendingBuddies.length },
         { id: 'articles' as TabType, label: 'Bài viết', icon: FileText, count: articles.length },
         { id: 'feedbacks' as TabType, label: 'Phản hồi', icon: MessageSquare, count: feedbacks.filter(f => !f.is_read).length },
     ];
@@ -111,28 +123,28 @@ const AdminDashboardView: FC = () => {
     return (
         <div className={`min-h-screen bg-[#EDEDED] ${styles.fonts.body}`}>
             {/* Header */}
-            <header className="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm">
-                <div className="max-w-7xl mx-auto px-6 md:px-12 py-4 flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                        <div className="w-12 h-12 bg-[#EDEDED] rounded-xl flex items-center justify-center border border-[#0099FF]/20">
-                            <Dna className="w-6 h-6 text-[#0099FF]" />
+            <header className={`bg-[#000033] sticky top-0 z-50 shadow-lg py-4 ${styles.fonts.body}`}>
+                <div className="container mx-auto px-8 md:px-12 lg:px-20 flex items-center justify-between">
+                    <div className="flex items-center gap-2 md:gap-3">
+                        <div className="relative w-8 h-8 md:w-10 md:h-10 flex items-center justify-center">
+                            <Dna className="text-[#0099FF] w-6 h-6 md:w-8 h-8 animate-[spin_10s_linear_infinite]" />
                         </div>
                         <div>
-                            <h1 className={`text-xl font-bold text-[#000033] ${styles.fonts.heading}`}>Admin Dashboard</h1>
-                            <p className="text-xs text-gray-500">BIOSCIZONE Management</p>
+                            <h1 className={`text-base md:text-xl font-bold text-white tracking-tight ${styles.fonts.heading}`}>Admin Dashboard</h1>
+                            <p className="text-[10px] md:text-xs text-gray-400 uppercase tracking-widest font-medium">BIOSCIZONE Management</p>
                         </div>
                     </div>
                     <button
                         onClick={handleLogout}
-                        className="flex items-center gap-2 px-4 py-2 text-gray-600 hover:text-[#0066CC] hover:bg-[#EDEDED] rounded-lg transition-all font-medium"
+                        className="bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-full text-xs md:text-sm font-bold transition-all flex items-center justify-center gap-2"
                     >
-                        <LogOut size={18} />
+                        <LogOut size={16} />
                         <span className="hidden sm:inline">Đăng xuất</span>
                     </button>
                 </div>
             </header>
 
-            <div className="max-w-7xl mx-auto px-6 md:px-12 py-8">
+            <div className="container mx-auto px-8 md:px-12 lg:px-20 py-8">
                 {/* Tabs */}
                 <div className="flex gap-2 mb-8 bg-white p-1.5 rounded-xl w-fit shadow-sm border border-gray-100">
                     {tabs.map(tab => (
@@ -140,16 +152,22 @@ const AdminDashboardView: FC = () => {
                             key={tab.id}
                             onClick={() => setActiveTab(tab.id)}
                             className={`flex items-center gap-2 px-4 py-2.5 rounded-lg font-medium transition-all ${activeTab === tab.id
-                                    ? 'bg-[#0066CC] text-white shadow-lg shadow-blue-500/20'
-                                    : 'text-gray-600 hover:text-[#0066CC] hover:bg-[#EDEDED]'
+                                ? 'bg-[#0066CC] text-white shadow-lg shadow-blue-500/20'
+                                : 'text-gray-600 hover:text-[#0066CC] hover:bg-[#EDEDED]'
                                 }`}
                         >
                             <tab.icon size={18} />
                             <span className="hidden sm:inline">{tab.label}</span>
-                            {tab.count > 0 && (
+                            {(tab.id !== 'buddies' && tab.count > 0) && (
                                 <span className={`px-2 py-0.5 text-xs rounded-full ${activeTab === tab.id ? 'bg-white/20' : 'bg-[#0099FF]/10 text-[#0099FF]'
                                     }`}>
                                     {tab.count}
+                                </span>
+                            )}
+                            {tab.id === 'buddies' && pendingBuddies.length > 0 && (
+                                <span className={`px-2 py-0.5 text-xs rounded-full ${activeTab === tab.id ? 'bg-white/20' : 'bg-red-100 text-red-600'
+                                    }`}>
+                                    {pendingBuddies.length}
                                 </span>
                             )}
                         </button>
@@ -165,44 +183,113 @@ const AdminDashboardView: FC = () => {
                     <>
                         {/* Bio-Buddies Tab */}
                         {activeTab === 'buddies' && (
-                            <div className="space-y-4">
-                                {buddies.length === 0 ? (
-                                    <div className="text-center py-20 text-gray-400 bg-white rounded-2xl border border-gray-100">
-                                        <Users className="w-12 h-12 mx-auto mb-4 opacity-50" />
-                                        <p className="text-[#000033] font-medium">Không có yêu cầu đang chờ duyệt</p>
-                                    </div>
-                                ) : (
-                                    buddies.map(buddy => (
-                                        <div key={buddy.id} className="bg-white border border-gray-100 rounded-2xl p-6 hover:border-[#0099FF]/30 hover:shadow-lg transition-all">
-                                            <div className="flex items-start justify-between">
-                                                <div className="flex-1">
-                                                    <h3 className={`text-lg font-bold text-[#000033] ${styles.fonts.heading}`}>{buddy.full_name}</h3>
-                                                    <p className="text-gray-500 text-sm">{buddy.email} • {buddy.course}</p>
-                                                    <div className="mt-3">
-                                                        <p className="text-[#0066CC] font-semibold">{buddy.research_topic}</p>
-                                                        <p className="text-gray-600 mt-2">{buddy.description}</p>
+                            <div className="space-y-6">
+                                {/* Sub-tabs for Buddies */}
+                                <div className="flex gap-4 border-b border-gray-200 pb-px">
+                                    <button
+                                        onClick={() => setBuddySubTab('pending')}
+                                        className={`pb-3 px-2 text-sm font-bold transition-all relative ${buddySubTab === 'pending'
+                                            ? 'text-[#0066CC]'
+                                            : 'text-gray-400 hover:text-gray-600'
+                                            }`}
+                                    >
+                                        Chờ duyệt ({pendingBuddies.length})
+                                        {buddySubTab === 'pending' && (
+                                            <div className="absolute bottom-0 left-0 w-full h-0.5 bg-[#0066CC]" />
+                                        )}
+                                    </button>
+                                    <button
+                                        onClick={() => setBuddySubTab('approved')}
+                                        className={`pb-3 px-2 text-sm font-bold transition-all relative ${buddySubTab === 'approved'
+                                            ? 'text-[#0066CC]'
+                                            : 'text-gray-400 hover:text-gray-600'
+                                            }`}
+                                    >
+                                        Đã duyệt ({approvedBuddies.length})
+                                        {buddySubTab === 'approved' && (
+                                            <div className="absolute bottom-0 left-0 w-full h-0.5 bg-[#0066CC]" />
+                                        )}
+                                    </button>
+                                </div>
+
+                                <div className="space-y-4">
+                                    {buddySubTab === 'pending' ? (
+                                        pendingBuddies.length === 0 ? (
+                                            <div className="text-center py-20 text-gray-400 bg-white rounded-2xl border border-gray-100">
+                                                <Users className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                                                <p className="text-[#000033] font-medium">Không có yêu cầu đang chờ duyệt</p>
+                                            </div>
+                                        ) : (
+                                            pendingBuddies.map(buddy => (
+                                                <div key={buddy.id} className="bg-white border border-gray-100 rounded-2xl p-6 hover:border-[#0099FF]/30 hover:shadow-lg transition-all">
+                                                    <div className="flex items-start justify-between">
+                                                        <div className="flex-1">
+                                                            <div className="flex items-center gap-2 mb-1">
+                                                                <h3 className={`text-lg font-bold text-[#000033] ${styles.fonts.heading}`}>{buddy.full_name}</h3>
+                                                                <span className="px-2 py-0.5 text-[10px] font-bold bg-amber-100 text-amber-700 rounded-full uppercase">Chờ duyệt</span>
+                                                            </div>
+                                                            <p className="text-gray-500 text-sm">{buddy.email} • {buddy.course}</p>
+                                                            <div className="mt-3">
+                                                                <p className="text-[#0066CC] font-semibold">{buddy.research_topic}</p>
+                                                                <p className="text-gray-600 mt-2">{buddy.description}</p>
+                                                            </div>
+                                                        </div>
+                                                        <div className="flex gap-2 ml-4">
+                                                            <button
+                                                                onClick={() => handleApproveBuddy(buddy.id)}
+                                                                className="p-2.5 bg-green-50 text-green-600 hover:bg-green-100 rounded-xl transition-all"
+                                                                title="Duyệt"
+                                                            >
+                                                                <Check size={20} />
+                                                            </button>
+                                                            <button
+                                                                onClick={() => handleDeleteBuddy(buddy.id)}
+                                                                className="p-2.5 bg-red-50 text-red-500 hover:bg-red-100 rounded-xl transition-all"
+                                                                title="Xóa"
+                                                            >
+                                                                <Trash2 size={20} />
+                                                            </button>
+                                                        </div>
                                                     </div>
                                                 </div>
-                                                <div className="flex gap-2 ml-4">
-                                                    <button
-                                                        onClick={() => handleApproveBuddy(buddy.id)}
-                                                        className="p-2.5 bg-green-50 text-green-600 hover:bg-green-100 rounded-xl transition-all"
-                                                        title="Duyệt"
-                                                    >
-                                                        <Check size={20} />
-                                                    </button>
-                                                    <button
-                                                        onClick={() => handleDeleteBuddy(buddy.id)}
-                                                        className="p-2.5 bg-red-50 text-red-500 hover:bg-red-100 rounded-xl transition-all"
-                                                        title="Xóa"
-                                                    >
-                                                        <Trash2 size={20} />
-                                                    </button>
-                                                </div>
+                                            ))
+                                        )
+                                    ) : (
+                                        approvedBuddies.length === 0 ? (
+                                            <div className="text-center py-20 text-gray-400 bg-white rounded-2xl border border-gray-100">
+                                                <Users className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                                                <p className="text-[#000033] font-medium">Chưa có Bio-Buddy nào được duyệt</p>
                                             </div>
-                                        </div>
-                                    ))
-                                )}
+                                        ) : (
+                                            approvedBuddies.map(buddy => (
+                                                <div key={buddy.id} className="bg-white border border-gray-100 rounded-2xl p-6 hover:border-[#0099FF]/30 hover:shadow-lg transition-all">
+                                                    <div className="flex items-start justify-between">
+                                                        <div className="flex-1">
+                                                            <div className="flex items-center gap-2 mb-1">
+                                                                <h3 className={`text-lg font-bold text-[#000033] ${styles.fonts.heading}`}>{buddy.full_name}</h3>
+                                                                <span className="px-2 py-0.5 text-[10px] font-bold bg-green-100 text-green-700 rounded-full uppercase">Đã duyệt</span>
+                                                            </div>
+                                                            <p className="text-gray-500 text-sm">{buddy.email} • {buddy.course}</p>
+                                                            <div className="mt-3">
+                                                                <p className="text-[#0066CC] font-semibold">{buddy.research_topic}</p>
+                                                                <p className="text-gray-600 mt-2">{buddy.description}</p>
+                                                            </div>
+                                                        </div>
+                                                        <div className="flex gap-2 ml-4">
+                                                            <button
+                                                                onClick={() => handleDeleteBuddy(buddy.id)}
+                                                                className="p-2.5 bg-red-50 text-red-500 hover:bg-red-100 rounded-xl transition-all"
+                                                                title="Xóa"
+                                                            >
+                                                                <Trash2 size={20} />
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            ))
+                                        )
+                                    )}
+                                </div>
                             </div>
                         )}
 
@@ -262,8 +349,8 @@ const AdminDashboardView: FC = () => {
                                         <div
                                             key={feedback.id}
                                             className={`border rounded-2xl p-6 transition-all hover:shadow-lg ${feedback.is_read
-                                                    ? 'bg-white border-gray-100'
-                                                    : 'bg-[#0099FF]/5 border-[#0099FF]/30'
+                                                ? 'bg-white border-gray-100'
+                                                : 'bg-[#0099FF]/5 border-[#0099FF]/30'
                                                 }`}
                                         >
                                             <div className="flex items-start justify-between">
