@@ -3,6 +3,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 from datetime import timedelta
 from typing import List
 import libsql
+import uuid
 from ..database import get_db
 from ..auth import (
     authenticate_user, 
@@ -17,10 +18,9 @@ router = APIRouter()
 
 # Authentication
 @router.post("/login", response_model=Token)
-async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(), db: libsql.Connection = Depends(get_db)):
-    # Simple check against settings/DB for demo
-    # In a real app, you'd check encrypted pass in DB
-    if form_data.username != settings.ADMIN_USERNAME or form_data.password != settings.ADMIN_PASSWORD:
+async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
+    # Use the authenticate_user function that checks DB first, then env vars
+    if not authenticate_user(form_data.username, form_data.password):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Incorrect username or password",
@@ -32,6 +32,24 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
         data={"sub": form_data.username}, expires_delta=access_token_expires
     )
     return {"access_token": access_token, "token_type": "bearer"}
+
+# Seed initial admin (call once to create admin in database)
+@router.post("/seed-admin")
+async def seed_admin(username: str, password: str, db: libsql.Connection = Depends(get_db)):
+    # Check if any admin exists
+    cursor = db.execute("SELECT COUNT(*) FROM admins")
+    count = cursor.fetchone()[0]
+    if count > 0:
+        raise HTTPException(status_code=400, detail="Admin already exists. Use existing credentials.")
+    
+    # Create admin with hashed password
+    admin_id = str(uuid.uuid4())
+    hashed_password = get_password_hash(password)
+    db.execute(
+        "INSERT INTO admins (id, username, hashed_password) VALUES (?, ?, ?)",
+        [admin_id, username, hashed_password]
+    )
+    return {"message": f"Admin '{username}' created successfully"}
 
 # Content Management
 @router.get("/pending", response_model=List[BioBuddyResponse])
