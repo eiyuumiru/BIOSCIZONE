@@ -2,13 +2,16 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from .routers import public, admin
 from .database import init_db
+from .config import settings
 
 app = FastAPI(title="BiosciZone API", version="1.0.0")
 
-# CORS Configuration
+# CORS Configuration - origins read from environment variable
+origins = [origin.strip() for origin in settings.CORS_ORIGINS.split(",")]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"], # In production, replace with actual frontend URL
+    allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
