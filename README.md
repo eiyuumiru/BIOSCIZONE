@@ -1,80 +1,64 @@
-# BIOSCIZONE
+# BIOSCIZONE (Monorepo)
 
-Nền tảng kết nối NCKH cho sinh viên, giảng viên và nguồn lực nghiên cứu khoa học thuộc Khoa Sinh học - Công nghệ Sinh học. Giao diện gồm nhiều chuyên mục (Bio-Match, Science Corner, Bio-Magazine, Achievements, Resources, Contact) với thiết kế hiện đại, hiệu ứng chuyển động mượt.
-
-## Tính năng chính
-- Trang chủ có hero animation và lối tắt nhanh tới các khu vực nổi bật.
-- Bio-Match: danh sách bạn đồng hành nghiên cứu + thông tin các phòng thí nghiệm.
-- Science Corner: bài chia sẻ và video học thuật.
-- Bio-Magazine: tổng hợp bài báo, tạp chí khoa học.
-- Achievements: timeline thành tích nghiên cứu.
-- Resources: tài nguyên, hướng dẫn và tài liệu tham khảo.
-- Contact + Idea Modal: form liên hệ và gửi ý tưởng nghiên cứu (UI thuần, chưa có backend).
-
-## Công nghệ
-- React 18 + React Router DOM
-- Vite
-- Tailwind CSS
-- lucide-react (icon)
+Nền tảng kết nối NCKH cho sinh viên, giảng viên và nguồn lực nghiên cứu khoa học thuộc Khoa Sinh học - Công nghệ Sinh học. Đây là dự án Monorepo bao gồm cả Frontend (React) và Backend (FastAPI).
 
 ## Cấu trúc thư mục
 ```
 .
-├─ src/
-│  ├─ components/
-│  │  ├─ layout/
-│  │  │  ├─ Navigation.jsx
-│  │  │  ├─ Footer.jsx
-│  │  │  └─ IdeaModal.jsx
-│  │  └─ views/
-│  │     ├─ HomeView.jsx
-│  │     ├─ BioMatchView.jsx
-│  │     ├─ ScienceCornerView.jsx
-│  │     ├─ BioMagazineView.jsx
-│  │     ├─ AchievementsView.jsx
-│  │     ├─ ResourcesView.jsx
-│  │     └─ ContactView.jsx
-│  ├─ data.jsx
-│  ├─ App.jsx
-│  ├─ main.jsx
-│  └─ index.css
-├─ index.html
-├─ vite.config.js
-├─ tailwind.config.js
-└─ vercel.json
+├── frontend/             # Ứng dụng React + Vite + Tailwind
+├── backend/              # API FastAPI + Turso (SQLite Edge)
+├── .env                  # Lưu trữ biến môi trường dùng chung
+└── README.md             # Hướng dẫn chung
 ```
 
-## Routes
-- `/` Trang chủ
-- `/bio-match`
-- `/science-corner`
-- `/bio-magazine`
-- `/achievements`
-- `/resources`
-- `/contact`
-- `*` fallback về trang chủ
+---
 
-## Chạy dự án
+## Hướng dẫn khởi chạy
+
+### 1. Cấu trúc biến môi trường
+Tạo file `.env` ở thư mục gốc (root) với các thông tin sau:
+```env
+# Turso DB
+TURSO_DATABASE_URL=Your_Libsql_URL
+TURSO_AUTH_TOKEN=Your_Auth_Token
+
+# Security
+JWT_SECRET=Your_Secret_Key
+ADMIN_USERNAME=admin
+ADMIN_PASSWORD=your_password
 ```
+
+### 2. Chạy Frontend
+```bash
+cd frontend
 npm install
 npm run dev
 ```
+Truy cập: `http://localhost:5173`
 
-## Build & Preview
+### 3. Chạy Backend
+```bash
+cd backend
+python -m venv venv
+# Chạy từ thư mục gốc (root)
+pip install -r requirements.txt
+uvicorn backend.app.main:app --reload
 ```
-npm run build
-npm run preview
-```
+Truy cập API Docs: `http://127.0.0.1:8000/docs`
 
-## Tùy biến nội dung
-- Dữ liệu mẫu và cấu hình màu/font nằm ở `src/data.jsx`.
-- Các view đọc dữ liệu từ `src/data.jsx`, nên chỉ cần chỉnh file này để cập nhật nội dung hiển thị.
-- Font đang dùng: Montserrat (heading) và Inter (body) từ Google Fonts trong `src/index.css`.
+---
 
-## Triển khai
-- `npm run build` sẽ tạo thư mục `dist/`.
-- `vercel.json` đã cấu hình rewrite cho SPA routing.
+## 🛠 Công nghệ sử dụng
+- **Frontend:** React 18, Vite, Tailwind CSS, Lucide React.
+- **Backend:** FastAPI (Python), Turso (SQLite Edge), JWT Auth, Pydantic.
+- **Hosting:** Render.com.
 
-## Ghi chú
-- Các form (Contact, Idea Modal) hiện chỉ là UI, chưa tích hợp API gửi dữ liệu.
-- Bộ lọc trong Bio-Match là giao diện mẫu, chưa có logic lọc dữ liệu.
+## Quy trình vận hành Admin
+1. Admin đăng nhập qua `/api/admin/login`.
+2. Truy xuất danh sách Ý tưởng chờ duyệt từ sinh viên.
+3. Đăng bài báo mới trực tiếp vào mục Bio-Magazine.
+
+---
+
+## Liên hệ
+Dự án thuộc khuôn khổ công trình thanh niên của Đoàn khoa Sinh học - Công nghệ Sinh học, Trường Đại học Khoa học tự nhiên, ĐHQG-HCM.

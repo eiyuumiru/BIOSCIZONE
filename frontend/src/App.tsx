@@ -121,7 +121,7 @@ const AppContent: FC = () => {
                         <Route path="/" element={<HomeView setCurrentView={setCurrentView} onIdeaClick={() => setIsIdeaModalOpen(true)} />} />
                         <Route path="/bio-match" element={<BioMatchView />} />
                         <Route path="/science-corner" element={<ScienceCornerView />} />
-                        <Route path="/bio-magazine" element={<BioMagazineView onMagazineSubmitSuccess={() => handleSubmitSuccess('magazine')} />} />
+                        <Route path="/bio-magazine" element={<BioMagazineView />} />
                         <Route path="/achievements" element={<AchievementsView />} />
                         <Route path="/resources" element={<ResourcesView />} />
                         <Route path="/contact" element={<ContactView />} />
