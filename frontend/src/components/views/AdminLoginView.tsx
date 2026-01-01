@@ -1,7 +1,7 @@
-import { useState, memo, type FC, type FormEvent } from 'react';
+import { useState, useEffect, memo, type FC, type FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Lock, User, AlertCircle, Dna, Send } from 'lucide-react';
-import { login } from '../../services/adminApi';
+import { login, isLoggedIn } from '../../services/adminApi';
 import { styles } from '../../data';
 
 // Separate memoized component for particles - won't re-render on parent state changes
@@ -37,6 +37,13 @@ const AdminLoginView: FC = () => {
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+
+    // Redirect if already logged in
+    useEffect(() => {
+        if (isLoggedIn()) {
+            navigate('/admin/dashboard');
+        }
+    }, [navigate]);
 
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
