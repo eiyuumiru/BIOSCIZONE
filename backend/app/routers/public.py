@@ -29,6 +29,7 @@ def submit_buddy(buddy: BioBuddyCreate, db: libsql.Connection = Depends(get_db))
         buddy.phone, buddy.research_topic, buddy.research_field, 
         buddy.research_subject, buddy.description
     ])
+    db.commit()
     return {"message": "Submitted for approval"}
 
 @router.get("/articles", response_model=List[ArticleResponse])

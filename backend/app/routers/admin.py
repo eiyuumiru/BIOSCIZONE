@@ -49,6 +49,7 @@ async def seed_admin(username: str, password: str, db: libsql.Connection = Depen
         "INSERT INTO admins (id, username, hashed_password) VALUES (?, ?, ?)",
         [admin_id, username, hashed_password]
     )
+    db.commit()
     return {"message": f"Admin '{username}' created successfully"}
 
 # Content Management
@@ -61,6 +62,7 @@ def get_pending_buddies(db: libsql.Connection = Depends(get_db), current_user: s
 @router.patch("/approve-buddy/{id}")
 def approve_buddy(id: int, db: libsql.Connection = Depends(get_db), current_user: str = Depends(get_current_user)):
     db.execute("UPDATE bio_buddies SET status = 'approved' WHERE id = ?", [id])
+    db.commit()
     return {"message": "Buddy approved"}
 
 @router.post("/articles", response_model=ArticleResponse)
@@ -73,6 +75,7 @@ def create_article(article: ArticleCreate, db: libsql.Connection = Depends(get_d
         article.category, article.title, article.content, 
         article.author, article.external_link, article.file_url, article.publication_date
     ])
+    db.commit()
     # Fetch latest to return
     rs = db.execute("SELECT * FROM articles WHERE id = last_insert_rowid()")
     columns = [col[0] for col in rs.description]
@@ -84,11 +87,13 @@ def create_article(article: ArticleCreate, db: libsql.Connection = Depends(get_d
 @router.delete("/articles/{id}")
 def delete_article(id: int, db: libsql.Connection = Depends(get_db), current_user: str = Depends(get_current_user)):
     db.execute("DELETE FROM articles WHERE id = ?", [id])
+    db.commit()
     return {"message": "Article deleted"}
 
 @router.delete("/buddies/{id}")
 def delete_buddy(id: int, db: libsql.Connection = Depends(get_db), current_user: str = Depends(get_current_user)):
     db.execute("DELETE FROM bio_buddies WHERE id = ?", [id])
+    db.commit()
     return {"message": "Buddy deleted"}
 
 # Feedback Management
@@ -101,4 +106,5 @@ def get_feedbacks(db: libsql.Connection = Depends(get_db), current_user: str = D
 @router.patch("/feedbacks/{id}/read")
 def mark_feedback_read(id: int, db: libsql.Connection = Depends(get_db), current_user: str = Depends(get_current_user)):
     db.execute("UPDATE feedbacks SET is_read = 1 WHERE id = ?", [id])
+    db.commit()
     return {"message": "Feedback marked as read"}
