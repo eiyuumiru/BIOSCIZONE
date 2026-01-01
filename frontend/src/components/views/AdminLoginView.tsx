@@ -1,6 +1,6 @@
 import { useState, memo, type FC, type FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { LogIn, Lock, User, AlertCircle, Dna, Send } from 'lucide-react';
+import { Lock, User, AlertCircle, Dna, Send } from 'lucide-react';
 import { login } from '../../services/adminApi';
 import { styles } from '../../data';
 

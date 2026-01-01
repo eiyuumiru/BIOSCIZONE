@@ -2,9 +2,9 @@ import { useState, useEffect, type FC } from 'react';
 import {
     PlayCircle,
     Share2,
-    ArrowRight,
-    Loader2
+    ArrowRight
 } from 'lucide-react';
+import LoadingSpinner from '../layout/LoadingSpinner';
 import { styles } from '../../data';
 import { getArticles, type ArticleAPI } from '../../services/api';
 
@@ -38,9 +38,7 @@ const ScienceCornerView: FC = () => {
                 </div>
 
                 {loading ? (
-                    <div className="flex items-center justify-center py-20">
-                        <Loader2 className="animate-spin text-[#0066CC]" size={48} />
-                    </div>
+                    <LoadingSpinner fullScreen={false} message="Đang tải Science Corner..." />
                 ) : error ? (
                     <div className="text-center py-20 text-red-500">
                         <p>Đã xảy ra lỗi: {error}</p>

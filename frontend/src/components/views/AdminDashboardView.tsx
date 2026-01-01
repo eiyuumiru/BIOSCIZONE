@@ -11,6 +11,7 @@ import {
     type FeedbackAPI, type ArticleCreateData
 } from '../../services/adminApi';
 import { getBuddies, type BioBuddyAPI, type ArticleAPI } from '../../services/api';
+import LoadingSpinner from '../layout/LoadingSpinner';
 import { styles } from '../../data';
 
 type TabType = 'buddies' | 'articles' | 'feedbacks';
@@ -176,9 +177,7 @@ const AdminDashboardView: FC = () => {
 
                 {/* Content */}
                 {isLoading ? (
-                    <div className="flex items-center justify-center py-20">
-                        <div className="w-10 h-10 border-3 border-[#0099FF]/30 border-t-[#0099FF] rounded-full animate-spin" />
-                    </div>
+                    <LoadingSpinner fullScreen={false} message="Đang tải dữ liệu hệ thống..." />
                 ) : (
                     <>
                         {/* Bio-Buddies Tab */}

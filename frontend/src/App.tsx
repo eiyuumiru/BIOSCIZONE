@@ -1,11 +1,12 @@
 import { Suspense, lazy, useEffect, useState, type FC } from 'react';
 import { BrowserRouter, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
-import { Dna, CheckCircle } from 'lucide-react';
+import { CheckCircle } from 'lucide-react';
 
 // Layout Components (always loaded)
 import Navigation from './components/layout/Navigation';
 import Footer from './components/layout/Footer';
 import IdeaModal from './components/layout/IdeaModal';
+import LoadingSpinner from './components/layout/LoadingSpinner';
 
 // View Components (lazy loaded)
 const HomeView = lazy(() => import('./components/views/HomeView'));
@@ -22,15 +23,6 @@ const AdminDashboardView = lazy(() => import('./components/views/AdminDashboardV
 
 import { styles } from './data';
 
-// Loading component for Suspense fallback
-const LoadingSpinner: FC = () => (
-    <div className="min-h-screen flex items-center justify-center bg-[#EDEDED]">
-        <div className="text-center">
-            <Dna className="w-12 h-12 text-[#0099FF] animate-spin mx-auto mb-4" />
-            <p className="text-gray-500 font-medium">Đang tải...</p>
-        </div>
-    </div>
-);
 
 // Scroll to top on route change
 const ScrollToTop: FC = () => {

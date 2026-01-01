@@ -7,9 +7,9 @@ import {
     ChevronDown,
     Mail,
     Phone,
-    ArrowRight,
-    Loader2
+    ArrowRight
 } from 'lucide-react';
+import LoadingSpinner from '../layout/LoadingSpinner';
 import { styles } from '../../data';
 import { getBuddies, getLabs, type BioBuddyAPI, type LabAPI } from '../../services/api';
 
@@ -137,9 +137,7 @@ const BioMatchView: FC = () => {
 
                         <div className="flex-1 relative pb-12">
                             {loadingBuddies ? (
-                                <div className="flex items-center justify-center py-20">
-                                    <Loader2 className="animate-spin text-[#0066CC]" size={48} />
-                                </div>
+                                <LoadingSpinner fullScreen={false} message="Đang tìm kiếm Bio-Buddy..." />
                             ) : error ? (
                                 <div className="text-center py-20 text-red-500">
                                     <p>Đã xảy ra lỗi: {error}</p>
@@ -199,9 +197,7 @@ const BioMatchView: FC = () => {
                 ) : (
                     <div className="max-w-3xl mx-auto space-y-4">
                         {loadingLabs ? (
-                            <div className="flex items-center justify-center py-20">
-                                <Loader2 className="animate-spin text-[#0066CC]" size={48} />
-                            </div>
+                            <LoadingSpinner fullScreen={false} message="Đang tải danh sách Lab..." />
                         ) : labs.length === 0 ? (
                             <div className="text-center py-20 text-gray-500">
                                 <p>Chưa có dữ liệu Lab/Bộ môn nào.</p>
