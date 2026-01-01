@@ -16,6 +16,10 @@ const AchievementsView = lazy(() => import('./components/views/AchievementsView'
 const ResourcesView = lazy(() => import('./components/views/ResourcesView'));
 const ContactView = lazy(() => import('./components/views/ContactView'));
 
+// Admin Views (lazy loaded)
+const AdminLoginView = lazy(() => import('./components/views/AdminLoginView'));
+const AdminDashboardView = lazy(() => import('./components/views/AdminDashboardView'));
+
 import { styles } from './data';
 
 // Loading component for Suspense fallback
@@ -159,9 +163,24 @@ const AppContent: FC = () => {
 const App: FC = () => {
     return (
         <BrowserRouter>
-            <AppContent />
+            <Routes>
+                {/* Admin Routes - No Navigation/Footer */}
+                <Route path="/admin" element={
+                    <Suspense fallback={<LoadingSpinner />}>
+                        <AdminLoginView />
+                    </Suspense>
+                } />
+                <Route path="/admin/dashboard" element={
+                    <Suspense fallback={<LoadingSpinner />}>
+                        <AdminDashboardView />
+                    </Suspense>
+                } />
+                {/* Main App Routes */}
+                <Route path="/*" element={<AppContent />} />
+            </Routes>
         </BrowserRouter>
     );
 };
 
 export default App;
+

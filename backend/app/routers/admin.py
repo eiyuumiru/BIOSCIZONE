@@ -85,3 +85,20 @@ def create_article(article: ArticleCreate, db: libsql.Connection = Depends(get_d
 def delete_article(id: int, db: libsql.Connection = Depends(get_db), current_user: str = Depends(get_current_user)):
     db.execute("DELETE FROM articles WHERE id = ?", [id])
     return {"message": "Article deleted"}
+
+@router.delete("/buddies/{id}")
+def delete_buddy(id: int, db: libsql.Connection = Depends(get_db), current_user: str = Depends(get_current_user)):
+    db.execute("DELETE FROM bio_buddies WHERE id = ?", [id])
+    return {"message": "Buddy deleted"}
+
+# Feedback Management
+@router.get("/feedbacks")
+def get_feedbacks(db: libsql.Connection = Depends(get_db), current_user: str = Depends(get_current_user)):
+    rs = db.execute("SELECT * FROM feedbacks ORDER BY created_at DESC")
+    columns = [col[0] for col in rs.description]
+    return [dict(zip(columns, row)) for row in rs.fetchall()]
+
+@router.patch("/feedbacks/{id}/read")
+def mark_feedback_read(id: int, db: libsql.Connection = Depends(get_db), current_user: str = Depends(get_current_user)):
+    db.execute("UPDATE feedbacks SET is_read = 1 WHERE id = ?", [id])
+    return {"message": "Feedback marked as read"}
