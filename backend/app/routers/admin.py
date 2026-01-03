@@ -34,7 +34,7 @@ def log_audit(db: libsql.Connection, username: str, action: str, entity_type: st
 
 # Authentication
 @router.post("/login", response_model=Token)
-async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
+async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(), db: libsql.Connection = Depends(get_db)):
     # authenticate_user now returns dict with username and role
     user = authenticate_user(form_data.username, form_data.password)
     if not user:
@@ -49,6 +49,7 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
         data={"sub": user["username"], "role": user["role"]}, 
         expires_delta=access_token_expires
     )
+    log_audit(db, user["username"], "login", "session", None, {"role": user["role"]})
     return {"access_token": access_token, "token_type": "bearer"}
 
 # Get current user info (for frontend to determine role)
@@ -218,13 +219,20 @@ def get_pending_buddies(db: libsql.Connection = Depends(get_db), current_user: s
     return [dict(zip(columns, row)) for row in rs.fetchall()]
 
 @router.patch("/approve-buddy/{id}")
-def approve_buddy(id: int, db: libsql.Connection = Depends(get_db), current_user: str = Depends(get_current_user)):
+def approve_buddy(id: int, db: libsql.Connection = Depends(get_db), current_user: dict = Depends(get_current_user_with_role)):
+    # Get buddy name for logging
+    rs = db.execute("SELECT full_name, research_topic FROM bio_buddies WHERE id = ?", [id])
+    buddy = rs.fetchone()
+    if not buddy:
+        raise HTTPException(status_code=404, detail="Buddy not found")
+    
     db.execute("UPDATE bio_buddies SET status = 'approved' WHERE id = ?", [id])
     db.commit()
+    log_audit(db, current_user["username"], "approve", "bio_buddy", str(id), {"name": buddy[0], "topic": buddy[1]})
     return {"message": "Buddy approved"}
 
 @router.post("/articles", response_model=ArticleResponse)
-def create_article(article: ArticleCreate, db: libsql.Connection = Depends(get_db), current_user: str = Depends(get_current_user)):
+def create_article(article: ArticleCreate, db: libsql.Connection = Depends(get_db), current_user: dict = Depends(get_current_user_with_role)):
     query = """
     INSERT INTO articles (category, title, content, author, external_link, file_url, publication_date)
     VALUES (?, ?, ?, ?, ?, ?, ?)
@@ -240,16 +248,28 @@ def create_article(article: ArticleCreate, db: libsql.Connection = Depends(get_d
     first_row = rs.fetchone()
     if not first_row:
         raise HTTPException(status_code=500, detail="Failed to create article")
-    return dict(zip(columns, first_row))
+    result = dict(zip(columns, first_row))
+    log_audit(db, current_user["username"], "create", "article", str(result["id"]), {"title": article.title, "category": article.category})
+    return result
 
 @router.delete("/articles/{id}")
-def delete_article(id: int, db: libsql.Connection = Depends(get_db), current_user: str = Depends(get_current_user)):
+def delete_article(id: int, db: libsql.Connection = Depends(get_db), current_user: dict = Depends(get_current_user_with_role)):
+    # Get article info for logging
+    rs = db.execute("SELECT title, category FROM articles WHERE id = ?", [id])
+    article = rs.fetchone()
+    if article:
+        log_audit(db, current_user["username"], "delete", "article", str(id), {"title": article[0], "category": article[1]})
     db.execute("DELETE FROM articles WHERE id = ?", [id])
     db.commit()
     return {"message": "Article deleted"}
 
 @router.delete("/buddies/{id}")
-def delete_buddy(id: int, db: libsql.Connection = Depends(get_db), current_user: str = Depends(get_current_user)):
+def delete_buddy(id: int, db: libsql.Connection = Depends(get_db), current_user: dict = Depends(get_current_user_with_role)):
+    # Get buddy info for logging
+    rs = db.execute("SELECT full_name FROM bio_buddies WHERE id = ?", [id])
+    buddy = rs.fetchone()
+    if buddy:
+        log_audit(db, current_user["username"], "delete", "bio_buddy", str(id), {"name": buddy[0]})
     db.execute("DELETE FROM bio_buddies WHERE id = ?", [id])
     db.commit()
     return {"message": "Buddy deleted"}

@@ -2,7 +2,7 @@ import { useState, useEffect, type FC } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
     Users, FileText, MessageSquare, LogOut, Check, Trash2,
-    Plus, Mail, Calendar, Eye, Dna, Settings, UserCog, Shield, Clock, Edit
+    Plus, Mail, Calendar, Eye, Dna, Settings, UserCog, Shield, Clock, Edit, LogIn
 } from 'lucide-react';
 import {
     isLoggedIn, logout, getPendingBuddies, approveBuddy, deleteBuddy,
@@ -19,7 +19,7 @@ import ArticleModal from '../admin/ArticleModal';
 import AdminModal from '../admin/AdminModal';
 import { styles } from '../../data';
 
-type TabType = 'buddies' | 'articles' | 'feedbacks' | 'admins' | 'settings';
+type TabType = 'buddies' | 'articles' | 'feedbacks' | 'admins' | 'settings' | 'audit_logs';
 type BuddySubTab = 'pending' | 'approved';
 type ArticleCategory = 'news' | 'achievement' | 'magazine' | 'science_corner' | 'resource';
 
@@ -83,11 +83,10 @@ const AdminDashboardView: FC = () => {
                 const data = await getFeedbacks();
                 setFeedbacks(data);
             } else if (activeTab === 'admins' && userRole === 'superadmin') {
-                const [adminData, logData] = await Promise.all([
-                    listAdmins(),
-                    getAuditLogs(50)
-                ]);
+                const adminData = await listAdmins();
                 setAdmins(adminData);
+            } else if (activeTab === 'audit_logs' && userRole === 'superadmin') {
+                const logData = await getAuditLogs(100);
                 setAuditLogs(logData);
             } else if (activeTab === 'settings' && userRole === 'superadmin') {
                 const data = await getSettings();
@@ -179,6 +178,7 @@ const AdminDashboardView: FC = () => {
         // Superadmin only tabs
         ...(userRole === 'superadmin' ? [
             { id: 'admins' as TabType, label: 'Tài khoản', icon: UserCog, count: admins.length },
+            { id: 'audit_logs' as TabType, label: 'Lịch sử', icon: Clock, count: auditLogs.length },
             { id: 'settings' as TabType, label: 'Cài đặt', icon: Settings, count: 0 },
         ] : []),
     ];
@@ -373,8 +373,8 @@ const AdminDashboardView: FC = () => {
                                                 key={cat.value}
                                                 onClick={() => setArticleCategory(cat.value)}
                                                 className={`pb-3 px-3 text-sm font-bold transition-all relative ${articleCategory === cat.value
-                                                        ? 'text-[#0066CC]'
-                                                        : 'text-gray-400 hover:text-gray-600'
+                                                    ? 'text-[#0066CC]'
+                                                    : 'text-gray-400 hover:text-gray-600'
                                                     }`}
                                             >
                                                 {cat.label} ({count})
@@ -532,35 +532,78 @@ const AdminDashboardView: FC = () => {
                                         ))
                                     )}
                                 </div>
+                            </div>
+                        )}
 
-                                {/* Audit Logs */}
-                                {auditLogs.length > 0 && (
-                                    <div className="mt-8">
-                                        <h3 className={`text-lg font-bold text-[#000033] mb-4 flex items-center gap-2 ${styles.fonts.heading}`}>
-                                            <Clock size={20} className="text-[#0099FF]" />
-                                            Lịch sử hoạt động
-                                        </h3>
-                                        <div className="bg-white border border-gray-100 rounded-2xl overflow-hidden">
-                                            <div className="max-h-80 overflow-y-auto">
-                                                {auditLogs.map(log => (
-                                                    <div key={log.id} className="px-6 py-4 border-b border-gray-50 last:border-b-0 hover:bg-gray-50 transition-all">
-                                                        <div className="flex items-center justify-between">
-                                                            <div>
-                                                                <span className="font-semibold text-[#000033]">{log.admin_username}</span>
-                                                                <span className="text-gray-500 mx-2">đã</span>
-                                                                <span className={`px-2 py-0.5 text-xs rounded-full font-medium ${log.action === 'create' ? 'bg-green-100 text-green-700' :
-                                                                    log.action === 'update' ? 'bg-blue-100 text-blue-700' :
-                                                                        'bg-red-100 text-red-700'
-                                                                    }`}>
-                                                                    {log.action === 'create' ? 'tạo' : log.action === 'update' ? 'cập nhật' : 'xóa'}
-                                                                </span>
-                                                                <span className="text-gray-500 ml-2">{log.entity_type}</span>
+                        {/* Audit Logs Tab (Superadmin only) */}
+                        {activeTab === 'audit_logs' && userRole === 'superadmin' && (
+                            <div className="space-y-6">
+                                <div className="flex items-center justify-between">
+                                    <h2 className={`text-xl font-bold text-[#000033] flex items-center gap-2 ${styles.fonts.heading}`}>
+                                        <Clock size={24} className="text-[#0099FF]" />
+                                        Lịch sử hoạt động
+                                    </h2>
+                                    <span className="text-sm text-gray-500">{auditLogs.length} hoạt động</span>
+                                </div>
+
+                                {auditLogs.length === 0 ? (
+                                    <div className="text-center py-20 text-gray-400 bg-white rounded-2xl border border-gray-100">
+                                        <Clock className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                                        <p className="text-[#000033] font-medium">Chưa có hoạt động nào được ghi nhận</p>
+                                        <p className="text-sm text-gray-400 mt-1">Các hoạt động như tạo/sửa/xóa admin sẽ được ghi lại ở đây</p>
+                                    </div>
+                                ) : (
+                                    <div className="bg-white border border-gray-100 rounded-2xl overflow-hidden">
+                                        <div className="divide-y divide-gray-50">
+                                            {auditLogs.map(log => (
+                                                <div key={log.id} className="px-6 py-4 hover:bg-gray-50 transition-all">
+                                                    <div className="flex items-center justify-between">
+                                                        <div className="flex items-center gap-3">
+                                                            <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${log.action === 'create' ? 'bg-green-100' :
+                                                                    log.action === 'update' ? 'bg-blue-100' :
+                                                                        log.action === 'approve' ? 'bg-emerald-100' :
+                                                                            log.action === 'login' ? 'bg-purple-100' : 'bg-red-100'
+                                                                }`}>
+                                                                {log.action === 'create' ? (
+                                                                    <Plus size={20} className="text-green-600" />
+                                                                ) : log.action === 'update' ? (
+                                                                    <Edit size={20} className="text-blue-600" />
+                                                                ) : log.action === 'approve' ? (
+                                                                    <Check size={20} className="text-emerald-600" />
+                                                                ) : log.action === 'login' ? (
+                                                                    <LogIn size={20} className="text-purple-600" />
+                                                                ) : (
+                                                                    <Trash2 size={20} className="text-red-600" />
+                                                                )}
                                                             </div>
-                                                            <span className="text-xs text-gray-400">{log.created_at?.split('T')[0]}</span>
+                                                            <div>
+                                                                <p className="font-semibold text-[#000033]">
+                                                                    {log.admin_username}
+                                                                    <span className="text-gray-500 font-normal mx-1">đã</span>
+                                                                    <span className={`px-2 py-0.5 text-xs rounded-full font-medium ${log.action === 'create' ? 'bg-green-100 text-green-700' :
+                                                                            log.action === 'update' ? 'bg-blue-100 text-blue-700' :
+                                                                                log.action === 'approve' ? 'bg-emerald-100 text-emerald-700' :
+                                                                                    log.action === 'login' ? 'bg-purple-100 text-purple-700' : 'bg-red-100 text-red-700'
+                                                                        }`}>
+                                                                        {log.action === 'create' ? 'tạo' :
+                                                                            log.action === 'update' ? 'cập nhật' :
+                                                                                log.action === 'approve' ? 'duyệt' :
+                                                                                    log.action === 'login' ? 'đăng nhập' : 'xóa'}
+                                                                    </span>
+                                                                    <span className="text-gray-600 ml-1">{log.entity_type}</span>
+                                                                </p>
+                                                                {log.details && (
+                                                                    <p className="text-sm text-gray-400 mt-0.5">{log.details}</p>
+                                                                )}
+                                                            </div>
+                                                        </div>
+                                                        <div className="text-right">
+                                                            <p className="text-sm text-gray-500">{log.created_at?.split('T')[0]}</p>
+                                                            <p className="text-xs text-gray-400">{log.created_at?.split('T')[1]?.split('.')[0]}</p>
                                                         </div>
                                                     </div>
-                                                ))}
-                                            </div>
+                                                </div>
+                                            ))}
                                         </div>
                                     </div>
                                 )}
