@@ -21,6 +21,15 @@ import { styles } from '../../data';
 
 type TabType = 'buddies' | 'articles' | 'feedbacks' | 'admins' | 'settings';
 type BuddySubTab = 'pending' | 'approved';
+type ArticleCategory = 'news' | 'achievement' | 'magazine' | 'science_corner' | 'resource';
+
+const ARTICLE_CATEGORIES: { value: ArticleCategory; label: string }[] = [
+    { value: 'news', label: 'Tin tức' },
+    { value: 'achievement', label: 'Thành tích' },
+    { value: 'magazine', label: 'Bio-Magazine' },
+    { value: 'science_corner', label: 'Science Corner' },
+    { value: 'resource', label: 'Tài nguyên' },
+];
 
 const AdminDashboardView: FC = () => {
     const navigate = useNavigate();
@@ -32,6 +41,7 @@ const AdminDashboardView: FC = () => {
     const [feedbacks, setFeedbacks] = useState<FeedbackAPI[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [showArticleModal, setShowArticleModal] = useState(false);
+    const [articleCategory, setArticleCategory] = useState<ArticleCategory>('news');
 
     // Superadmin states
     const [userRole, setUserRole] = useState<'admin' | 'superadmin' | null>(null);
@@ -353,28 +363,50 @@ const AdminDashboardView: FC = () => {
 
                         {/* Articles Tab */}
                         {activeTab === 'articles' && (
-                            <div>
+                            <div className="space-y-6">
+                                {/* Category Sub-tabs */}
+                                <div className="flex gap-2 flex-wrap border-b border-gray-200 pb-px">
+                                    {ARTICLE_CATEGORIES.map(cat => {
+                                        const count = articles.filter(a => a.category === cat.value).length;
+                                        return (
+                                            <button
+                                                key={cat.value}
+                                                onClick={() => setArticleCategory(cat.value)}
+                                                className={`pb-3 px-3 text-sm font-bold transition-all relative ${articleCategory === cat.value
+                                                        ? 'text-[#0066CC]'
+                                                        : 'text-gray-400 hover:text-gray-600'
+                                                    }`}
+                                            >
+                                                {cat.label} ({count})
+                                                {articleCategory === cat.value && (
+                                                    <div className="absolute bottom-0 left-0 w-full h-0.5 bg-[#0066CC]" />
+                                                )}
+                                            </button>
+                                        );
+                                    })}
+                                </div>
+
+                                {/* Add Article Button */}
                                 <button
                                     onClick={() => setShowArticleModal(true)}
-                                    className="mb-6 flex items-center gap-2 px-5 py-2.5 bg-[#0066CC] hover:bg-[#0055AA] text-white font-bold rounded-xl transition-all shadow-lg shadow-blue-500/20 transform hover:-translate-y-0.5"
+                                    className="flex items-center gap-2 px-5 py-2.5 bg-[#0066CC] hover:bg-[#0055AA] text-white font-bold rounded-xl transition-all shadow-lg shadow-blue-500/20 transform hover:-translate-y-0.5"
                                 >
                                     <Plus size={18} />
-                                    Thêm bài viết
+                                    Thêm {ARTICLE_CATEGORIES.find(c => c.value === articleCategory)?.label || 'bài viết'}
                                 </button>
+
+                                {/* Articles List (filtered by category) */}
                                 <div className="space-y-4">
-                                    {articles.length === 0 ? (
+                                    {articles.filter(a => a.category === articleCategory).length === 0 ? (
                                         <div className="text-center py-20 text-gray-400 bg-white rounded-2xl border border-gray-100">
                                             <FileText className="w-12 h-12 mx-auto mb-4 opacity-50" />
-                                            <p className="text-[#000033] font-medium">Chưa có bài viết nào</p>
+                                            <p className="text-[#000033] font-medium">Chưa có bài viết nào trong mục này</p>
                                         </div>
                                     ) : (
-                                        articles.map(article => (
+                                        articles.filter(a => a.category === articleCategory).map(article => (
                                             <div key={article.id} className="bg-white border border-gray-100 rounded-2xl p-6 flex items-center justify-between hover:border-[#0099FF]/30 hover:shadow-lg transition-all">
                                                 <div>
-                                                    <span className="px-3 py-1 text-xs font-medium bg-[#0099FF]/10 text-[#0066CC] rounded-full">
-                                                        {article.category}
-                                                    </span>
-                                                    <h3 className={`text-lg font-bold text-[#000033] mt-2 ${styles.fonts.heading}`}>{article.title}</h3>
+                                                    <h3 className={`text-lg font-bold text-[#000033] ${styles.fonts.heading}`}>{article.title}</h3>
                                                     <p className="text-gray-500 text-sm mt-1">
                                                         {article.author && `${article.author} • `}
                                                         {article.created_at?.split('T')[0]}
@@ -584,6 +616,8 @@ const AdminDashboardView: FC = () => {
             {/* Create Article Modal */}
             {showArticleModal && (
                 <ArticleModal
+                    category={articleCategory}
+                    categoryLabel={ARTICLE_CATEGORIES.find(c => c.value === articleCategory)?.label || ''}
                     onClose={() => setShowArticleModal(false)}
                     onSuccess={(article) => {
                         setArticles([article, ...articles]);
