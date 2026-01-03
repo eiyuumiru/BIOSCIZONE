@@ -61,7 +61,6 @@ class FeedbackCreate(BaseModel):
     subject: str
     message: str
 
-# Lab Model
 class LabResponse(BaseModel):
     id: int
     name: str
@@ -69,6 +68,48 @@ class LabResponse(BaseModel):
     email: Optional[str] = None
     phone: Optional[str] = None
     research_areas: Optional[str] = None
+
+    class Config:
+        from_attributes = True
+
+# Admin Management Models (Superadmin)
+class AdminBase(BaseModel):
+    username: str
+    role: str = "admin"
+
+class AdminCreate(AdminBase):
+    password: str
+
+class AdminResponse(AdminBase):
+    id: str
+
+    class Config:
+        from_attributes = True
+
+class AdminUpdate(BaseModel):
+    username: Optional[str] = None
+    password: Optional[str] = None
+    role: Optional[str] = None
+
+# System Settings Models (Superadmin)
+class SystemSettingResponse(BaseModel):
+    key: str
+    value: str
+    updated_at: Optional[datetime] = None
+    updated_by: Optional[str] = None
+
+class SystemSettingUpdate(BaseModel):
+    value: str
+
+# Audit Log Models (Superadmin)
+class AuditLogResponse(BaseModel):
+    id: int
+    admin_username: str
+    action: str
+    entity_type: str
+    entity_id: Optional[str] = None
+    details: Optional[str] = None
+    created_at: datetime
 
     class Config:
         from_attributes = True

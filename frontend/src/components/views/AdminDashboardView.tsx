@@ -2,19 +2,22 @@ import { useState, useEffect, type FC } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
     Users, FileText, MessageSquare, LogOut, Check, Trash2,
-    Plus, X, Mail, Calendar, Eye, Dna
+    Plus, X, Mail, Calendar, Eye, Dna, Settings, UserCog, Shield, Clock, Edit, Key
 } from 'lucide-react';
 import {
     isLoggedIn, logout, getPendingBuddies, approveBuddy, deleteBuddy,
     getAllArticles, createArticle, deleteArticle,
     getFeedbacks, markFeedbackRead,
-    type FeedbackAPI, type ArticleCreateData
+    getUserRoleFromToken, getSettings, updateSetting,
+    listAdmins, createAdmin, updateAdmin, deleteAdmin, getAuditLogs,
+    type FeedbackAPI, type ArticleCreateData,
+    type AdminUser, type SystemSetting, type AuditLog
 } from '../../services/adminApi';
 import { getBuddies, type BioBuddyAPI, type ArticleAPI } from '../../services/api';
 import LoadingSpinner from '../layout/LoadingSpinner';
 import { styles } from '../../data';
 
-type TabType = 'buddies' | 'articles' | 'feedbacks';
+type TabType = 'buddies' | 'articles' | 'feedbacks' | 'admins' | 'settings';
 type BuddySubTab = 'pending' | 'approved';
 
 const AdminDashboardView: FC = () => {
@@ -28,10 +31,21 @@ const AdminDashboardView: FC = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [showArticleModal, setShowArticleModal] = useState(false);
 
-    // Check auth on mount
+    // Superadmin states
+    const [userRole, setUserRole] = useState<'admin' | 'superadmin' | null>(null);
+    const [admins, setAdmins] = useState<AdminUser[]>([]);
+    const [settings, setSettings] = useState<SystemSetting[]>([]);
+    const [auditLogs, setAuditLogs] = useState<AuditLog[]>([]);
+    const [showAdminModal, setShowAdminModal] = useState(false);
+    const [editingAdmin, setEditingAdmin] = useState<AdminUser | null>(null);
+
+    // Check auth on mount and get role
     useEffect(() => {
         if (!isLoggedIn()) {
             navigate('/admin');
+        } else {
+            const role = getUserRoleFromToken();
+            setUserRole(role);
         }
     }, [navigate]);
 
@@ -53,9 +67,19 @@ const AdminDashboardView: FC = () => {
             } else if (activeTab === 'articles') {
                 const data = await getAllArticles();
                 setArticles(data);
-            } else {
+            } else if (activeTab === 'feedbacks') {
                 const data = await getFeedbacks();
                 setFeedbacks(data);
+            } else if (activeTab === 'admins' && userRole === 'superadmin') {
+                const [adminData, logData] = await Promise.all([
+                    listAdmins(),
+                    getAuditLogs(50)
+                ]);
+                setAdmins(adminData);
+                setAuditLogs(logData);
+            } else if (activeTab === 'settings' && userRole === 'superadmin') {
+                const data = await getSettings();
+                setSettings(data);
             }
         } catch (error) {
             console.error('Failed to load data:', error);
@@ -115,10 +139,36 @@ const AdminDashboardView: FC = () => {
         }
     };
 
+    const handleToggleSetting = async (key: string, currentValue: string) => {
+        const newValue = currentValue === 'true' ? 'false' : 'true';
+        try {
+            await updateSetting(key, newValue);
+            setSettings(settings.map(s => s.key === key ? { ...s, value: newValue } : s));
+        } catch (error) {
+            console.error('Failed to update setting:', error);
+        }
+    };
+
+    const handleDeleteAdmin = async (id: string) => {
+        if (!confirm('Xác nhận xóa tài khoản admin này?')) return;
+        try {
+            await deleteAdmin(id);
+            setAdmins(admins.filter(a => a.id !== id));
+            loadData(); // Reload to get updated audit logs
+        } catch (error) {
+            alert((error as Error).message);
+        }
+    };
+
     const tabs = [
         { id: 'buddies' as TabType, label: 'Bio-Buddies', icon: Users, count: pendingBuddies.length },
         { id: 'articles' as TabType, label: 'Bài viết', icon: FileText, count: articles.length },
         { id: 'feedbacks' as TabType, label: 'Phản hồi', icon: MessageSquare, count: feedbacks.filter(f => !f.is_read).length },
+        // Superadmin only tabs
+        ...(userRole === 'superadmin' ? [
+            { id: 'admins' as TabType, label: 'Tài khoản', icon: UserCog, count: admins.length },
+            { id: 'settings' as TabType, label: 'Cài đặt', icon: Settings, count: 0 },
+        ] : []),
     ];
 
     return (
@@ -131,7 +181,14 @@ const AdminDashboardView: FC = () => {
                             <Dna className="text-[#0099FF] w-6 h-6 md:w-8 h-8 animate-[spin_10s_linear_infinite]" />
                         </div>
                         <div>
-                            <h1 className={`text-base md:text-xl font-bold text-white tracking-tight ${styles.fonts.heading}`}>Admin Dashboard</h1>
+                            <div className="flex items-center gap-2">
+                                <h1 className={`text-base md:text-xl font-bold text-white tracking-tight ${styles.fonts.heading}`}>Admin Dashboard</h1>
+                                {userRole === 'superadmin' && (
+                                    <span className="px-2 py-0.5 text-[10px] bg-amber-500 text-white rounded-full font-bold uppercase">
+                                        Superadmin
+                                    </span>
+                                )}
+                            </div>
                             <p className="text-[10px] md:text-xs text-gray-400 uppercase tracking-widest font-medium">BIOSCIZONE Management</p>
                         </div>
                     </div>
@@ -147,7 +204,7 @@ const AdminDashboardView: FC = () => {
 
             <div className="container mx-auto px-8 md:px-12 lg:px-20 py-8">
                 {/* Tabs */}
-                <div className="flex gap-2 mb-8 bg-white p-1.5 rounded-xl w-fit shadow-sm border border-gray-100">
+                <div className="flex gap-2 mb-8 bg-white p-1.5 rounded-xl w-fit shadow-sm border border-gray-100 flex-wrap">
                     {tabs.map(tab => (
                         <button
                             key={tab.id}
@@ -159,7 +216,7 @@ const AdminDashboardView: FC = () => {
                         >
                             <tab.icon size={18} />
                             <span className="hidden sm:inline">{tab.label}</span>
-                            {(tab.id !== 'buddies' && tab.count > 0) && (
+                            {(tab.id !== 'buddies' && tab.id !== 'settings' && tab.count > 0) && (
                                 <span className={`px-2 py-0.5 text-xs rounded-full ${activeTab === tab.id ? 'bg-white/20' : 'bg-[#0099FF]/10 text-[#0099FF]'
                                     }`}>
                                     {tab.count}
@@ -385,6 +442,139 @@ const AdminDashboardView: FC = () => {
                                 )}
                             </div>
                         )}
+
+                        {/* Admins Tab (Superadmin only) */}
+                        {activeTab === 'admins' && userRole === 'superadmin' && (
+                            <div className="space-y-6">
+                                <div className="flex items-center justify-between">
+                                    <h2 className={`text-xl font-bold text-[#000033] ${styles.fonts.heading}`}>Quản lý Tài khoản Admin</h2>
+                                    <button
+                                        onClick={() => { setEditingAdmin(null); setShowAdminModal(true); }}
+                                        className="flex items-center gap-2 px-5 py-2.5 bg-[#0066CC] hover:bg-[#0055AA] text-white font-bold rounded-xl transition-all shadow-lg shadow-blue-500/20 transform hover:-translate-y-0.5"
+                                    >
+                                        <Plus size={18} />
+                                        Thêm Admin
+                                    </button>
+                                </div>
+
+                                {/* Admin List */}
+                                <div className="space-y-4">
+                                    {admins.length === 0 ? (
+                                        <div className="text-center py-20 text-gray-400 bg-white rounded-2xl border border-gray-100">
+                                            <UserCog className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                                            <p className="text-[#000033] font-medium">Chưa có tài khoản admin nào</p>
+                                        </div>
+                                    ) : (
+                                        admins.map(admin => (
+                                            <div key={admin.id} className="bg-white border border-gray-100 rounded-2xl p-6 flex items-center justify-between hover:border-[#0099FF]/30 hover:shadow-lg transition-all">
+                                                <div className="flex items-center gap-4">
+                                                    <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${admin.role === 'superadmin' ? 'bg-amber-100' : 'bg-[#0099FF]/10'}`}>
+                                                        {admin.role === 'superadmin' ? <Shield className="text-amber-600" size={24} /> : <UserCog className="text-[#0066CC]" size={24} />}
+                                                    </div>
+                                                    <div>
+                                                        <h3 className={`text-lg font-bold text-[#000033] ${styles.fonts.heading}`}>{admin.username}</h3>
+                                                        <span className={`px-2 py-0.5 text-[10px] font-bold rounded-full uppercase ${admin.role === 'superadmin' ? 'bg-amber-100 text-amber-700' : 'bg-[#0099FF]/10 text-[#0066CC]'}`}>
+                                                            {admin.role}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                <div className="flex gap-2">
+                                                    <button
+                                                        onClick={() => { setEditingAdmin(admin); setShowAdminModal(true); }}
+                                                        className="p-2.5 bg-[#EDEDED] text-gray-600 hover:bg-[#0099FF]/10 hover:text-[#0066CC] rounded-xl transition-all"
+                                                        title="Chỉnh sửa"
+                                                    >
+                                                        <Edit size={20} />
+                                                    </button>
+                                                    <button
+                                                        onClick={() => handleDeleteAdmin(admin.id)}
+                                                        className="p-2.5 bg-red-50 text-red-500 hover:bg-red-100 rounded-xl transition-all"
+                                                        title="Xóa"
+                                                    >
+                                                        <Trash2 size={20} />
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        ))
+                                    )}
+                                </div>
+
+                                {/* Audit Logs */}
+                                {auditLogs.length > 0 && (
+                                    <div className="mt-8">
+                                        <h3 className={`text-lg font-bold text-[#000033] mb-4 flex items-center gap-2 ${styles.fonts.heading}`}>
+                                            <Clock size={20} className="text-[#0099FF]" />
+                                            Lịch sử hoạt động
+                                        </h3>
+                                        <div className="bg-white border border-gray-100 rounded-2xl overflow-hidden">
+                                            <div className="max-h-80 overflow-y-auto">
+                                                {auditLogs.map(log => (
+                                                    <div key={log.id} className="px-6 py-4 border-b border-gray-50 last:border-b-0 hover:bg-gray-50 transition-all">
+                                                        <div className="flex items-center justify-between">
+                                                            <div>
+                                                                <span className="font-semibold text-[#000033]">{log.admin_username}</span>
+                                                                <span className="text-gray-500 mx-2">đã</span>
+                                                                <span className={`px-2 py-0.5 text-xs rounded-full font-medium ${log.action === 'create' ? 'bg-green-100 text-green-700' :
+                                                                    log.action === 'update' ? 'bg-blue-100 text-blue-700' :
+                                                                        'bg-red-100 text-red-700'
+                                                                    }`}>
+                                                                    {log.action === 'create' ? 'tạo' : log.action === 'update' ? 'cập nhật' : 'xóa'}
+                                                                </span>
+                                                                <span className="text-gray-500 ml-2">{log.entity_type}</span>
+                                                            </div>
+                                                            <span className="text-xs text-gray-400">{log.created_at?.split('T')[0]}</span>
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        )}
+
+                        {/* Settings Tab (Superadmin only) */}
+                        {activeTab === 'settings' && userRole === 'superadmin' && (
+                            <div className="space-y-6">
+                                <h2 className={`text-xl font-bold text-[#000033] ${styles.fonts.heading}`}>Cài đặt Hệ thống</h2>
+
+                                <div className="bg-white border border-gray-100 rounded-2xl divide-y divide-gray-100">
+                                    {settings.map(setting => (
+                                        <div key={setting.key} className="p-6 flex items-center justify-between">
+                                            <div>
+                                                <h3 className="font-semibold text-[#000033]">
+                                                    {setting.key === 'registration_enabled' ? 'Cho phép đăng ký tài khoản' :
+                                                        setting.key === 'maintenance_mode' ? 'Chế độ bảo trì' : setting.key}
+                                                </h3>
+                                                <p className="text-sm text-gray-500 mt-1">
+                                                    {setting.key === 'registration_enabled'
+                                                        ? 'Khi bật, người dùng có thể đăng ký tài khoản admin mới tại trang đăng nhập'
+                                                        : setting.key === 'maintenance_mode'
+                                                            ? 'Khi bật, trang web sẽ hiển thị thông báo bảo trì'
+                                                            : ''}
+                                                </p>
+                                                {setting.updated_by && (
+                                                    <p className="text-xs text-gray-400 mt-2">
+                                                        Cập nhật bởi {setting.updated_by} lúc {setting.updated_at?.split('T')[0]}
+                                                    </p>
+                                                )}
+                                            </div>
+                                            <button
+                                                onClick={() => handleToggleSetting(setting.key, setting.value)}
+                                                className={`relative w-14 h-8 rounded-full transition-all ${setting.value === 'true' ? 'bg-[#0066CC]' : 'bg-gray-300'}`}
+                                            >
+                                                <div className={`absolute top-1 w-6 h-6 bg-white rounded-full shadow transition-all ${setting.value === 'true' ? 'left-7' : 'left-1'}`} />
+                                            </button>
+                                        </div>
+                                    ))}
+                                    {settings.length === 0 && (
+                                        <div className="p-6 text-center text-gray-500">
+                                            Chưa có cài đặt nào
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        )}
                     </>
                 )}
             </div>
@@ -396,6 +586,19 @@ const AdminDashboardView: FC = () => {
                     onSuccess={(article) => {
                         setArticles([article, ...articles]);
                         setShowArticleModal(false);
+                    }}
+                />
+            )}
+
+            {/* Admin Modal */}
+            {showAdminModal && (
+                <AdminModal
+                    admin={editingAdmin}
+                    onClose={() => { setShowAdminModal(false); setEditingAdmin(null); }}
+                    onSuccess={() => {
+                        loadData();
+                        setShowAdminModal(false);
+                        setEditingAdmin(null);
                     }}
                 />
             )}
@@ -525,6 +728,140 @@ const ArticleModal: FC<{
                             className="flex-1 py-3 bg-[#0066CC] text-white font-bold rounded-xl hover:bg-[#0055AA] transition-all disabled:opacity-50 shadow-lg shadow-blue-500/20"
                         >
                             {isSubmitting ? 'Đang tạo...' : 'Tạo bài viết'}
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    );
+};
+
+// Admin Create/Edit Modal
+const AdminModal: FC<{
+    admin: AdminUser | null;
+    onClose: () => void;
+    onSuccess: () => void;
+}> = ({ admin, onClose, onSuccess }) => {
+    const [formData, setFormData] = useState({
+        username: admin?.username || '',
+        password: '',
+        role: admin?.role || 'admin' as 'admin' | 'superadmin',
+    });
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [error, setError] = useState('');
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setIsSubmitting(true);
+        setError('');
+
+        try {
+            if (admin) {
+                // Update existing admin
+                const updateData: { username?: string; password?: string; role?: 'admin' | 'superadmin' } = {};
+                if (formData.username !== admin.username) updateData.username = formData.username;
+                if (formData.password) updateData.password = formData.password;
+                if (formData.role !== admin.role) updateData.role = formData.role;
+
+                if (Object.keys(updateData).length > 0) {
+                    await updateAdmin(admin.id, updateData);
+                }
+            } else {
+                // Create new admin
+                if (!formData.password) {
+                    setError('Vui lòng nhập mật khẩu');
+                    setIsSubmitting(false);
+                    return;
+                }
+                await createAdmin({
+                    username: formData.username,
+                    password: formData.password,
+                    role: formData.role,
+                });
+            }
+            onSuccess();
+        } catch (err) {
+            setError((err as Error).message);
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
+    return (
+        <div className="fixed inset-0 bg-black/30 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+            <div className="bg-white border border-gray-100 rounded-2xl w-full max-w-md shadow-2xl">
+                <div className="flex items-center justify-between p-6 border-b border-gray-100">
+                    <h2 className={`text-xl font-bold text-[#000033] ${styles.fonts.heading}`}>
+                        {admin ? 'Chỉnh sửa Admin' : 'Thêm Admin mới'}
+                    </h2>
+                    <button onClick={onClose} className="p-2 text-gray-400 hover:text-gray-600 hover:bg-[#EDEDED] rounded-lg transition-all">
+                        <X size={20} />
+                    </button>
+                </div>
+                <form onSubmit={handleSubmit} className="p-6 space-y-4">
+                    {error && (
+                        <div className="p-3 bg-red-50 border border-red-200 rounded-xl text-red-600 text-sm">
+                            {error}
+                        </div>
+                    )}
+
+                    {/* Username */}
+                    <div>
+                        <label className="block text-sm font-medium text-[#000033] mb-2">Tên đăng nhập *</label>
+                        <input
+                            type="text"
+                            value={formData.username}
+                            onChange={(e) => setFormData({ ...formData, username: e.target.value })}
+                            className="w-full px-4 py-3 bg-[#EDEDED] border border-gray-200 rounded-xl text-[#000033] focus:outline-none focus:border-[#0099FF] focus:ring-2 focus:ring-[#0099FF]/20"
+                            required
+                        />
+                    </div>
+
+                    {/* Password */}
+                    <div>
+                        <label className="block text-sm font-medium text-[#000033] mb-2">
+                            Mật khẩu {admin ? '(để trống nếu không đổi)' : '*'}
+                        </label>
+                        <div className="relative">
+                            <Key className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                            <input
+                                type="password"
+                                value={formData.password}
+                                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                                className="w-full pl-12 pr-4 py-3 bg-[#EDEDED] border border-gray-200 rounded-xl text-[#000033] focus:outline-none focus:border-[#0099FF] focus:ring-2 focus:ring-[#0099FF]/20"
+                                placeholder="••••••••"
+                            />
+                        </div>
+                    </div>
+
+                    {/* Role */}
+                    <div>
+                        <label className="block text-sm font-medium text-[#000033] mb-2">Vai trò</label>
+                        <select
+                            value={formData.role}
+                            onChange={(e) => setFormData({ ...formData, role: e.target.value as 'admin' | 'superadmin' })}
+                            className="w-full px-4 py-3 bg-[#EDEDED] border border-gray-200 rounded-xl text-[#000033] focus:outline-none focus:border-[#0099FF] focus:ring-2 focus:ring-[#0099FF]/20"
+                        >
+                            <option value="admin">Admin</option>
+                            <option value="superadmin">Superadmin</option>
+                        </select>
+                    </div>
+
+                    {/* Submit */}
+                    <div className="flex gap-3 pt-4">
+                        <button
+                            type="button"
+                            onClick={onClose}
+                            className="flex-1 py-3 bg-[#EDEDED] text-[#000033] font-medium rounded-xl hover:bg-gray-200 transition-all"
+                        >
+                            Hủy
+                        </button>
+                        <button
+                            type="submit"
+                            disabled={isSubmitting}
+                            className="flex-1 py-3 bg-[#0066CC] text-white font-bold rounded-xl hover:bg-[#0055AA] transition-all disabled:opacity-50 shadow-lg shadow-blue-500/20"
+                        >
+                            {isSubmitting ? 'Đang xử lý...' : admin ? 'Cập nhật' : 'Tạo Admin'}
                         </button>
                     </div>
                 </form>

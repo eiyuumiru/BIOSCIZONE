@@ -72,3 +72,24 @@ def get_labs(db: libsql.Connection = Depends(get_db)):
     rs = db.execute("SELECT * FROM labs")
     columns = [col[0] for col in rs.description]
     return [dict(zip(columns, row)) for row in rs.fetchall()]
+
+@router.get("/registration-status")
+def get_registration_status(db: libsql.Connection = Depends(get_db)):
+    """Check if admin registration is enabled (public endpoint)"""
+    rs = db.execute("SELECT value FROM system_settings WHERE key = 'registration_enabled'")
+    row = rs.fetchone()
+    enabled = row[0] == 'true' if row else False
+    return {"enabled": enabled}
+
+@router.post("/feedback")
+def submit_feedback(feedback: FeedbackCreate, db: libsql.Connection = Depends(get_db)):
+    query = """
+    INSERT INTO feedbacks (sender_name, email, student_id, subject, message)
+    VALUES (?, ?, ?, ?, ?)
+    """
+    db.execute(query, [
+        feedback.sender_name, feedback.email, feedback.student_id,
+        feedback.subject, feedback.message
+    ])
+    db.commit()
+    return {"message": "Feedback submitted successfully"}

@@ -53,3 +53,26 @@ CREATE TABLE IF NOT EXISTS labs (
     phone TEXT,
     research_areas TEXT
 );
+
+-- System Settings (for superadmin)
+CREATE TABLE IF NOT EXISTS system_settings (
+    key TEXT PRIMARY KEY,
+    value TEXT NOT NULL,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_by TEXT
+);
+
+-- Audit Logs (for superadmin)
+CREATE TABLE IF NOT EXISTS audit_logs (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    admin_username TEXT NOT NULL,
+    action TEXT NOT NULL,
+    entity_type TEXT NOT NULL,
+    entity_id TEXT,
+    details TEXT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Insert default system settings
+INSERT OR IGNORE INTO system_settings (key, value) VALUES ('registration_enabled', 'true');
+INSERT OR IGNORE INTO system_settings (key, value) VALUES ('maintenance_mode', 'false');

@@ -197,3 +197,203 @@ export async function markFeedbackRead(id: number): Promise<{ message: string }>
     if (!response.ok) throw new Error('Failed to mark feedback as read');
     return response.json();
 }
+
+// ============ Superadmin Types ============
+
+export interface CurrentUser {
+    username: string;
+    role: 'admin' | 'superadmin';
+}
+
+export interface AdminUser {
+    id: string;
+    username: string;
+    role: 'admin' | 'superadmin';
+}
+
+export interface AdminCreateData {
+    username: string;
+    password: string;
+    role: 'admin' | 'superadmin';
+}
+
+export interface AdminUpdateData {
+    username?: string;
+    password?: string;
+    role?: 'admin' | 'superadmin';
+}
+
+export interface SystemSetting {
+    key: string;
+    value: string;
+    updated_at?: string;
+    updated_by?: string;
+}
+
+export interface AuditLog {
+    id: number;
+    admin_username: string;
+    action: string;
+    entity_type: string;
+    entity_id?: string;
+    details?: string;
+    created_at: string;
+}
+
+// ============ Superadmin API Functions ============
+
+/**
+ * Get current user info (username and role)
+ */
+export async function getCurrentUser(): Promise<CurrentUser> {
+    const response = await fetch(`${API_BASE_URL}/api/admin/me`, {
+        headers: authHeaders(),
+    });
+
+    if (!response.ok) {
+        if (response.status === 401) {
+            removeToken();
+            throw new Error('Session expired');
+        }
+        throw new Error('Failed to get current user');
+    }
+
+    return response.json();
+}
+
+/**
+ * Get user role from stored token (decode JWT)
+ */
+export function getUserRoleFromToken(): 'admin' | 'superadmin' | null {
+    const token = getToken();
+    if (!token) return null;
+
+    try {
+        // Decode JWT payload (base64)
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        return payload.role || 'admin';
+    } catch {
+        return null;
+    }
+}
+
+// ============ Admin Management (Superadmin only) ============
+
+/**
+ * Get all admin accounts
+ */
+export async function listAdmins(): Promise<AdminUser[]> {
+    const response = await fetch(`${API_BASE_URL}/api/admin/admins`, {
+        headers: authHeaders(),
+    });
+
+    if (!response.ok) {
+        if (response.status === 403) throw new Error('Superadmin access required');
+        throw new Error('Failed to fetch admins');
+    }
+
+    return response.json();
+}
+
+/**
+ * Create a new admin account
+ */
+export async function createAdmin(data: AdminCreateData): Promise<AdminUser> {
+    const response = await fetch(`${API_BASE_URL}/api/admin/admins`, {
+        method: 'POST',
+        headers: authHeaders(),
+        body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+        const error = await response.json().catch(() => ({ detail: 'Failed to create admin' }));
+        throw new Error(error.detail || 'Failed to create admin');
+    }
+
+    return response.json();
+}
+
+/**
+ * Update an admin account
+ */
+export async function updateAdmin(id: string, data: AdminUpdateData): Promise<{ message: string }> {
+    const response = await fetch(`${API_BASE_URL}/api/admin/admins/${id}`, {
+        method: 'PATCH',
+        headers: authHeaders(),
+        body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+        const error = await response.json().catch(() => ({ detail: 'Failed to update admin' }));
+        throw new Error(error.detail || 'Failed to update admin');
+    }
+
+    return response.json();
+}
+
+/**
+ * Delete an admin account
+ */
+export async function deleteAdmin(id: string): Promise<{ message: string }> {
+    const response = await fetch(`${API_BASE_URL}/api/admin/admins/${id}`, {
+        method: 'DELETE',
+        headers: authHeaders(),
+    });
+
+    if (!response.ok) {
+        const error = await response.json().catch(() => ({ detail: 'Failed to delete admin' }));
+        throw new Error(error.detail || 'Failed to delete admin');
+    }
+
+    return response.json();
+}
+
+// ============ System Settings (Superadmin only) ============
+
+/**
+ * Get all system settings
+ */
+export async function getSettings(): Promise<SystemSetting[]> {
+    const response = await fetch(`${API_BASE_URL}/api/admin/settings`, {
+        headers: authHeaders(),
+    });
+
+    if (!response.ok) {
+        if (response.status === 403) throw new Error('Superadmin access required');
+        throw new Error('Failed to fetch settings');
+    }
+
+    return response.json();
+}
+
+/**
+ * Update a system setting
+ */
+export async function updateSetting(key: string, value: string): Promise<{ message: string }> {
+    const response = await fetch(`${API_BASE_URL}/api/admin/settings/${key}`, {
+        method: 'PATCH',
+        headers: authHeaders(),
+        body: JSON.stringify({ value }),
+    });
+
+    if (!response.ok) throw new Error('Failed to update setting');
+    return response.json();
+}
+
+// ============ Audit Logs (Superadmin only) ============
+
+/**
+ * Get audit logs
+ */
+export async function getAuditLogs(limit: number = 100): Promise<AuditLog[]> {
+    const response = await fetch(`${API_BASE_URL}/api/admin/audit-logs?limit=${limit}`, {
+        headers: authHeaders(),
+    });
+
+    if (!response.ok) {
+        if (response.status === 403) throw new Error('Superadmin access required');
+        throw new Error('Failed to fetch audit logs');
+    }
+
+    return response.json();
+}

@@ -1,9 +1,8 @@
 fastapi
 uvicorn[standard]
-libsql
-python-dotenv
 python-jose[cryptography]
-passlib[bcrypt]
-python-multipart
+argon2-cffi
 pydantic-settings
+python-multipart
+libsql
 email-validator

@@ -4,23 +4,40 @@ from datetime import timedelta
 from typing import List
 import libsql
 import uuid
+import json
 from ..database import get_db
 from ..auth import (
     authenticate_user, 
     create_access_token, 
-    get_current_user, 
+    get_current_user,
+    get_current_user_with_role,
+    require_superadmin,
     get_password_hash,
     settings
 )
-from ..models import Token, BioBuddyResponse, ArticleCreate, ArticleResponse
+from ..models import (
+    Token, BioBuddyResponse, ArticleCreate, ArticleResponse,
+    AdminCreate, AdminResponse, AdminUpdate,
+    SystemSettingResponse, SystemSettingUpdate,
+    AuditLogResponse
+)
 
 router = APIRouter()
+
+# Helper function to log audit events
+def log_audit(db: libsql.Connection, username: str, action: str, entity_type: str, entity_id: str = None, details: dict = None):
+    db.execute(
+        "INSERT INTO audit_logs (admin_username, action, entity_type, entity_id, details) VALUES (?, ?, ?, ?, ?)",
+        [username, action, entity_type, entity_id, json.dumps(details) if details else None]
+    )
+    db.commit()
 
 # Authentication
 @router.post("/login", response_model=Token)
 async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
-    # Use the authenticate_user function that checks DB first, then env vars
-    if not authenticate_user(form_data.username, form_data.password):
+    # authenticate_user now returns dict with username and role
+    user = authenticate_user(form_data.username, form_data.password)
+    if not user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Incorrect username or password",
@@ -29,13 +46,19 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
     
     access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = create_access_token(
-        data={"sub": form_data.username}, expires_delta=access_token_expires
+        data={"sub": user["username"], "role": user["role"]}, 
+        expires_delta=access_token_expires
     )
     return {"access_token": access_token, "token_type": "bearer"}
 
+# Get current user info (for frontend to determine role)
+@router.get("/me")
+async def get_me(current_user: dict = Depends(get_current_user_with_role)):
+    return current_user
+
 # Seed initial admin (call once to create admin in database)
 @router.post("/seed-admin")
-async def seed_admin(username: str, password: str, db: libsql.Connection = Depends(get_db)):
+async def seed_admin(username: str, password: str, role: str = "admin", db: libsql.Connection = Depends(get_db)):
     # Check if any admin exists
     cursor = db.execute("SELECT COUNT(*) FROM admins")
     count = cursor.fetchone()[0]
@@ -46,13 +69,148 @@ async def seed_admin(username: str, password: str, db: libsql.Connection = Depen
     admin_id = str(uuid.uuid4())
     hashed_password = get_password_hash(password)
     db.execute(
-        "INSERT INTO admins (id, username, hashed_password) VALUES (?, ?, ?)",
-        [admin_id, username, hashed_password]
+        "INSERT INTO admins (id, username, hashed_password, role) VALUES (?, ?, ?, ?)",
+        [admin_id, username, hashed_password, role]
     )
     db.commit()
-    return {"message": f"Admin '{username}' created successfully"}
+    return {"message": f"Admin '{username}' with role '{role}' created successfully"}
 
-# Content Management
+# ==========================================
+# SUPERADMIN ENDPOINTS - System Settings
+# ==========================================
+
+@router.get("/settings", response_model=List[SystemSettingResponse])
+def get_settings(db: libsql.Connection = Depends(get_db), current_user: dict = Depends(require_superadmin)):
+    rs = db.execute("SELECT key, value, updated_at, updated_by FROM system_settings")
+    columns = [col[0] for col in rs.description]
+    return [dict(zip(columns, row)) for row in rs.fetchall()]
+
+@router.get("/settings/{key}", response_model=SystemSettingResponse)
+def get_setting(key: str, db: libsql.Connection = Depends(get_db), current_user: dict = Depends(require_superadmin)):
+    rs = db.execute("SELECT key, value, updated_at, updated_by FROM system_settings WHERE key = ?", [key])
+    row = rs.fetchone()
+    if not row:
+        raise HTTPException(status_code=404, detail="Setting not found")
+    columns = [col[0] for col in rs.description]
+    return dict(zip(columns, row))
+
+@router.patch("/settings/{key}")
+def update_setting(key: str, data: SystemSettingUpdate, db: libsql.Connection = Depends(get_db), current_user: dict = Depends(require_superadmin)):
+    # Check if setting exists
+    rs = db.execute("SELECT key FROM system_settings WHERE key = ?", [key])
+    if not rs.fetchone():
+        # Create new setting
+        db.execute(
+            "INSERT INTO system_settings (key, value, updated_by) VALUES (?, ?, ?)",
+            [key, data.value, current_user["username"]]
+        )
+    else:
+        # Update existing
+        db.execute(
+            "UPDATE system_settings SET value = ?, updated_at = CURRENT_TIMESTAMP, updated_by = ? WHERE key = ?",
+            [data.value, current_user["username"], key]
+        )
+    db.commit()
+    log_audit(db, current_user["username"], "update", "setting", key, {"value": data.value})
+    return {"message": f"Setting '{key}' updated"}
+
+# ==========================================
+# SUPERADMIN ENDPOINTS - Admin Management
+# ==========================================
+
+@router.get("/admins", response_model=List[AdminResponse])
+def list_admins(db: libsql.Connection = Depends(get_db), current_user: dict = Depends(require_superadmin)):
+    rs = db.execute("SELECT id, username, role FROM admins ORDER BY username")
+    columns = [col[0] for col in rs.description]
+    return [dict(zip(columns, row)) for row in rs.fetchall()]
+
+@router.post("/admins", response_model=AdminResponse)
+def create_admin(admin: AdminCreate, db: libsql.Connection = Depends(get_db), current_user: dict = Depends(require_superadmin)):
+    # Check if username exists
+    rs = db.execute("SELECT id FROM admins WHERE username = ?", [admin.username])
+    if rs.fetchone():
+        raise HTTPException(status_code=400, detail="Username already exists")
+    
+    admin_id = str(uuid.uuid4())
+    hashed_password = get_password_hash(admin.password)
+    db.execute(
+        "INSERT INTO admins (id, username, hashed_password, role) VALUES (?, ?, ?, ?)",
+        [admin_id, admin.username, hashed_password, admin.role]
+    )
+    db.commit()
+    log_audit(db, current_user["username"], "create", "admin", admin_id, {"username": admin.username, "role": admin.role})
+    return {"id": admin_id, "username": admin.username, "role": admin.role}
+
+@router.patch("/admins/{id}")
+def update_admin(id: str, admin: AdminUpdate, db: libsql.Connection = Depends(get_db), current_user: dict = Depends(require_superadmin)):
+    # Check if admin exists
+    rs = db.execute("SELECT username FROM admins WHERE id = ?", [id])
+    existing = rs.fetchone()
+    if not existing:
+        raise HTTPException(status_code=404, detail="Admin not found")
+    
+    updates = []
+    params = []
+    audit_details = {}
+    
+    if admin.username:
+        # Check if new username conflicts
+        rs = db.execute("SELECT id FROM admins WHERE username = ? AND id != ?", [admin.username, id])
+        if rs.fetchone():
+            raise HTTPException(status_code=400, detail="Username already exists")
+        updates.append("username = ?")
+        params.append(admin.username)
+        audit_details["username"] = admin.username
+    
+    if admin.password:
+        updates.append("hashed_password = ?")
+        params.append(get_password_hash(admin.password))
+        audit_details["password"] = "[changed]"
+    
+    if admin.role:
+        updates.append("role = ?")
+        params.append(admin.role)
+        audit_details["role"] = admin.role
+    
+    if updates:
+        params.append(id)
+        db.execute(f"UPDATE admins SET {', '.join(updates)} WHERE id = ?", params)
+        db.commit()
+        log_audit(db, current_user["username"], "update", "admin", id, audit_details)
+    
+    return {"message": "Admin updated"}
+
+@router.delete("/admins/{id}")
+def delete_admin(id: str, db: libsql.Connection = Depends(get_db), current_user: dict = Depends(require_superadmin)):
+    # Check if admin exists
+    rs = db.execute("SELECT username FROM admins WHERE id = ?", [id])
+    existing = rs.fetchone()
+    if not existing:
+        raise HTTPException(status_code=404, detail="Admin not found")
+    
+    # Prevent deleting self
+    if existing[0] == current_user["username"]:
+        raise HTTPException(status_code=400, detail="Cannot delete yourself")
+    
+    db.execute("DELETE FROM admins WHERE id = ?", [id])
+    db.commit()
+    log_audit(db, current_user["username"], "delete", "admin", id, {"username": existing[0]})
+    return {"message": "Admin deleted"}
+
+# ==========================================
+# SUPERADMIN ENDPOINTS - Audit Logs
+# ==========================================
+
+@router.get("/audit-logs", response_model=List[AuditLogResponse])
+def get_audit_logs(limit: int = 100, db: libsql.Connection = Depends(get_db), current_user: dict = Depends(require_superadmin)):
+    rs = db.execute("SELECT * FROM audit_logs ORDER BY created_at DESC LIMIT ?", [limit])
+    columns = [col[0] for col in rs.description]
+    return [dict(zip(columns, row)) for row in rs.fetchall()]
+
+# ==========================================
+# REGULAR ADMIN ENDPOINTS - Content Management
+# ==========================================
+
 @router.get("/pending", response_model=List[BioBuddyResponse])
 def get_pending_buddies(db: libsql.Connection = Depends(get_db), current_user: str = Depends(get_current_user)):
     rs = db.execute("SELECT * FROM bio_buddies WHERE status = 'pending'")

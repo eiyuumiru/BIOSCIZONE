@@ -132,3 +132,12 @@ export async function submitFeedback(data: {
     if (!response.ok) throw new Error('Failed to submit feedback');
     return response.json();
 }
+
+/**
+ * Check if admin registration is enabled
+ */
+export async function getRegistrationStatus(): Promise<{ enabled: boolean }> {
+    const response = await fetch(`${API_BASE_URL}/api/registration-status`);
+    if (!response.ok) return { enabled: false };
+    return response.json();
+}
