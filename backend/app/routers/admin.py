@@ -57,14 +57,32 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
 async def get_me(current_user: dict = Depends(get_current_user_with_role)):
     return current_user
 
-# Seed initial admin (call once to create admin in database)
+# Seed initial admin or register new admin if enabled
 @router.post("/seed-admin")
 async def seed_admin(username: str, password: str, role: str = "admin", db: libsql.Connection = Depends(get_db)):
+    # Check if registration is enabled in settings
+    rs = db.execute("SELECT value FROM system_settings WHERE key = 'registration_enabled'")
+    row = rs.fetchone()
+    registration_enabled = row[0] == 'true' if row else False
+
     # Check if any admin exists
     cursor = db.execute("SELECT COUNT(*) FROM admins")
     count = cursor.fetchone()[0]
-    if count > 0:
-        raise HTTPException(status_code=400, detail="Admin already exists. Use existing credentials.")
+    
+    # Allow if no admin exists (bootstrap) OR if registration is explicitly enabled
+    if count > 0 and not registration_enabled:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, 
+            detail="Registration is disabled. Please contact a system administrator."
+        )
+    
+    # Check if username exists
+    rs = db.execute("SELECT id FROM admins WHERE username = ?", [username])
+    if rs.fetchone():
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, 
+            detail="Username already exists"
+        )
     
     # Create admin with hashed password
     admin_id = str(uuid.uuid4())
@@ -74,6 +92,10 @@ async def seed_admin(username: str, password: str, role: str = "admin", db: libs
         [admin_id, username, hashed_password, role]
     )
     db.commit()
+    
+    action = "register" if count > 0 else "seed"
+    log_audit(db, username, action, "admin", admin_id, {"role": role})
+    
     return {"message": f"Admin '{username}' with role '{role}' created successfully"}
 
 # ==========================================
