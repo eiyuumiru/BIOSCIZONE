@@ -21,10 +21,9 @@ import { styles } from '../../data';
 
 type TabType = 'buddies' | 'articles' | 'feedbacks' | 'admins' | 'settings' | 'audit_logs';
 type BuddySubTab = 'pending' | 'approved';
-type ArticleCategory = 'news' | 'achievement' | 'magazine' | 'science_corner' | 'resource';
+type ArticleCategory = 'achievement' | 'magazine' | 'science_corner' | 'resource';
 
 const ARTICLE_CATEGORIES: { value: ArticleCategory; label: string }[] = [
-    { value: 'news', label: 'Tin tức' },
     { value: 'achievement', label: 'Thành tích' },
     { value: 'magazine', label: 'Bio-Magazine' },
     { value: 'science_corner', label: 'Science Corner' },
@@ -41,7 +40,7 @@ const AdminDashboardView: FC = () => {
     const [feedbacks, setFeedbacks] = useState<FeedbackAPI[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [showArticleModal, setShowArticleModal] = useState(false);
-    const [articleCategory, setArticleCategory] = useState<ArticleCategory>('news');
+    const [articleCategory, setArticleCategory] = useState<ArticleCategory>('achievement');
     const [editingArticle, setEditingArticle] = useState<ArticleAPI | null>(null);
 
     // Superadmin states

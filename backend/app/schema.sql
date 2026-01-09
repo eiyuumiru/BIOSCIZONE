@@ -24,7 +24,7 @@ CREATE TABLE IF NOT EXISTS bio_buddies (
 
 CREATE TABLE IF NOT EXISTS articles (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    category TEXT NOT NULL, -- magazine, news, achievement, resource, science_corner
+    category TEXT NOT NULL, -- magazine, achievement, resource, science_corner
     title TEXT NOT NULL,
     content TEXT,
     author TEXT,
