@@ -44,19 +44,12 @@ const AppContent: FC = () => {
     const [isToastAnimating, setIsToastAnimating] = useState<boolean>(false);
     const [successMessage, setSuccessMessage] = useState<{ title: string, desc: string }>({ title: '', desc: '' });
 
-    const handleSubmitSuccess = (type: 'idea' | 'magazine') => {
-        if (type === 'idea') {
-            setSuccessMessage({
-                title: 'Đã gửi ý tưởng thành công!',
-                desc: 'Cảm ơn bạn đã chia sẻ với BIOSCIZONE'
-            });
-            setIsIdeaModalOpen(false);
-        } else {
-            setSuccessMessage({
-                title: 'Đã gửi bài báo thành công!',
-                desc: 'Công trình của bạn đang được xét duyệt'
-            });
-        }
+    const handleSubmitSuccess = () => {
+        setSuccessMessage({
+            title: 'Đã gửi ý tưởng thành công!',
+            desc: 'Cảm ơn bạn đã chia sẻ với BIOSCIZONE'
+        });
+        setIsIdeaModalOpen(false);
         setShowSuccessToast(true);
         setIsToastAnimating(false);
         // Small delay to allow DOM to render before animating in
@@ -132,7 +125,7 @@ const AppContent: FC = () => {
             <IdeaModal
                 isOpen={isIdeaModalOpen}
                 onClose={() => setIsIdeaModalOpen(false)}
-                onSubmitSuccess={() => handleSubmitSuccess('idea')}
+                onSubmitSuccess={handleSubmitSuccess}
             />
 
             {/* Success Toast - Bottom Right */}

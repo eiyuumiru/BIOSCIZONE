@@ -37,11 +37,6 @@ export interface IdeaModalProps {
     onSubmitSuccess: () => void;
 }
 
-export interface MagazineModalProps {
-    isOpen: boolean;
-    onClose: () => void;
-    onSubmitSuccess: () => void;
-}
 
 export interface HomeViewProps {
     setCurrentView: (view: string) => void;
