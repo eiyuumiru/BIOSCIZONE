@@ -130,8 +130,27 @@ const BioMatchView: FC = () => {
                         </div>
 
                         <div className="p-8 pt-7">
-
                             <div className="space-y-4">
+                                <div className="group relative">
+                                    <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5 block">Mã số sinh viên (MSSV)</label>
+                                    <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-2xl border border-gray-100 group-hover:border-[#0066CC]/30 transition">
+                                        <div className="w-10 h-10 rounded-xl bg-white flex items-center justify-center text-[#0066CC] shadow-sm">
+                                            <Users size={18} />
+                                        </div>
+                                        <div className="flex-1 overflow-hidden">
+                                            <p className="text-sm font-semibold text-[#000033] truncate">{selectedBuddyForContact.student_id || 'Chưa cập nhật'}</p>
+                                        </div>
+                                        {selectedBuddyForContact.student_id && (
+                                            <button
+                                                onClick={() => copyToClipboard(selectedBuddyForContact.student_id!, 'mssv')}
+                                                className="p-2.5 hover:bg-white rounded-xl text-gray-400 hover:text-[#0066CC] transition shadow-sm hover:shadow"
+                                            >
+                                                {copiedField === 'mssv' ? <Check size={16} className="text-green-500" /> : <Copy size={16} />}
+                                            </button>
+                                        )}
+                                    </div>
+                                </div>
+
                                 <div className="group relative">
                                     <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5 block">Email</label>
                                     <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-2xl border border-gray-100 group-hover:border-[#0066CC]/30 transition">
