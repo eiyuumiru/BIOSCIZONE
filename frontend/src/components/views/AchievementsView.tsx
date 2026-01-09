@@ -1,8 +1,8 @@
 import { useState, useEffect, type FC } from 'react';
 import {
-    Trophy,
-    Loader2
+    Trophy
 } from 'lucide-react';
+import LoadingSpinner from '../layout/LoadingSpinner';
 import { styles } from '../../data';
 import { getArticles, type ArticleAPI } from '../../services/api';
 import { useNavigate } from 'react-router-dom';
@@ -30,9 +30,7 @@ const AchievementsView: FC = () => {
                 </div>
 
                 {loading ? (
-                    <div className="flex items-center justify-center py-20">
-                        <Loader2 className="animate-spin text-[#0066CC]" size={48} />
-                    </div>
+                    <LoadingSpinner fullScreen={false} message="Đang tải thành tích..." />
                 ) : error ? (
                     <div className="text-center py-20 text-red-500">
                         <p>Đã xảy ra lỗi: {error}</p>
