@@ -74,12 +74,15 @@ const ResourcesView: FC = () => {
                                 </div>
 
                                 <div className="shrink-0">
-                                    <button
-                                        onClick={(e) => { e.stopPropagation(); navigate(`/article/${item.id}`); }}
+                                    <a
+                                        href={item.external_link || item.file_url || `/article/${item.id}`}
+                                        target={(item.external_link || item.file_url) ? "_blank" : "_self"}
+                                        rel="noopener noreferrer"
+                                        onClick={(e) => e.stopPropagation()}
                                         className="text-sm font-bold text-gray-400 group-hover:text-[#0066CC] flex items-center gap-2 transition"
                                     >
                                         Đọc ngay <ArrowRight size={16} />
-                                    </button>
+                                    </a>
                                 </div>
                             </div>
                         ))}
