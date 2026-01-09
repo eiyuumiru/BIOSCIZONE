@@ -46,6 +46,15 @@ class ArticleBase(BaseModel):
 class ArticleCreate(ArticleBase):
     pass
 
+class ArticleUpdate(BaseModel):
+    category: Optional[str] = None
+    title: Optional[str] = None
+    content: Optional[str] = None
+    author: Optional[str] = None
+    external_link: Optional[str] = None
+    file_url: Optional[str] = None
+    publication_date: Optional[str] = None
+
 class ArticleResponse(ArticleBase):
     id: int
     created_at: datetime

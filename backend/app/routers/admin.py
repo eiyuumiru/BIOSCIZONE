@@ -16,7 +16,7 @@ from ..auth import (
     settings
 )
 from ..models import (
-    Token, BioBuddyResponse, ArticleCreate, ArticleResponse,
+    Token, BioBuddyResponse, ArticleCreate, ArticleUpdate, ArticleResponse,
     AdminCreate, AdminResponse, AdminUpdate,
     SystemSettingResponse, SystemSettingUpdate,
     AuditLogResponse
@@ -273,6 +273,35 @@ def create_article(article: ArticleCreate, db: libsql.Connection = Depends(get_d
     result = dict(zip(columns, first_row))
     log_audit(db, current_user["username"], "create", "article", str(result["id"]), {"title": article.title, "category": article.category})
     return result
+
+@router.patch("/articles/{id}")
+def update_article(id: int, data: ArticleUpdate, db: libsql.Connection = Depends(get_db), current_user: dict = Depends(get_current_user_with_role)):
+    # Check if article exists
+    rs = db.execute("SELECT title, category FROM articles WHERE id = ?", [id])
+    existing = rs.fetchone()
+    if not existing:
+        raise HTTPException(status_code=404, detail="Article not found")
+    
+    updates = []
+    params = []
+    audit_details = {}
+    
+    update_data = data.model_dump(exclude_unset=True)
+    if not update_data:
+        return {"message": "No changes provided"}
+
+    for field, value in update_data.items():
+        updates.append(f"{field} = ?")
+        params.append(value)
+        audit_details[field] = value
+    
+    if updates:
+        params.append(id)
+        db.execute(f"UPDATE articles SET {', '.join(updates)} WHERE id = ?", params)
+        db.commit()
+        log_audit(db, current_user["username"], "update", "article", str(id), audit_details)
+    
+    return {"message": "Article updated"}
 
 @router.delete("/articles/{id}")
 def delete_article(id: int, db: libsql.Connection = Depends(get_db), current_user: dict = Depends(get_current_user_with_role)):

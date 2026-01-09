@@ -161,6 +161,20 @@ export async function createArticle(data: ArticleCreateData): Promise<ArticleAPI
 }
 
 /**
+ * Update an existing article
+ */
+export async function updateArticle(id: number, data: Partial<ArticleCreateData>): Promise<{ message: string }> {
+    const response = await fetch(`${API_BASE_URL}/api/admin/articles/${id}`, {
+        method: 'PATCH',
+        headers: authHeaders(),
+        body: JSON.stringify(data),
+    });
+
+    if (!response.ok) throw new Error('Failed to update article');
+    return response.json();
+}
+
+/**
  * Delete an article
  */
 export async function deleteArticle(id: number): Promise<{ message: string }> {

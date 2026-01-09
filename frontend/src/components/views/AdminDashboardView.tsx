@@ -42,6 +42,7 @@ const AdminDashboardView: FC = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [showArticleModal, setShowArticleModal] = useState(false);
     const [articleCategory, setArticleCategory] = useState<ArticleCategory>('news');
+    const [editingArticle, setEditingArticle] = useState<ArticleAPI | null>(null);
 
     // Superadmin states
     const [userRole, setUserRole] = useState<'admin' | 'superadmin' | null>(null);
@@ -139,6 +140,12 @@ const AdminDashboardView: FC = () => {
         } catch (error) {
             console.error('Failed to delete article:', error);
         }
+    };
+
+    const handleEditArticle = (article: ArticleAPI) => {
+        setEditingArticle(article);
+        setArticleCategory(article.category as ArticleCategory);
+        setShowArticleModal(true);
     };
 
     const handleMarkRead = async (id: number) => {
@@ -412,13 +419,22 @@ const AdminDashboardView: FC = () => {
                                                         {article.created_at?.split('T')[0]}
                                                     </p>
                                                 </div>
-                                                <button
-                                                    onClick={() => handleDeleteArticle(article.id)}
-                                                    className="p-2.5 bg-red-50 text-red-500 hover:bg-red-100 rounded-xl transition-all"
-                                                    title="Xóa"
-                                                >
-                                                    <Trash2 size={20} />
-                                                </button>
+                                                <div className="flex gap-2">
+                                                    <button
+                                                        onClick={() => handleEditArticle(article)}
+                                                        className="p-2.5 bg-[#EDEDED] text-gray-600 hover:bg-[#0099FF]/10 hover:text-[#0066CC] rounded-xl transition-all"
+                                                        title="Chỉnh sửa"
+                                                    >
+                                                        <Edit size={20} />
+                                                    </button>
+                                                    <button
+                                                        onClick={() => handleDeleteArticle(article.id)}
+                                                        className="p-2.5 bg-red-50 text-red-500 hover:bg-red-100 rounded-xl transition-all"
+                                                        title="Xóa"
+                                                    >
+                                                        <Trash2 size={20} />
+                                                    </button>
+                                                </div>
                                             </div>
                                         ))
                                     )}
@@ -560,9 +576,9 @@ const AdminDashboardView: FC = () => {
                                                     <div className="flex items-center justify-between">
                                                         <div className="flex items-center gap-3">
                                                             <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${log.action === 'create' ? 'bg-green-100' :
-                                                                    log.action === 'update' ? 'bg-blue-100' :
-                                                                        log.action === 'approve' ? 'bg-emerald-100' :
-                                                                            log.action === 'login' ? 'bg-purple-100' : 'bg-red-100'
+                                                                log.action === 'update' ? 'bg-blue-100' :
+                                                                    log.action === 'approve' ? 'bg-emerald-100' :
+                                                                        log.action === 'login' ? 'bg-purple-100' : 'bg-red-100'
                                                                 }`}>
                                                                 {log.action === 'create' ? (
                                                                     <Plus size={20} className="text-green-600" />
@@ -581,9 +597,9 @@ const AdminDashboardView: FC = () => {
                                                                     {log.admin_username}
                                                                     <span className="text-gray-500 font-normal mx-1">đã</span>
                                                                     <span className={`px-2 py-0.5 text-xs rounded-full font-medium ${log.action === 'create' ? 'bg-green-100 text-green-700' :
-                                                                            log.action === 'update' ? 'bg-blue-100 text-blue-700' :
-                                                                                log.action === 'approve' ? 'bg-emerald-100 text-emerald-700' :
-                                                                                    log.action === 'login' ? 'bg-purple-100 text-purple-700' : 'bg-red-100 text-red-700'
+                                                                        log.action === 'update' ? 'bg-blue-100 text-blue-700' :
+                                                                            log.action === 'approve' ? 'bg-emerald-100 text-emerald-700' :
+                                                                                log.action === 'login' ? 'bg-purple-100 text-purple-700' : 'bg-red-100 text-red-700'
                                                                         }`}>
                                                                         {log.action === 'create' ? 'tạo' :
                                                                             log.action === 'update' ? 'cập nhật' :
@@ -661,10 +677,19 @@ const AdminDashboardView: FC = () => {
                 <ArticleModal
                     category={articleCategory}
                     categoryLabel={ARTICLE_CATEGORIES.find(c => c.value === articleCategory)?.label || ''}
-                    onClose={() => setShowArticleModal(false)}
-                    onSuccess={(article) => {
-                        setArticles([article, ...articles]);
+                    article={editingArticle || undefined}
+                    onClose={() => {
                         setShowArticleModal(false);
+                        setEditingArticle(null);
+                    }}
+                    onSuccess={(article) => {
+                        if (editingArticle) {
+                            setArticles(articles.map(a => a.id === article.id ? article : a));
+                        } else {
+                            setArticles([article, ...articles]);
+                        }
+                        setShowArticleModal(false);
+                        setEditingArticle(null);
                     }}
                 />
             )}

@@ -1,29 +1,30 @@
 import { useState, useEffect, type FC } from 'react';
-import { X, FileText, Send, Loader2, Link as LinkIcon } from 'lucide-react';
-import { createArticle, type ArticleCreateData } from '../../services/adminApi';
+import { X, FileText, Send, Loader2, Link as LinkIcon, Save } from 'lucide-react';
+import { createArticle, updateArticle, type ArticleCreateData } from '../../services/adminApi';
 import { type ArticleAPI } from '../../services/api';
 import { styles } from '../../data';
 
 interface ArticleModalProps {
     category: string;
     categoryLabel: string;
+    article?: ArticleAPI;
     onClose: () => void;
     onSuccess: (article: ArticleAPI) => void;
 }
 
-const ArticleModal: FC<ArticleModalProps> = ({ category, categoryLabel, onClose, onSuccess }) => {
+const ArticleModal: FC<ArticleModalProps> = ({ category, categoryLabel, article, onClose, onSuccess }) => {
     const [isVisible, setIsVisible] = useState(false);
     const [isAnimating, setIsAnimating] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
     const [formData, setFormData] = useState<ArticleCreateData>({
-        category: category,
-        title: '',
-        content: '',
-        author: '',
-        external_link: '',
-        publication_date: '',
+        category: article?.category || category,
+        title: article?.title || '',
+        content: article?.content || '',
+        author: article?.author || '',
+        external_link: article?.external_link || '',
+        publication_date: article?.publication_date?.split('T')[0] || '',
     });
 
     useEffect(() => {
@@ -50,11 +51,24 @@ const ArticleModal: FC<ArticleModalProps> = ({ category, categoryLabel, onClose,
         setIsSubmitting(true);
 
         try {
-            const article = await createArticle(formData);
+            let result: ArticleAPI;
+            if (article) {
+                await updateArticle(article.id, formData);
+                result = {
+                    ...article,
+                    ...formData,
+                    // If your backend returns the updated article, use it. 
+                    // Otherwise, we construct it for the frontend list update.
+                    publication_date: formData.publication_date ? `${formData.publication_date}T00:00:00Z` : undefined
+                } as ArticleAPI;
+            } else {
+                result = await createArticle(formData);
+            }
+
             setIsAnimating(false);
             setTimeout(() => {
                 setIsVisible(false);
-                onSuccess(article);
+                onSuccess(result);
             }, 300);
         } catch (err) {
             setError(err instanceof Error ? err.message : 'Đã xảy ra lỗi. Vui lòng thử lại.');
@@ -80,7 +94,9 @@ const ArticleModal: FC<ArticleModalProps> = ({ category, categoryLabel, onClose,
                             <FileText size={24} />
                         </div>
                         <div>
-                            <h3 className={`text-xl font-bold ${styles.fonts.heading}`}>Thêm Bài Viết Mới</h3>
+                            <h3 className={`text-xl font-bold ${styles.fonts.heading}`}>
+                                {article ? 'Chỉnh Sửa Bài Viết' : 'Thêm Bài Viết Mới'}
+                            </h3>
                             <p className="text-xs text-[#0099FF] font-medium uppercase tracking-wider">{categoryLabel}</p>
                         </div>
                     </div>
@@ -184,11 +200,19 @@ const ArticleModal: FC<ArticleModalProps> = ({ category, categoryLabel, onClose,
                         >
                             {isSubmitting ? (
                                 <>
-                                    <Loader2 size={16} className="animate-spin" /> Đang tạo...
+                                    <Loader2 size={16} className="animate-spin" /> {article ? 'Đang lưu...' : 'Đang tạo...'}
                                 </>
                             ) : (
                                 <>
-                                    <Send size={16} className="transform -rotate-45 mt-1.5" /> Tạo bài viết
+                                    {article ? (
+                                        <>
+                                            <Save size={16} /> Lưu thay đổi
+                                        </>
+                                    ) : (
+                                        <>
+                                            <Send size={16} className="transform -rotate-45 mt-1.5" /> Tạo bài viết
+                                        </>
+                                    )}
                                 </>
                             )}
                         </button>
