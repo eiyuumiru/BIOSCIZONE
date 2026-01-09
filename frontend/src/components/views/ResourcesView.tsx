@@ -7,11 +7,13 @@ import {
 } from 'lucide-react';
 import { styles } from '../../data';
 import { getArticles, type ArticleAPI } from '../../services/api';
+import ResourceDetailModal from './ResourceDetailModal';
 
 const ResourcesView: FC = () => {
     const [resources, setResources] = useState<ArticleAPI[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [selectedResource, setSelectedResource] = useState<ArticleAPI | null>(null);
 
     useEffect(() => {
         setLoading(true);
@@ -54,7 +56,8 @@ const ResourcesView: FC = () => {
                         {resources.map((item) => (
                             <div
                                 key={item.id}
-                                className="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 group flex flex-col sm:flex-row sm:items-center gap-6 border-l-4 border-transparent hover:border-[#0099FF]"
+                                onClick={() => setSelectedResource(item)}
+                                className="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 group flex flex-col sm:flex-row sm:items-center gap-6 border-l-4 border-transparent hover:border-[#0099FF] cursor-pointer"
                             >
                                 <div className="w-12 h-12 bg-[#EDEDED] rounded-lg flex items-center justify-center text-[#000033] group-hover:bg-[#0066CC] group-hover:text-white transition shrink-0">
                                     {getIcon(item)}
@@ -77,6 +80,7 @@ const ResourcesView: FC = () => {
                                         href={item.external_link || item.file_url || '#'}
                                         target="_blank"
                                         rel="noopener noreferrer"
+                                        onClick={(e) => e.stopPropagation()}
                                         className="text-sm font-bold text-gray-400 group-hover:text-[#0066CC] flex items-center gap-2 transition"
                                     >
                                         Đọc ngay <ArrowRight size={16} />
@@ -87,6 +91,13 @@ const ResourcesView: FC = () => {
                     </div>
                 )}
             </div>
+
+            {selectedResource && (
+                <ResourceDetailModal
+                    resource={selectedResource}
+                    onClose={() => setSelectedResource(null)}
+                />
+            )}
         </div>
     );
 };
