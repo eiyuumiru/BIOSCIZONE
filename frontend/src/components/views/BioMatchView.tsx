@@ -7,7 +7,10 @@ import {
     ChevronDown,
     Mail,
     Phone,
-    ArrowRight
+    ArrowRight,
+    X,
+    Copy,
+    Check
 } from 'lucide-react';
 import LoadingSpinner from '../layout/LoadingSpinner';
 import { styles } from '../../data';
@@ -20,6 +23,9 @@ const BioMatchView: FC = () => {
     const [openLabId, setOpenLabId] = useState<number | null>(null);
     const [selectedCourse, setSelectedCourse] = useState<string>('All');
     const [selectedFields, setSelectedFields] = useState<string[]>([]);
+    const [selectedBuddyForContact, setSelectedBuddyForContact] = useState<BioBuddyAPI | null>(null);
+    const [isContactModalAnimating, setIsContactModalAnimating] = useState(false);
+    const [copiedField, setCopiedField] = useState<string | null>(null);
 
     // API data states
     const [buddies, setBuddies] = useState<BioBuddyAPI[]>([]);
@@ -58,13 +64,116 @@ const BioMatchView: FC = () => {
         }
     };
 
-    // Filter buddies by selected research fields (client-side)
     const filteredBuddies = selectedFields.length > 0
         ? buddies.filter(b => b.research_field && selectedFields.includes(b.research_field))
         : buddies;
 
+    const copyToClipboard = (text: string, field: string) => {
+        navigator.clipboard.writeText(text);
+        setCopiedField(field);
+        setTimeout(() => setCopiedField(null), 2000);
+    };
+
+    // Animation logic for contact modal
+    useEffect(() => {
+        if (selectedBuddyForContact) {
+            requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
+                    setIsContactModalAnimating(true);
+                });
+            });
+        }
+    }, [selectedBuddyForContact]);
+
+    const handleCloseContactModal = () => {
+        setIsContactModalAnimating(false);
+        setTimeout(() => {
+            setSelectedBuddyForContact(null);
+        }, 300);
+    };
+
     return (
         <div className="min-h-screen pt-28 pb-20 bg-[#EDEDED]">
+            {/* Contact Modal */}
+            {selectedBuddyForContact && (
+                <div className={`fixed inset-0 z-[100] flex items-center justify-center p-4 transition-opacity duration-300 ${isContactModalAnimating ? 'opacity-100' : 'opacity-0'}`}>
+                    <div
+                        className={`absolute inset-0 bg-[#000033]/60 backdrop-blur-sm transition-opacity duration-300 ${isContactModalAnimating ? 'opacity-100' : 'opacity-0'}`}
+                        onClick={handleCloseContactModal}
+                    ></div>
+                    <div className={`bg-white rounded-3xl w-full max-w-md shadow-2xl relative overflow-hidden transform transition-all duration-300 ${isContactModalAnimating ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}`}>
+                        {/* Header Section */}
+                        <div className="bg-[#000033] p-8 pb-7 relative overflow-hidden">
+                            {/* Decorative element */}
+                            <div className="absolute -top-10 -right-10 w-32 h-32 bg-blue-500/10 rounded-full blur-3xl"></div>
+                            <div className="absolute -bottom-10 -left-10 w-24 h-24 bg-blue-600/10 rounded-full blur-2xl"></div>
+
+                            <div className="flex justify-between items-start relative z-10">
+                                <div className="flex items-center gap-4">
+                                    <div className="w-14 h-14 rounded-2xl bg-white/10 flex items-center justify-center text-white border border-white/10 backdrop-blur-sm shadow-inner">
+                                        <Users size={28} strokeWidth={1.5} />
+                                    </div>
+                                    <div>
+                                        <h3 className={`text-xl font-bold text-white ${styles.fonts.heading}`}>
+                                            Thông tin liên hệ
+                                        </h3>
+                                        <p className="text-sm text-blue-200/70 font-medium mt-0.5">Bio-Buddy: {selectedBuddyForContact.full_name}</p>
+                                    </div>
+                                </div>
+                                <button
+                                    onClick={handleCloseContactModal}
+                                    className="p-2 hover:bg-white/10 rounded-full text-white/50 hover:text-white transition-colors"
+                                >
+                                    <X size={20} />
+                                </button>
+                            </div>
+                        </div>
+
+                        <div className="p-8 pt-7">
+
+                            <div className="space-y-4">
+                                <div className="group relative">
+                                    <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5 block">Email</label>
+                                    <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-2xl border border-gray-100 group-hover:border-[#0066CC]/30 transition">
+                                        <div className="w-10 h-10 rounded-xl bg-white flex items-center justify-center text-[#0066CC] shadow-sm">
+                                            <Mail size={18} />
+                                        </div>
+                                        <div className="flex-1 overflow-hidden">
+                                            <p className="text-sm font-semibold text-[#000033] truncate">{selectedBuddyForContact.email}</p>
+                                        </div>
+                                        <button
+                                            onClick={() => copyToClipboard(selectedBuddyForContact.email, 'email')}
+                                            className="p-2.5 hover:bg-white rounded-xl text-gray-400 hover:text-[#0066CC] transition shadow-sm hover:shadow"
+                                        >
+                                            {copiedField === 'email' ? <Check size={16} className="text-green-500" /> : <Copy size={16} />}
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div className="group relative">
+                                    <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5 block">Số điện thoại</label>
+                                    <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-2xl border border-gray-100 group-hover:border-[#0066CC]/30 transition">
+                                        <div className="w-10 h-10 rounded-xl bg-white flex items-center justify-center text-[#0066CC] shadow-sm">
+                                            <Phone size={18} />
+                                        </div>
+                                        <div className="flex-1 overflow-hidden">
+                                            <p className="text-sm font-semibold text-[#000033] truncate">{selectedBuddyForContact.phone || 'Chưa cập nhật'}</p>
+                                        </div>
+                                        {selectedBuddyForContact.phone && (
+                                            <button
+                                                onClick={() => copyToClipboard(selectedBuddyForContact.phone!, 'phone')}
+                                                className="p-2.5 hover:bg-white rounded-xl text-gray-400 hover:text-[#0066CC] transition shadow-sm hover:shadow"
+                                            >
+                                                {copiedField === 'phone' ? <Check size={16} className="text-green-500" /> : <Copy size={16} />}
+                                            </button>
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
             <div className="container mx-auto px-8 md:px-12 lg:px-20">
                 <div className="flex justify-center mb-10">
                     <div className="bg-white p-1.5 rounded-full shadow-sm inline-flex border border-gray-200">
@@ -184,7 +293,10 @@ const BioMatchView: FC = () => {
                                                         </span>
                                                     )}
                                                 </div>
-                                                <button className="w-full py-2.5 border border-[#0066CC] text-[#0066CC] rounded-lg font-bold text-sm hover:bg-[#0066CC] hover:text-white transition flex items-center justify-center gap-2">
+                                                <button
+                                                    onClick={() => setSelectedBuddyForContact(buddy)}
+                                                    className="w-full py-2.5 border border-[#0066CC] text-[#0066CC] rounded-lg font-bold text-sm hover:bg-[#0066CC] hover:text-white transition flex items-center justify-center gap-2"
+                                                >
                                                     <Send size={16} className="transform -rotate-45 mt-1.5" /> Liên hệ ngay
                                                 </button>
                                             </div>
@@ -247,7 +359,7 @@ const BioMatchView: FC = () => {
                     </div>
                 )}
             </div>
-        </div>
+        </div >
     );
 };
 
