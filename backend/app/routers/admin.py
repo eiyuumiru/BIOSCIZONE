@@ -337,3 +337,14 @@ def mark_feedback_read(id: int, db: libsql.Connection = Depends(get_db), current
     db.execute("UPDATE feedbacks SET is_read = 1 WHERE id = ?", [id])
     db.commit()
     return {"message": "Feedback marked as read"}
+@router.delete("/feedbacks/{id}")
+def delete_feedback(id: int, db: libsql.Connection = Depends(get_db), current_user: dict = Depends(get_current_user_with_role)):
+    # Get feedback info for logging
+    rs = db.execute("SELECT sender_name, subject FROM feedbacks WHERE id = ?", [id])
+    feedback = rs.fetchone()
+    if feedback:
+        log_audit(db, current_user["username"], "delete", "feedback", str(id), {"sender": feedback[0], "subject": feedback[1]})
+    
+    db.execute("DELETE FROM feedbacks WHERE id = ?", [id])
+    db.commit()
+    return {"message": "Feedback deleted"}

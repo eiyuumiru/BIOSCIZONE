@@ -7,7 +7,7 @@ import {
 import {
     isLoggedIn, logout, getPendingBuddies, approveBuddy, deleteBuddy,
     getAllArticles, deleteArticle,
-    getFeedbacks, markFeedbackRead,
+    getFeedbacks, markFeedbackRead, deleteFeedback,
     getUserRoleFromToken, getSettings, updateSetting,
     listAdmins, deleteAdmin, getAuditLogs,
     type FeedbackAPI,
@@ -154,6 +154,16 @@ const AdminDashboardView: FC = () => {
             setFeedbacks(feedbacks.map(f => f.id === id ? { ...f, is_read: 1 } : f));
         } catch (error) {
             console.error('Failed to mark as read:', error);
+        }
+    };
+
+    const handleDeleteFeedback = async (id: number) => {
+        if (!confirm('Xác nhận xóa phản hồi này?')) return;
+        try {
+            await deleteFeedback(id);
+            setFeedbacks(feedbacks.filter(f => f.id !== id));
+        } catch (error) {
+            console.error('Failed to delete feedback:', error);
         }
     };
 
@@ -477,15 +487,24 @@ const AdminDashboardView: FC = () => {
                                                     <p className="text-[#0066CC] font-semibold mt-3">{feedback.subject}</p>
                                                     <p className="text-gray-600 mt-2">{feedback.message}</p>
                                                 </div>
-                                                {!feedback.is_read && (
+                                                <div className="flex gap-2 ml-4">
+                                                    {!feedback.is_read && (
+                                                        <button
+                                                            onClick={() => handleMarkRead(feedback.id)}
+                                                            className="p-2.5 bg-[#EDEDED] text-gray-600 hover:bg-[#0099FF]/10 hover:text-[#0066CC] rounded-xl transition-all"
+                                                            title="Đánh dấu đã đọc"
+                                                        >
+                                                            <Eye size={20} />
+                                                        </button>
+                                                    )}
                                                     <button
-                                                        onClick={() => handleMarkRead(feedback.id)}
-                                                        className="p-2.5 bg-[#EDEDED] text-gray-600 hover:bg-[#0099FF]/10 hover:text-[#0066CC] rounded-xl transition-all"
-                                                        title="Đánh dấu đã đọc"
+                                                        onClick={() => handleDeleteFeedback(feedback.id)}
+                                                        className="p-2.5 bg-red-50 text-red-500 hover:bg-red-100 rounded-xl transition-all"
+                                                        title="Xóa"
                                                     >
-                                                        <Eye size={20} />
+                                                        <Trash2 size={20} />
                                                     </button>
-                                                )}
+                                                </div>
                                             </div>
                                         </div>
                                     ))

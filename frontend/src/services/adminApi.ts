@@ -411,3 +411,16 @@ export async function getAuditLogs(limit: number = 100): Promise<AuditLog[]> {
 
     return response.json();
 }
+
+/**
+ * Delete a feedback entry
+ */
+export async function deleteFeedback(id: number): Promise<{ message: string }> {
+    const response = await fetch(`${API_BASE_URL}/api/admin/feedbacks/${id}`, {
+        method: 'DELETE',
+        headers: authHeaders(),
+    });
+
+    if (!response.ok) throw new Error('Failed to delete feedback');
+    return response.json();
+}
