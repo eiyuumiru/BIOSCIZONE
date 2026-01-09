@@ -4,6 +4,7 @@ import {
     Share2,
     ArrowRight
 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import LoadingSpinner from '../layout/LoadingSpinner';
 import { styles } from '../../data';
 import { getArticles, type ArticleAPI } from '../../services/api';
@@ -12,6 +13,7 @@ const ScienceCornerView: FC = () => {
     const [articles, setArticles] = useState<ArticleAPI[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const navigate = useNavigate();
 
     useEffect(() => {
         setLoading(true);
@@ -52,7 +54,11 @@ const ScienceCornerView: FC = () => {
                         {articles.map((item) => {
                             const itemType = getItemType(item);
                             return (
-                                <div key={item.id} className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 group flex flex-col h-full border border-gray-100">
+                                <div
+                                    key={item.id}
+                                    onClick={() => navigate(`/article/${item.id}`)}
+                                    className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 group flex flex-col h-full border border-gray-100 cursor-pointer"
+                                >
                                     <div className={`h-48 relative flex items-center justify-center ${itemType === 'video' ? 'bg-gray-900' : 'bg-[#E6F4FF]'}`}>
                                         {itemType === 'video' ? (
                                             <PlayCircle size={64} className="text-white opacity-80 group-hover:scale-110 transition" />
@@ -72,16 +78,14 @@ const ScienceCornerView: FC = () => {
                                             {item.title}
                                         </h3>
                                         <p className="text-sm text-gray-500 font-bold mb-3">Tác giả: {item.author || 'Ẩn danh'}</p>
-                                        <p className="text-gray-600 text-sm leading-relaxed mb-4 flex-1">{item.content || 'Không có mô tả'}</p>
+                                        <p className="text-gray-600 text-sm leading-relaxed mb-4 flex-1 line-clamp-3">{item.content ? item.content.replace(/<[^>]*>/g, '') : 'Không có mô tả'}</p>
 
-                                        <a
-                                            href={item.external_link || item.file_url || '#'}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
+                                        <button
+                                            onClick={(e) => { e.stopPropagation(); navigate(`/article/${item.id}`); }}
                                             className="text-[#0099FF] font-bold text-sm flex items-center gap-2 mt-auto hover:underline"
                                         >
                                             {itemType === 'video' ? 'Xem video' : 'Đọc bài viết'} <ArrowRight size={16} />
-                                        </a>
+                                        </button>
                                     </div>
                                 </div>
                             );

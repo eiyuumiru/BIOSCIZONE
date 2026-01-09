@@ -43,6 +43,15 @@ def get_articles(category: str = None, db: libsql.Connection = Depends(get_db)):
     columns = [col[0] for col in rs.description]
     return [dict(zip(columns, row)) for row in rs.fetchall()]
 
+@router.get("/articles/{article_id}", response_model=ArticleResponse)
+def get_article(article_id: int, db: libsql.Connection = Depends(get_db)):
+    rs = db.execute("SELECT * FROM articles WHERE id = ?", [article_id])
+    row = rs.fetchone()
+    if not row:
+        raise HTTPException(status_code=404, detail="Article not found")
+    columns = [col[0] for col in rs.description]
+    return dict(zip(columns, row))
+
 @router.get("/search")
 def global_search(q: str, db: libsql.Connection = Depends(get_db)):
     keyword = f"%{q}%"

@@ -3,6 +3,7 @@ import {
     FileText,
     ArrowRight
 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import LoadingSpinner from '../layout/LoadingSpinner';
 import { styles } from '../../data';
 import { getArticles, type ArticleAPI } from '../../services/api';
@@ -11,6 +12,7 @@ const BioMagazineView: FC = () => {
     const [articles, setArticles] = useState<ArticleAPI[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const navigate = useNavigate();
 
     useEffect(() => {
         setLoading(true);
@@ -41,7 +43,11 @@ const BioMagazineView: FC = () => {
                 ) : (
                     <div className="space-y-4">
                         {articles.map((item) => (
-                            <div key={item.id} className="bg-white p-6 md:p-8 rounded-lg shadow-sm hover:shadow-md transition border-l-4 border-transparent hover:border-[#000033] group">
+                            <div
+                                key={item.id}
+                                onClick={() => navigate(`/article/${item.id}`)}
+                                className="bg-white p-6 md:p-8 rounded-lg shadow-sm hover:shadow-md transition border-l-4 border-transparent hover:border-[#000033] group cursor-pointer"
+                            >
                                 <div className="flex items-start gap-4">
                                     <div className="hidden sm:flex flex-col items-center justify-center min-w-[60px] text-center">
                                         <FileText size={32} className="text-gray-300 mb-1 group-hover:text-[#000033] transition" />
@@ -52,16 +58,14 @@ const BioMagazineView: FC = () => {
                                             {item.title}
                                         </h3>
                                         <p className="text-sm text-gray-600 italic mb-1">{item.author || 'Unknown Author'}</p>
-                                        <p className="text-sm text-[#0066CC] font-medium">{item.content || 'No description'}</p>
+                                        <p className="text-sm text-[#0066CC] font-medium line-clamp-2">{item.content ? item.content.replace(/<[^>]*>/g, '') : 'No description'}</p>
                                     </div>
-                                    <a
-                                        href={item.external_link || item.file_url || '#'}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
+                                    <button
+                                        onClick={(e) => { e.stopPropagation(); navigate(`/article/${item.id}`); }}
                                         className="p-2 text-gray-400 hover:text-[#0066CC] transition"
                                     >
                                         <ArrowRight size={24} />
-                                    </a>
+                                    </button>
                                 </div>
                             </div>
                         ))}

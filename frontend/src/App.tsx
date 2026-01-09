@@ -16,6 +16,7 @@ const BioMagazineView = lazy(() => import('./components/views/BioMagazineView'))
 const AchievementsView = lazy(() => import('./components/views/AchievementsView'));
 const ResourcesView = lazy(() => import('./components/views/ResourcesView'));
 const ContactView = lazy(() => import('./components/views/ContactView'));
+const ArticleDetailView = lazy(() => import('./components/views/ArticleDetailView'));
 
 // Admin Views (lazy loaded)
 const AdminLoginView = lazy(() => import('./components/views/AdminLoginView'));
@@ -113,6 +114,7 @@ const AppContent: FC = () => {
                         <Route path="/bio-magazine" element={<BioMagazineView />} />
                         <Route path="/achievements" element={<AchievementsView />} />
                         <Route path="/resources" element={<ResourcesView />} />
+                        <Route path="/article/:id" element={<ArticleDetailView />} />
                         <Route path="/contact" element={<ContactView />} />
                         {/* Fallback to home for unknown routes */}
                         <Route path="*" element={<HomeView setCurrentView={setCurrentView} onIdeaClick={() => setIsIdeaModalOpen(true)} />} />

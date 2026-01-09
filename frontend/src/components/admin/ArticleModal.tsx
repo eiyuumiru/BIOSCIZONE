@@ -1,5 +1,7 @@
 import { useState, useEffect, type FC } from 'react';
 import { X, FileText, Send, Loader2, Link as LinkIcon, Save } from 'lucide-react';
+import ReactQuill from 'react-quill-new';
+import 'react-quill-new/dist/quill.snow.css';
 import { createArticle, updateArticle, type ArticleCreateData } from '../../services/adminApi';
 import { type ArticleAPI } from '../../services/api';
 import { styles } from '../../data';
@@ -86,7 +88,7 @@ const ArticleModal: FC<ArticleModalProps> = ({ category, categoryLabel, article,
                 onClick={handleClose}
             ></div>
 
-            <div className={`bg-white w-full max-w-4xl rounded-2xl shadow-2xl relative z-10 overflow-hidden transition-all duration-300 ${isAnimating ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}`}>
+            <div className={`bg-white w-full max-w-6xl rounded-2xl shadow-2xl relative z-10 overflow-hidden transition-all duration-300 ${isAnimating ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}`}>
                 {/* Header - Similar to IdeaModal */}
                 <div className="bg-[#000033] p-6 text-white flex justify-between items-center">
                     <div className="flex items-center gap-3">
@@ -171,14 +173,26 @@ const ArticleModal: FC<ArticleModalProps> = ({ category, categoryLabel, article,
                         <div className="space-y-4 flex flex-col">
                             <h4 className="text-sm font-bold text-[#000033] uppercase border-b border-gray-100 pb-2">Nội dung bài viết</h4>
 
-                            <div className="space-y-2 flex-grow flex flex-col">
+                            <div className="space-y-2 flex-grow flex flex-col article-editor">
                                 <label className="text-xs font-bold text-gray-500 uppercase ml-1">Mô tả / Nội dung</label>
-                                <textarea
-                                    value={formData.content}
-                                    onChange={(e) => setFormData({ ...formData, content: e.target.value })}
-                                    placeholder="Nhập nội dung hoặc mô tả ngắn gọn về bài viết..."
-                                    className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0099FF]/20 focus:bg-white transition resize-none flex-grow min-h-[250px]"
-                                />
+                                <div className="flex-grow min-h-[400px]">
+                                    <ReactQuill
+                                        theme="snow"
+                                        value={formData.content}
+                                        onChange={(content) => setFormData({ ...formData, content })}
+                                        placeholder="Nhập nội dung hoặc mô tả ngắn gọn về bài viết..."
+                                        className="h-[350px]"
+                                        modules={{
+                                            toolbar: [
+                                                [{ 'header': [1, 2, 3, false] }],
+                                                ['bold', 'italic', 'underline', 'strike'],
+                                                [{ 'color': [] }, { 'background': [] }],
+                                                [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+                                                ['link', 'clean']
+                                            ],
+                                        }}
+                                    />
+                                </div>
                             </div>
                         </div>
                     </div>

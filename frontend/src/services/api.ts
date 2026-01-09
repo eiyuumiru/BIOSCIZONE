@@ -97,6 +97,18 @@ export async function getArticles(category?: string): Promise<ArticleAPI[]> {
 }
 
 /**
+ * Fetch a single article by ID
+ */
+export async function getArticle(id: number): Promise<ArticleAPI> {
+    const response = await fetch(`${API_BASE_URL}/api/articles/${id}`);
+    if (!response.ok) {
+        if (response.status === 404) throw new Error('Article not found');
+        throw new Error('Failed to fetch article');
+    }
+    return response.json();
+}
+
+/**
  * Fetch all labs/departments
  */
 export async function getLabs(): Promise<LabAPI[]> {
