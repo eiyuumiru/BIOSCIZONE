@@ -208,15 +208,28 @@ body {
 }
 
 .react-calendar__navigation {
-    @apply bg-[#000033] h-12 mb-0 flex items-center px-2 !important;
+    @apply bg-[#000033] h-12 mb-0 flex items-center justify-between px-1 !important;
 }
 
 .react-calendar__navigation button {
-    @apply text-white font-bold text-lg min-w-[40px] !important;
+    @apply text-white font-bold text-base min-w-[32px] h-8 flex items-center justify-center rounded-lg transition-colors !important;
+}
+
+.react-calendar__navigation button:enabled:hover {
+    @apply bg-white/10 !important;
 }
 
 .react-calendar__navigation__label {
-    @apply text-sm uppercase tracking-wider !important;
+    @apply flex-grow text-sm font-bold uppercase tracking-widest text-center !important;
+    pointer-events: none;
+    /* Usually don't need to click the label to switch views */
+}
+
+/* Specific button overrides to ensure spacing */
+.react-calendar__navigation__prev2-button,
+.react-calendar__navigation__next2-button {
+    @apply text-white/40 !important;
+    /* Make double arrows secondary */
 }
 
 .react-calendar__navigation button:enabled:hover,
