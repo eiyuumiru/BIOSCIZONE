@@ -1,13 +1,12 @@
 import { useState, type FC } from 'react';
 import {
-    Mail,
     MapPin,
     Send,
-    Facebook,
-    Youtube,
     CheckCircle,
     Loader2
 } from 'lucide-react';
+import { FaFacebookF, FaYoutube, FaTiktok } from 'react-icons/fa6';
+import { IoMail } from 'react-icons/io5';
 import { styles } from '../../data';
 import { submitFeedback } from '../../services/api';
 
@@ -64,7 +63,7 @@ const ContactView: FC = () => {
                             <div className="space-y-6">
                                 <div className="flex items-start gap-4">
                                     <div className="w-10 h-10 bg-[#E6F4FF] rounded-lg flex items-center justify-center text-[#0066CC] shrink-0">
-                                        <Mail size={20} />
+                                        <IoMail size={20} />
                                     </div>
                                     <div>
                                         <p className="text-xs font-bold text-gray-400 uppercase">Email</p>
@@ -81,7 +80,7 @@ const ContactView: FC = () => {
                                         <div className="space-y-3">
                                             <p className="text-sm font-medium text-gray-700">
                                                 <span className="font-bold block">Cơ sở 1:</span>
-                                                227 đường Nguyễn Văn Cừ, Phường Chợ Quán, Thành phố Hồ Chí Minh
+                                                227 Nguyễn Văn Cừ, Phường Chợ Quán, Thành phố Hồ Chí Minh
                                             </p>
                                             <p className="text-sm font-medium text-gray-700">
                                                 <span className="font-bold block">Cơ sở 2:</span>
@@ -95,8 +94,9 @@ const ContactView: FC = () => {
                             <div className="mt-10 pt-10 border-t border-gray-100">
                                 <h4 className="text-xs font-bold text-gray-400 uppercase mb-4 tracking-widest">Mạng xã hội</h4>
                                 <div className="flex gap-4">
-                                    <a href="https://www.facebook.com/DoanKhoa.LienChiHoi.KhoaSinhHoc.DHKHTN" target="_blank" rel="noopener noreferrer" className="p-2.5 bg-gray-50 rounded-full hover:bg-[#0099FF] hover:text-white transition cursor-pointer text-[#000033]"><Facebook size={20} /></a>
-                                    <a href="https://www.youtube.com/@oankhoasinhhoc-congnghes-vi1xt" target="_blank" rel="noopener noreferrer" className="p-2.5 bg-gray-50 rounded-full hover:bg-[#0099FF] hover:text-white transition cursor-pointer text-[#000033]"><Youtube size={20} /></a>
+                                    <a href="https://www.facebook.com/DoanKhoa.LienChiHoi.KhoaSinhHoc.DHKHTN" target="_blank" rel="noopener noreferrer" className="p-2.5 bg-gray-50 rounded-full hover:bg-[#0099FF] hover:text-white transition cursor-pointer text-[#000033]"><FaFacebookF size={20} /></a>
+                                    <a href="https://www.youtube.com/@oankhoasinhhoc-congnghes-vi1xt" target="_blank" rel="noopener noreferrer" className="p-2.5 bg-gray-50 rounded-full hover:bg-[#0099FF] hover:text-white transition cursor-pointer text-[#000033]"><FaYoutube size={20} /></a>
+                                    <a href="https://www.tiktok.com/@biotalk.hcmus" target="_blank" rel="noopener noreferrer" className="p-2.5 bg-gray-50 rounded-full hover:bg-[#0099FF] hover:text-white transition cursor-pointer text-[#000033]"><FaTiktok size={20} /></a>
                                 </div>
                             </div>
                         </div>

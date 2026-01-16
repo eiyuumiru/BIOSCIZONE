@@ -58,7 +58,7 @@ const BioMagazineView: FC = () => {
                                             {item.title}
                                         </h3>
                                         <p className="text-sm text-gray-600 italic mb-1">{item.author || 'Unknown Author'}</p>
-                                        <p className="text-sm text-[#0066CC] font-medium line-clamp-2">{item.content ? item.content.replace(/<[^>]*>/g, '') : 'No description'}</p>
+                                        <p className="text-sm text-[#0066CC] font-medium line-clamp-2">{item.content ? item.content.replace(/<[^>]*>/g, '').replace(/&nbsp;/g, ' ') : 'No description'}</p>
                                     </div>
                                     <button
                                         onClick={(e) => { e.stopPropagation(); navigate(`/article/${item.id}`); }}

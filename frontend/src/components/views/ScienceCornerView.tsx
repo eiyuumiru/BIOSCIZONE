@@ -78,7 +78,7 @@ const ScienceCornerView: FC = () => {
                                             {item.title}
                                         </h3>
                                         <p className="text-sm text-gray-500 font-bold mb-3">Tác giả: {item.author || 'Ẩn danh'}</p>
-                                        <p className="text-gray-600 text-sm leading-relaxed mb-4 flex-1 line-clamp-3">{item.content ? item.content.replace(/<[^>]*>/g, '') : 'Không có mô tả'}</p>
+                                        <p className="text-gray-600 text-sm leading-relaxed mb-4 flex-1 line-clamp-3">{item.content ? item.content.replace(/<[^>]*>/g, '').replace(/&nbsp;/g, ' ') : 'Không có mô tả'}</p>
 
                                         <button
                                             onClick={(e) => { e.stopPropagation(); navigate(`/article/${item.id}`); }}
