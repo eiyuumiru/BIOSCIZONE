@@ -173,6 +173,7 @@ body {
     overflow-x: hidden;
     width: 100%;
     box-sizing: border-box;
+    text-align: justify;
 }
 
 .ql-editor-display * {
