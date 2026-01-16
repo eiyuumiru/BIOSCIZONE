@@ -214,6 +214,7 @@ const ArticleModal: FC<ArticleModalProps> = ({ category, categoryLabel, article,
                                             toolbar: [
                                                 [{ 'header': [1, 2, 3, false] }],
                                                 ['bold', 'italic', 'underline', 'strike'],
+                                                [{ 'script': 'sub' }, { 'script': 'super' }],
                                                 [{ 'color': [] }, { 'background': [] }],
                                                 [{ 'list': 'ordered' }, { 'list': 'bullet' }],
                                                 ['link', 'clean']
