@@ -51,8 +51,8 @@ const ArticleDetailView: FC = () => {
     }
 
     return (
-        <div className="min-h-screen pt-32 pb-20 bg-[#EDEDED]">
-            <div className="container mx-auto px-6 md:px-12 lg:px-20 max-w-5xl">
+        <div className="min-h-screen pt-32 pb-20 bg-[#EDEDED] overflow-x-hidden">
+            <div className="container mx-auto px-6 md:px-12 lg:px-20 max-w-5xl w-full">
                 {/* Back Button */}
                 <button
                     onClick={() => navigate(-1)}
@@ -119,11 +119,15 @@ const ArticleDetailView: FC = () => {
                     </div>
 
                     {/* Content Area */}
-                    <div className="py-8">
+                    <div className="py-8 overflow-hidden">
                         {article.content ? (
                             <div
-                                className="prose prose-lg max-w-none text-gray-600 leading-relaxed ql-editor-display"
-                                dangerouslySetInnerHTML={{ __html: article.content }}
+                                className="prose prose-lg max-w-full text-gray-600 leading-relaxed ql-editor-display"
+                                dangerouslySetInnerHTML={{
+                                    __html: article.content
+                                        .replace(/&nbsp;/g, ' ')
+                                        .replace(/\u00A0/g, ' ')
+                                }}
                             />
                         ) : (
                             <p className="text-gray-400 italic text-center py-10">Không có nội dung chi tiết cho bài viết này.</p>

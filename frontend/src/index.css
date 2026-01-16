@@ -166,6 +166,21 @@ body {
     margin-bottom: 1.25rem;
 }
 
+/* Fix text overflow in content display */
+.ql-editor-display {
+    word-break: keep-all;
+    overflow-wrap: normal;
+    overflow-x: hidden;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.ql-editor-display * {
+    max-width: 100%;
+    word-break: keep-all;
+    overflow-wrap: normal;
+}
+
 /* Custom Styling for React Date Picker (Segmented Input) */
 .date-picker-wrapper {
     @apply w-full;
