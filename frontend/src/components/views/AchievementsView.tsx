@@ -18,7 +18,7 @@ const AchievementsView: FC = () => {
     useEffect(() => {
         setLoading(true);
         getArticles('achievement')
-            .then(data => setAchievements(data))
+            .then(data => setAchievements([...data].sort((a, b) => b.id - a.id)))
             .catch(err => setError(err.message))
             .finally(() => setLoading(false));
     }, []);
@@ -88,7 +88,7 @@ const AchievementsView: FC = () => {
                                                 {item.title}
                                             </h3>
                                             <p className="text-gray-600 text-sm mb-1 line-clamp-2"><span className="font-bold">Mô tả:</span> {item.content ? item.content.replace(/<[^>]*>/g, '').replace(/&nbsp;/g, ' ') : 'Không có mô tả'}</p>
-                                            <p className="text-[#0066CC] text-sm font-bold">{item.author || 'Ẩn danh'}</p>
+                                            {item.author && <p className="text-[#0066CC] text-sm font-bold">{item.author}</p>}
                                         </div>
                                     </div>
                                 </div>

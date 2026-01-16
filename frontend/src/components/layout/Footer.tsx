@@ -27,8 +27,8 @@ const Footer: FC<FooterProps> = ({ setCurrentView }) => (
                 <h5 className={`text-white font-bold mb-4 md:mb-6 uppercase text-xs tracking-widest ${styles.fonts.heading}`}>Khám phá</h5>
                 <ul className="space-y-3 text-sm mb-6 md:mb-10">
                     <li><button onClick={() => setCurrentView('bio-match')} className="hover:text-[#0099FF] transition">Bio-Match</button></li>
-                    <li><button onClick={() => setCurrentView('science-corner')} className="hover:text-[#0099FF] transition">Science Corner</button></li>
                     <li><button onClick={() => setCurrentView('bio-magazine')} className="hover:text-[#0099FF] transition">Bio-Magazine</button></li>
+                    <li><button onClick={() => setCurrentView('science-corner')} className="hover:text-[#0099FF] transition">Science Corner</button></li>
                 </ul>
                 <div className="mt-auto">
                     <img src="/logo-doan-tncs.png" alt="Đoàn TNCS Hồ Chí Minh" className="h-16 md:h-20 w-auto object-contain" />
@@ -39,7 +39,7 @@ const Footer: FC<FooterProps> = ({ setCurrentView }) => (
                 <h5 className={`text-white font-bold mb-4 md:mb-6 uppercase text-xs tracking-widest ${styles.fonts.heading}`}>Hỗ trợ</h5>
                 <ul className="space-y-3 text-sm">
                     <li><a href="/article/5" className="hover:text-[#0099FF] transition">Công cụ hỗ trợ nghiên cứu khoa học</a></li>
-                    <li><button onClick={() => setCurrentView('resources')} className="hover:text-[#0099FF] transition">Hướng dẫn trích nguồn tài liệu tham khảo</button></li>
+                    <li><button onClick={() => setCurrentView('resources')} className="hover:text-[#0099FF] transition">Hướng dẫn trích nguồn tài liệu</button></li>
                 </ul>
             </div>
 

@@ -20,7 +20,7 @@ const ScienceCornerView: FC = () => {
     useEffect(() => {
         setLoading(true);
         getArticles('science_corner')
-            .then(data => setArticles(data))
+            .then(data => setArticles([...data].sort((a, b) => b.id - a.id)))
             .catch(err => setError(err.message))
             .finally(() => setLoading(false));
     }, []);
@@ -104,7 +104,7 @@ const ScienceCornerView: FC = () => {
                                         <h3 className={`text-xl font-bold text-[#000033] mb-2 group-hover:text-[#0066CC] transition ${styles.fonts.heading}`}>
                                             {item.title}
                                         </h3>
-                                        <p className="text-sm text-gray-500 font-bold mb-3">Tác giả: {item.author || 'Ẩn danh'}</p>
+                                        {item.author && <p className="text-sm text-gray-500 font-bold mb-3">Tác giả: {item.author}</p>}
                                         <p className="text-gray-600 text-sm leading-relaxed mb-4 flex-1 line-clamp-3">{item.content ? item.content.replace(/<[^>]*>/g, '').replace(/&nbsp;/g, ' ') : 'Không có mô tả'}</p>
 
                                         <button

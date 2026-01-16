@@ -19,7 +19,7 @@ const BioMagazineView: FC = () => {
     useEffect(() => {
         setLoading(true);
         getArticles('magazine')
-            .then(data => setArticles(data))
+            .then(data => setArticles([...data].sort((a, b) => b.id - a.id)))
             .catch(err => setError(err.message))
             .finally(() => setLoading(false));
     }, []);
@@ -84,7 +84,7 @@ const BioMagazineView: FC = () => {
                                         <h3 className={`text-lg md:text-xl font-bold text-[#000033] mb-2 group-hover:text-[#0066CC] transition ${styles.fonts.heading}`}>
                                             {item.title}
                                         </h3>
-                                        <p className="text-sm text-gray-600 italic mb-1">{item.author || 'Unknown Author'}</p>
+                                        {item.author && <p className="text-sm text-gray-600 italic mb-1">{item.author}</p>}
                                         <p className="text-sm text-[#0066CC] font-medium line-clamp-2">{item.content ? item.content.replace(/<[^>]*>/g, '').replace(/&nbsp;/g, ' ') : 'No description'}</p>
                                     </div>
                                     <button

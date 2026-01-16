@@ -101,7 +101,7 @@ const ArticleDetailView: FC = () => {
                                         rel="noopener noreferrer"
                                         className="text-[#0066CC] hover:text-blue-700 flex items-center gap-1 text-xs font-bold transition"
                                     >
-                                        <Globe size={14} /> Liên kết ngoài
+                                        <Globe size={14} /> Xem liên kết
                                     </a>
                                 )}
                                 {article.file_url && (

@@ -20,7 +20,7 @@ const ResourcesView: FC = () => {
     useEffect(() => {
         setLoading(true);
         getArticles('resource')
-            .then(data => setResources(data))
+            .then(data => setResources([...data].sort((a, b) => b.id - a.id)))
             .catch(err => setError(err.message))
             .finally(() => setLoading(false));
     }, []);
