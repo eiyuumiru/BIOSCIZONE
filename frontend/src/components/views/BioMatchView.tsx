@@ -6,6 +6,7 @@ import {
     Microscope,
     ChevronDown,
     Mail,
+    Lightbulb,
     Phone,
     ArrowRight,
     X,
@@ -29,6 +30,8 @@ const BioMatchView: FC = () => {
     const [copiedField, setCopiedField] = useState<string | null>(null);
     const [searchBuddy, setSearchBuddy] = useState('');
     const [searchLab, setSearchLab] = useState('');
+    const [selectedBuddyForDescription, setSelectedBuddyForDescription] = useState<BioBuddyAPI | null>(null);
+    const [isDescriptionModalAnimating, setIsDescriptionModalAnimating] = useState(false);
 
     // API data states
     const [buddies, setBuddies] = useState<BioBuddyAPI[]>([]);
@@ -113,6 +116,24 @@ const BioMatchView: FC = () => {
         setIsContactModalAnimating(false);
         setTimeout(() => {
             setSelectedBuddyForContact(null);
+        }, 300);
+    };
+
+    // Animation logic for description modal
+    useEffect(() => {
+        if (selectedBuddyForDescription) {
+            requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
+                    setIsDescriptionModalAnimating(true);
+                });
+            });
+        }
+    }, [selectedBuddyForDescription]);
+
+    const handleCloseDescriptionModal = () => {
+        setIsDescriptionModalAnimating(false);
+        setTimeout(() => {
+            setSelectedBuddyForDescription(null);
         }, 300);
     };
 
@@ -217,6 +238,84 @@ const BioMatchView: FC = () => {
                     </div>
                 </div>
             )}
+            {/* Description Modal */}
+            {selectedBuddyForDescription && (
+                <div className={`fixed inset-0 z-[100] flex items-center justify-center p-4 transition-opacity duration-300 ${isDescriptionModalAnimating ? 'opacity-100' : 'opacity-0'}`}>
+                    <div
+                        className={`absolute inset-0 bg-[#000033]/60 backdrop-blur-sm transition-opacity duration-300 ${isDescriptionModalAnimating ? 'opacity-100' : 'opacity-0'}`}
+                        onClick={handleCloseDescriptionModal}
+                    ></div>
+                    <div className={`bg-white rounded-3xl w-full max-w-lg shadow-2xl relative overflow-hidden transform transition-all duration-300 ${isDescriptionModalAnimating ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}`}>
+                        {/* Header Section */}
+                        <div className="bg-[#000033] p-8 pb-7 relative overflow-hidden">
+                            {/* Decorative element */}
+                            <div className="absolute -top-10 -right-10 w-32 h-32 bg-blue-500/10 rounded-full blur-3xl"></div>
+                            <div className="absolute -bottom-10 -left-10 w-24 h-24 bg-blue-600/10 rounded-full blur-2xl"></div>
+
+                            <div className="flex justify-between items-start relative z-10">
+                                <div className="flex items-center gap-4">
+                                    <div className="w-14 h-14 rounded-2xl bg-white/10 flex items-center justify-center text-white border border-white/10 backdrop-blur-sm shadow-inner">
+                                        <Lightbulb size={28} strokeWidth={1.5} />
+                                    </div>
+                                    <div>
+                                        <h3 className={`text-xl font-bold text-white ${styles.fonts.heading}`}>
+                                            Chi tiết ý tưởng
+                                        </h3>
+                                        <p className="text-sm text-white/70 font-medium mt-0.5">{selectedBuddyForDescription.full_name} - {selectedBuddyForDescription.course}</p>
+                                    </div>
+                                </div>
+                                <button
+                                    onClick={handleCloseDescriptionModal}
+                                    className="p-2 hover:bg-white/10 rounded-full text-white/50 hover:text-white transition-colors"
+                                >
+                                    <X size={20} />
+                                </button>
+                            </div>
+                        </div>
+
+                        <div className="p-8 pt-7">
+                            <div className="space-y-5">
+                                <div>
+                                    <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 block">Đề tài / Ý tưởng</label>
+                                    <p className={`text-base font-semibold text-[#000033] italic ${styles.fonts.body}`}>"{selectedBuddyForDescription.research_topic}"</p>
+                                </div>
+
+                                <div>
+                                    <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 block">Mô tả chi tiết</label>
+                                    <div className="bg-gray-50 rounded-2xl p-5 border border-gray-100 max-h-60 overflow-y-auto">
+                                        <p className={`text-sm text-gray-700 leading-relaxed whitespace-pre-wrap ${styles.fonts.body}`}>
+                                            {selectedBuddyForDescription.description || 'Chưa có mô tả chi tiết.'}
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div className="flex flex-wrap gap-2 pt-2">
+                                    {selectedBuddyForDescription.research_field && (
+                                        <span className="text-xs font-bold bg-[#E6F4FF] text-[#0066CC] px-3 py-1.5 rounded-full">
+                                            {selectedBuddyForDescription.research_field}
+                                        </span>
+                                    )}
+                                    {selectedBuddyForDescription.research_subject && (
+                                        <span className="text-xs font-bold bg-[#E6F4FF] text-[#0066CC] px-3 py-1.5 rounded-full">
+                                            {selectedBuddyForDescription.research_subject}
+                                        </span>
+                                    )}
+                                </div>
+
+                                <button
+                                    onClick={() => {
+                                        handleCloseDescriptionModal();
+                                        setTimeout(() => setSelectedBuddyForContact(selectedBuddyForDescription), 350);
+                                    }}
+                                    className="w-full py-3 bg-[#0066CC] text-white rounded-xl font-bold text-sm hover:bg-[#0055AA] transition flex items-center justify-center gap-2 mt-4"
+                                >
+                                    <Send size={16} className="transform -rotate-45 mt-1" /> Liên hệ ngay
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
             <div className="container mx-auto px-8 md:px-12 lg:px-20">
                 <div className="flex justify-center mb-10">
                     <div className="bg-white p-1.5 rounded-full shadow-sm inline-flex border border-gray-200">
@@ -314,7 +413,8 @@ const BioMatchView: FC = () => {
                                     {filteredBuddies.map(buddy => (
                                         <div
                                             key={buddy.id}
-                                            className="bg-white rounded-xl p-6 shadow-sm border border-transparent hover:border-[#0099FF] hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 group flex flex-col h-full relative overflow-hidden"
+                                            className="bg-white rounded-xl p-6 shadow-sm border border-transparent hover:border-[#0099FF] hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 group flex flex-col h-full relative overflow-hidden cursor-pointer"
+                                            onClick={() => setSelectedBuddyForDescription(buddy)}
                                         >
                                             <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#0066CC] to-[#0099FF] opacity-0 group-hover:opacity-100 transition"></div>
                                             <div className="flex justify-between items-start mb-5">
@@ -348,7 +448,10 @@ const BioMatchView: FC = () => {
                                                     )}
                                                 </div>
                                                 <button
-                                                    onClick={() => setSelectedBuddyForContact(buddy)}
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        setSelectedBuddyForContact(buddy);
+                                                    }}
                                                     className="w-full py-2.5 border border-[#0066CC] text-[#0066CC] rounded-lg font-bold text-sm hover:bg-[#0066CC] hover:text-white transition flex items-center justify-center gap-2"
                                                 >
                                                     <Send size={16} className="transform -rotate-45 mt-1.5" /> Liên hệ ngay
