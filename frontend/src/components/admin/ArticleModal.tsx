@@ -1,7 +1,10 @@
 import { useState, useEffect, type FC } from 'react';
-import { X, FileText, Send, Loader2, Link as LinkIcon, Save } from 'lucide-react';
+import { X, FileText, Send, Loader2, Link as LinkIcon, Save, Calendar } from 'lucide-react';
 import ReactQuill from 'react-quill-new';
 import 'react-quill-new/dist/quill.snow.css';
+import DatePicker from 'react-date-picker';
+import 'react-date-picker/dist/DatePicker.css';
+import 'react-calendar/dist/Calendar.css';
 import { createArticle, updateArticle, type ArticleCreateData } from '../../services/adminApi';
 import { type ArticleAPI } from '../../services/api';
 import { styles } from '../../data';
@@ -26,8 +29,12 @@ const ArticleModal: FC<ArticleModalProps> = ({ category, categoryLabel, article,
         content: article?.content || '',
         author: article?.author || '',
         external_link: article?.external_link || '',
-        publication_date: article?.publication_date?.split('T')[0] || '',
+        publication_date: article?.publication_date ? article.publication_date.split('T')[0] : undefined,
     });
+
+    const [startDate, setStartDate] = useState<Date | null>(
+        article?.publication_date ? new Date(article.publication_date) : null
+    );
 
     useEffect(() => {
         setIsVisible(true);
@@ -53,18 +60,27 @@ const ArticleModal: FC<ArticleModalProps> = ({ category, categoryLabel, article,
         setIsSubmitting(true);
 
         try {
+            // Convert Date to yyyy-mm-dd for API
+            const apiData = { ...formData };
+            if (startDate) {
+                const y = startDate.getFullYear();
+                const m = String(startDate.getMonth() + 1).padStart(2, '0');
+                const d = String(startDate.getDate()).padStart(2, '0');
+                apiData.publication_date = `${y}-${m}-${d}`;
+            } else {
+                apiData.publication_date = undefined;
+            }
+
             let result: ArticleAPI;
             if (article) {
-                await updateArticle(article.id, formData);
+                await updateArticle(article.id, apiData);
                 result = {
                     ...article,
-                    ...formData,
-                    // If your backend returns the updated article, use it. 
-                    // Otherwise, we construct it for the frontend list update.
-                    publication_date: formData.publication_date ? `${formData.publication_date}T00:00:00Z` : undefined
+                    ...apiData,
+                    publication_date: apiData.publication_date ? `${apiData.publication_date}T00:00:00Z` : undefined
                 } as ArticleAPI;
             } else {
-                result = await createArticle(formData);
+                result = await createArticle(apiData);
             }
 
             setIsAnimating(false);
@@ -147,17 +163,29 @@ const ArticleModal: FC<ArticleModalProps> = ({ category, categoryLabel, article,
 
                             <div className="space-y-2">
                                 <label className="text-xs font-bold text-gray-500 uppercase ml-1">Ngày đăng</label>
-                                <input
-                                    type="date"
-                                    value={formData.publication_date || ''}
-                                    onChange={(e) => setFormData({ ...formData, publication_date: e.target.value })}
-                                    className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0099FF]/20 focus:bg-white transition"
-                                />
+                                <div className="date-picker-wrapper">
+                                    <DatePicker
+                                        onChange={(date) => setStartDate(date as Date | null)}
+                                        value={startDate}
+                                        format="dd/MM/yyyy"
+                                        locale="vi-VN"
+                                        calendarIcon={<Calendar size={18} />}
+                                        clearIcon={null}
+                                        className="premium-date-picker"
+                                        calendarProps={{
+                                            navigationLabel: ({ date }) => {
+                                                const month = String(date.getMonth() + 1).padStart(2, '0');
+                                                const year = date.getFullYear();
+                                                return `${month}/${year}`;
+                                            }
+                                        }}
+                                    />
+                                </div>
                             </div>
 
                             <div className="space-y-2">
                                 <label className="text-xs font-bold text-gray-500 uppercase ml-1 flex items-center gap-1">
-                                    <LinkIcon size={12} /> Link ngoài
+                                    <LinkIcon size={12} /> Xem chi tiết
                                 </label>
                                 <input
                                     type="url"

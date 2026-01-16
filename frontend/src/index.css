@@ -34,27 +34,34 @@ body {
     .animate-fade-in {
         animation: fadeIn 0.3s ease-out forwards;
     }
-    
+
     .animate-zoom-in {
         animation: zoomIn 0.3s cubic-bezier(0.34, 1.56, 1) forwards;
     }
 }
 
 @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
 }
 
 @keyframes zoomIn {
-    from { 
+    from {
         opacity: 0;
         transform: scale(0.95);
     }
-    to { 
+
+    to {
         opacity: 1;
         transform: scale(1);
     }
 }
+
 /* Article Editor Custom Styles */
 .article-editor .ql-toolbar {
     border-top-left-radius: 12px;
@@ -96,13 +103,160 @@ body {
 }
 
 /* Rich Text Display Styles */
-.ql-editor-display h1 { font-size: 2.5rem; font-weight: 800; margin-bottom: 1.5rem; color: #000033; }
-.ql-editor-display h2 { font-size: 2rem; font-weight: 700; margin-top: 2rem; margin-bottom: 1rem; color: #000033; }
-.ql-editor-display h3 { font-size: 1.5rem; font-weight: 700; margin-top: 1.5rem; margin-bottom: 0.75rem; color: #000033; }
-.ql-editor-display p { margin-bottom: 1.25rem; line-height: 1.8; }
-.ql-editor-display ul { list-style-type: disc; padding-left: 1.5rem; margin-bottom: 1.25rem; }
-.ql-editor-display ol { list-style-type: decimal; padding-left: 1.5rem; margin-bottom: 1.25rem; }
-.ql-editor-display strong { font-weight: 700; color: #111827; }
-.ql-editor-display a { color: #0066CC; text-decoration: underline; font-weight: 500; }
-.ql-editor-display a:hover { color: #004499; }
-.ql-editor-display blockquote { border-left: 4px solid #0099FF; padding-left: 1rem; font-style: italic; color: #4b5563; margin-bottom: 1.25rem; }
+.ql-editor-display h1 {
+    font-size: 2.5rem;
+    font-weight: 800;
+    margin-bottom: 1.5rem;
+    color: #000033;
+}
+
+.ql-editor-display h2 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+    color: #000033;
+}
+
+.ql-editor-display h3 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-top: 1.5rem;
+    margin-bottom: 0.75rem;
+    color: #000033;
+}
+
+.ql-editor-display p {
+    margin-bottom: 1.25rem;
+    line-height: 1.8;
+}
+
+.ql-editor-display ul {
+    list-style-type: disc;
+    padding-left: 1.5rem;
+    margin-bottom: 1.25rem;
+}
+
+.ql-editor-display ol {
+    list-style-type: decimal;
+    padding-left: 1.5rem;
+    margin-bottom: 1.25rem;
+}
+
+.ql-editor-display strong {
+    font-weight: 700;
+    color: #111827;
+}
+
+.ql-editor-display a {
+    color: #0066CC;
+    text-decoration: underline;
+    font-weight: 500;
+}
+
+.ql-editor-display a:hover {
+    color: #004499;
+}
+
+.ql-editor-display blockquote {
+    border-left: 4px solid #0099FF;
+    padding-left: 1rem;
+    font-style: italic;
+    color: #4b5563;
+    margin-bottom: 1.25rem;
+}
+
+/* Custom Styling for React Date Picker (Segmented Input) */
+.date-picker-wrapper {
+    @apply w-full;
+}
+
+.premium-date-picker {
+    @apply w-full bg-gray-50 border border-gray-100 rounded-xl transition-all;
+}
+
+.premium-date-picker:focus-within {
+    @apply ring-2 ring-[#0099FF]/20 bg-white border-[#0099FF]/30;
+}
+
+.premium-date-picker .react-date-picker__wrapper {
+    @apply border-none px-4 py-2.5 flex items-center justify-between;
+}
+
+.premium-date-picker .react-date-picker__inputGroup {
+    @apply flex items-center text-sm font-medium text-gray-700;
+}
+
+.premium-date-picker .react-date-picker__inputGroup__input {
+    @apply outline-none border-none bg-transparent text-gray-700;
+}
+
+.premium-date-picker .react-date-picker__inputGroup__divider {
+    @apply text-gray-400 mx-1;
+}
+
+.premium-date-picker .react-date-picker__button {
+    @apply p-1 text-gray-400 hover:text-[#0099FF] transition;
+}
+
+/* Compact Calendar Styling */
+.react-calendar {
+    @apply border-none rounded-2xl shadow-2xl font-['Inter'] !important;
+    overflow: hidden;
+    width: 280px !important;
+    /* Compact width */
+}
+
+.react-calendar__navigation {
+    @apply bg-[#000033] h-12 mb-0 flex items-center px-2 !important;
+}
+
+.react-calendar__navigation button {
+    @apply text-white font-bold text-lg min-w-[40px] !important;
+}
+
+.react-calendar__navigation__label {
+    @apply text-sm uppercase tracking-wider !important;
+}
+
+.react-calendar__navigation button:enabled:hover,
+.react-calendar__navigation button:enabled:focus {
+    @apply bg-white/10 !important;
+}
+
+.react-calendar__month-view__weekdays {
+    @apply bg-[#000033] text-white/60 text-[10px] font-bold uppercase py-2 !important;
+}
+
+.react-calendar__month-view__weekdays__weekday {
+    @apply flex items-center justify-center !important;
+}
+
+.react-calendar__month-view__days {
+    @apply p-2 !important;
+}
+
+.react-calendar__tile {
+    @apply rounded-lg h-9 text-sm font-medium transition-all !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+.react-calendar__tile:enabled:hover,
+.react-calendar__tile:enabled:focus {
+    @apply bg-[#E6F4FF] text-[#0099FF] !important;
+}
+
+.react-calendar__tile--now {
+    @apply bg-[#0099FF]/5 text-[#0099FF] font-bold !important;
+}
+
+.react-calendar__tile--active {
+    @apply bg-[#0099FF] text-white font-bold !important;
+}
+
+.react-calendar__tile--active:enabled:hover,
+.react-calendar__tile--active:enabled:focus {
+    @apply bg-[#0099FF] text-white !important;
+}
