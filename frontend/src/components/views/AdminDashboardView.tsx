@@ -21,12 +21,13 @@ import { styles } from '../../data';
 
 type TabType = 'buddies' | 'articles' | 'feedbacks' | 'admins' | 'settings' | 'audit_logs';
 type BuddySubTab = 'pending' | 'approved';
-type ArticleCategory = 'achievement' | 'magazine' | 'science_corner' | 'resource';
+type ArticleCategory = 'achievement' | 'magazine' | 'science_corner' | 'resource' | 'bio_info';
 
 const ARTICLE_CATEGORIES: { value: ArticleCategory; label: string }[] = [
-    { value: 'achievement', label: 'Thành tích' },
+    { value: 'bio_info', label: 'Bio-Information' },
     { value: 'magazine', label: 'Bio-Magazine' },
     { value: 'science_corner', label: 'Science Corner' },
+    { value: 'achievement', label: 'Thành tích' },
     { value: 'resource', label: 'Tài nguyên' },
 ];
 
