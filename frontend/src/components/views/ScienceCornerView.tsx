@@ -2,7 +2,8 @@ import { useState, useEffect, type FC } from 'react';
 import {
     PlayCircle,
     Share2,
-    ArrowRight
+    ArrowRight,
+    Search
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import LoadingSpinner from '../layout/LoadingSpinner';
@@ -13,6 +14,7 @@ const ScienceCornerView: FC = () => {
     const [articles, setArticles] = useState<ArticleAPI[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [searchQuery, setSearchQuery] = useState('');
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -31,12 +33,37 @@ const ScienceCornerView: FC = () => {
         return 'share';
     };
 
+    // Filter articles by search query
+    const filteredArticles = articles.filter(item => {
+        if (!searchQuery.trim()) return true;
+        const query = searchQuery.toLowerCase();
+        return (
+            item.title?.toLowerCase().includes(query) ||
+            item.author?.toLowerCase().includes(query) ||
+            item.content?.toLowerCase().includes(query)
+        );
+    });
+
     return (
         <div className="min-h-screen pt-28 pb-20 bg-[#EDEDED]">
             <div className="container mx-auto px-8 md:px-12 lg:px-20 max-w-6xl">
-                <div className="text-center mb-12">
+                <div className="text-center mb-8">
                     <h2 className={`text-3xl font-extrabold text-[#000033] mb-4 ${styles.fonts.heading}`}>SCIENCE CORNER</h2>
                     <p className="text-gray-600 max-w-2xl mx-auto">Nơi chia sẻ kinh nghiệm Nghiên cứu khoa học từ sinh viên và các video khoa học thú vị.</p>
+                </div>
+
+                {/* Search Bar */}
+                <div className="mb-10 flex justify-center">
+                    <div className="relative w-full max-w-xl">
+                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+                        <input
+                            type="text"
+                            placeholder="Tìm kiếm bài viết, video..."
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            className="w-full pl-12 pr-4 py-3 rounded-xl border border-gray-200 bg-white focus:border-[#0066CC] focus:ring-2 focus:ring-[#0066CC]/20 outline-none transition-all"
+                        />
+                    </div>
                 </div>
 
                 {loading ? (
@@ -45,13 +72,13 @@ const ScienceCornerView: FC = () => {
                     <div className="text-center py-20 text-red-500">
                         <p>Đã xảy ra lỗi: {error}</p>
                     </div>
-                ) : articles.length === 0 ? (
+                ) : filteredArticles.length === 0 ? (
                     <div className="text-center py-20 text-gray-500">
-                        <p>Chưa có bài viết nào trong Science Corner.</p>
+                        <p>{searchQuery ? 'Không tìm thấy kết quả phù hợp.' : 'Chưa có bài viết nào trong Science Corner.'}</p>
                     </div>
                 ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        {articles.map((item) => {
+                        {filteredArticles.map((item) => {
                             const itemType = getItemType(item);
                             return (
                                 <div
@@ -98,3 +125,4 @@ const ScienceCornerView: FC = () => {
 };
 
 export default ScienceCornerView;
+

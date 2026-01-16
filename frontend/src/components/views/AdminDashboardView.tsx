@@ -479,6 +479,12 @@ const AdminDashboardView: FC = () => {
                                                     <p className="text-gray-500 text-sm flex items-center gap-2 mt-1">
                                                         <Mail size={14} />
                                                         {feedback.email}
+                                                        {feedback.student_id && (
+                                                            <>
+                                                                <span>•</span>
+                                                                <span className="font-medium text-[#0066CC]">MSSV: {feedback.student_id}</span>
+                                                            </>
+                                                        )}
                                                         <span>•</span>
                                                         <Calendar size={14} />
                                                         {feedback.created_at?.split('T')[0]}
