@@ -71,7 +71,8 @@ const ArticleDetailView: FC = () => {
                             <span className="px-2 py-0.5 bg-blue-50 text-[#0066CC] rounded text-[10px] font-bold uppercase tracking-widest">
                                 {article.category === 'resource' ? 'Tài nguyên' :
                                     article.category === 'magazine' ? 'Bio-Magazine' :
-                                        article.category === 'achievement' ? 'Thành tích' : 'Science Corner'}
+                                        article.category === 'achievement' ? 'Thành tích' :
+                                            article.category === 'bio_info' ? 'Bio-Information' : 'Science Corner'}
                             </span>
                             <div className="h-1 w-1 bg-gray-300 rounded-full"></div>
                             <span className="text-xs text-gray-400 font-medium">
@@ -101,7 +102,7 @@ const ArticleDetailView: FC = () => {
                                         rel="noopener noreferrer"
                                         className="text-[#0066CC] hover:text-blue-700 flex items-center gap-1 text-xs font-bold transition"
                                     >
-                                        <Globe size={14} /> Xem liên kết
+                                        <Globe size={14} /> Xem chi tiết
                                     </a>
                                 )}
                                 {article.file_url && (

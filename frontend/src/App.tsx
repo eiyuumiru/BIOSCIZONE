@@ -13,7 +13,6 @@ const HomeView = lazy(() => import('./components/views/HomeView'));
 const BioMatchView = lazy(() => import('./components/views/BioMatchView'));
 const ScienceCornerView = lazy(() => import('./components/views/ScienceCornerView'));
 const BioMagazineView = lazy(() => import('./components/views/BioMagazineView'));
-const BioInformationView = lazy(() => import('./components/views/BioInformationView'));
 const AchievementsView = lazy(() => import('./components/views/AchievementsView'));
 const ResourcesView = lazy(() => import('./components/views/ResourcesView'));
 const ContactView = lazy(() => import('./components/views/ContactView'));
@@ -113,7 +112,6 @@ const AppContent: FC = () => {
                         <Route path="/bio-match" element={<BioMatchView />} />
                         <Route path="/science-corner" element={<ScienceCornerView />} />
                         <Route path="/bio-magazine" element={<BioMagazineView />} />
-                        <Route path="/bio-information" element={<BioInformationView />} />
                         <Route path="/achievements" element={<AchievementsView />} />
                         <Route path="/resources" element={<ResourcesView />} />
                         <Route path="/article/:id" element={<ArticleDetailView />} />

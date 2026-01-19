@@ -3,10 +3,8 @@ import {
     Filter,
     Users,
     Send,
-    Microscope,
-    ChevronDown,
-    Mail,
     Lightbulb,
+    Mail,
     Phone,
     ArrowRight,
     X,
@@ -14,31 +12,32 @@ import {
     Check,
     Search
 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import LoadingSpinner from '../layout/LoadingSpinner';
 import { styles } from '../../data';
-import { getBuddies, getLabs, type BioBuddyAPI, type LabAPI } from '../../services/api';
+import { getBuddies, getArticles, type BioBuddyAPI, type ArticleAPI } from '../../services/api';
 
 type TabType = 'buddy' | 'info';
 
 const BioMatchView: FC = () => {
+    const navigate = useNavigate();
     const [activeTab, setActiveTab] = useState<TabType>('buddy');
-    const [openLabId, setOpenLabId] = useState<number | null>(null);
     const [selectedCourse, setSelectedCourse] = useState<string>('All');
     const [selectedFields, setSelectedFields] = useState<string[]>([]);
     const [selectedBuddyForContact, setSelectedBuddyForContact] = useState<BioBuddyAPI | null>(null);
     const [isContactModalAnimating, setIsContactModalAnimating] = useState(false);
     const [copiedField, setCopiedField] = useState<string | null>(null);
     const [searchBuddy, setSearchBuddy] = useState('');
-    const [searchLab, setSearchLab] = useState('');
     const [selectedBuddyForDescription, setSelectedBuddyForDescription] = useState<BioBuddyAPI | null>(null);
     const [isDescriptionModalAnimating, setIsDescriptionModalAnimating] = useState(false);
 
     // API data states
     const [buddies, setBuddies] = useState<BioBuddyAPI[]>([]);
-    const [labs, setLabs] = useState<LabAPI[]>([]);
+    const [articles, setArticles] = useState<ArticleAPI[]>([]);
     const [loadingBuddies, setLoadingBuddies] = useState(true);
-    const [loadingLabs, setLoadingLabs] = useState(true);
+    const [loadingArticles, setLoadingArticles] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [searchInfo, setSearchInfo] = useState('');
 
     const courseOptions = ['All', 'K20', 'K21', 'K22', 'K23', 'K24', 'K25', 'Khác'];
     const fieldOptions = ['Di truyền', 'Sinh học phân tử', 'Sinh hóa', 'Vi sinh', 'Sinh lý thực vật', 'Sinh lý động vật', 'Sinh thái - Tiến hóa', 'Khác'];
@@ -53,13 +52,13 @@ const BioMatchView: FC = () => {
             .finally(() => setLoadingBuddies(false));
     }, [selectedCourse]);
 
-    // Fetch labs on mount
+    // Fetch bio-info articles
     useEffect(() => {
-        setLoadingLabs(true);
-        getLabs()
-            .then(data => setLabs(data))
+        setLoadingArticles(true);
+        getArticles('bio_info')
+            .then(data => setArticles(data))
             .catch(err => setError(err.message))
-            .finally(() => setLoadingLabs(false));
+            .finally(() => setLoadingArticles(false));
     }, []);
 
     const toggleField = (field: string): void => {
@@ -84,14 +83,13 @@ const BioMatchView: FC = () => {
         );
     });
 
-    // Filter labs by search query
-    const filteredLabs = labs.filter(lab => {
-        if (!searchLab.trim()) return true;
-        const query = searchLab.toLowerCase();
+    const filteredArticles = articles.filter(item => {
+        if (!searchInfo.trim()) return true;
+        const query = searchInfo.toLowerCase();
         return (
-            lab.name?.toLowerCase().includes(query) ||
-            lab.lead_name?.toLowerCase().includes(query) ||
-            lab.research_areas?.toLowerCase().includes(query)
+            item.title?.toLowerCase().includes(query) ||
+            item.content?.toLowerCase().includes(query) ||
+            item.author?.toLowerCase().includes(query)
         );
     });
 
@@ -464,69 +462,50 @@ const BioMatchView: FC = () => {
                         </div>
                     </div>
                 ) : (
-                    <div className="max-w-3xl mx-auto">
-                        {/* Search Bar for Labs */}
-                        <div className="mb-6">
-                            <div className="relative max-w-xl mx-auto">
-                                <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
-                                <input
-                                    type="text"
-                                    placeholder="Tìm kiếm bộ môn, PTN..."
-                                    value={searchLab}
-                                    onChange={(e) => setSearchLab(e.target.value)}
-                                    className="w-full pl-12 pr-4 py-3 rounded-xl border border-gray-200 bg-white focus:border-[#0066CC] focus:ring-2 focus:ring-[#0066CC]/20 outline-none transition-all"
-                                />
-                            </div>
-                        </div>
-                        <div className="space-y-4">
-                            {loadingLabs ? (
-                                <LoadingSpinner fullScreen={false} message="Đang tải danh sách Lab..." />
-                            ) : filteredLabs.length === 0 ? (
-                                <div className="text-center py-20 text-gray-500">
-                                    <p>{searchLab ? 'Không tìm thấy kết quả phù hợp.' : 'Chưa có dữ liệu Lab/Bộ môn nào.'}</p>
+                    <div className="max-w-4xl mx-auto">
+                        {/* Bio-Information Articles Section */}
+                        <div className="mb-12">
+                            <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-6">
+                                <h3 className={`text-xl font-bold text-[#000033] ${styles.fonts.heading}`}>Bio-Information</h3>
+                                <div className="relative w-full md:w-72">
+                                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
+                                    <input
+                                        type="text"
+                                        placeholder="Tìm bài viết..."
+                                        value={searchInfo}
+                                        onChange={(e) => setSearchInfo(e.target.value)}
+                                        className="w-full pl-10 pr-3 py-2 rounded-lg border border-gray-200 bg-white focus:border-[#0066CC] outline-none text-sm"
+                                    />
                                 </div>
-                            ) : (
-                                filteredLabs.map(lab => (
-                                    <div key={lab.id} className="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100">
-                                        <button
-                                            onClick={() => setOpenLabId(openLabId === lab.id ? null : lab.id)}
-                                            className="w-full flex items-center justify-between p-6 bg-white hover:bg-gray-50 transition text-left"
-                                        >
-                                            <div className="flex items-center gap-5">
-                                                <div className={`w-12 h-12 rounded-full flex items-center justify-center transition-colors
-                          ${openLabId === lab.id ? 'bg-[#000033] text-white' : 'bg-[#EDEDED] text-[#000033]'}`}>
-                                                    <Microscope size={24} strokeWidth={1.5} />
-                                                </div>
-                                                <div>
-                                                    <h4 className={`font-bold text-[#000033] text-lg ${styles.fonts.heading}`}>{lab.name}</h4>
-                                                    <p className="text-xs text-gray-500 font-semibold mt-1">Trưởng bộ môn: {lab.lead_name || 'Chưa cập nhật'}</p>
-                                                </div>
-                                            </div>
-                                            <ChevronDown className={`text-gray-400 transition-transform duration-300 ${openLabId === lab.id ? 'rotate-180 text-[#0099FF]' : ''}`} />
-                                        </button>
-                                        {openLabId === lab.id && (
-                                            <div className="px-6 pb-8 pt-2 bg-white border-t border-gray-100">
-                                                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-4 pl-[68px]">
-                                                    <div>
-                                                        <h5 className="text-xs font-bold text-[#0099FF] uppercase mb-3 tracking-widest">Hướng nghiên cứu</h5>
-                                                        <p className={`text-sm text-gray-600 leading-relaxed ${styles.fonts.body}`}>{lab.research_areas || 'Chưa cập nhật'}</p>
-                                                    </div>
-                                                    <div>
-                                                        <h5 className="text-xs font-bold text-[#0099FF] uppercase mb-3 tracking-widest">Thông tin liên hệ</h5>
-                                                        <ul className="text-sm text-gray-600 space-y-3">
-                                                            <li className="flex items-center gap-3"><Mail size={16} className="text-gray-400" /> {lab.email || 'Chưa cập nhật'}</li>
-                                                            <li className="flex items-center gap-3"><Phone size={16} className="text-gray-400" /> {lab.phone || '028 3835 4321'}</li>
-                                                        </ul>
-                                                        <button className="mt-4 text-xs font-bold text-[#0066CC] hover:underline flex items-center gap-1">
-                                                            Xem hồ sơ giảng viên <ArrowRight size={12} />
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        )}
+                            </div>
+
+                            <div className="space-y-4">
+                                {loadingArticles ? (
+                                    <LoadingSpinner fullScreen={false} message="Đang tải Bio-Information..." />
+                                ) : filteredArticles.length === 0 ? (
+                                    <div className="text-center py-10 bg-white rounded-xl border border-dashed border-gray-300 text-gray-400 text-sm">
+                                        Không tìm thấy bài viết nào.
                                     </div>
-                                ))
-                            )}
+                                ) : (
+                                    filteredArticles.map(article => (
+                                        <div
+                                            key={article.id}
+                                            onClick={() => navigate(`/article/${article.id}`)}
+                                            className="bg-white p-5 rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition cursor-pointer group flex justify-between items-center"
+                                        >
+                                            <div className="flex-1 pr-4">
+                                                <h4 className={`font-bold text-[#000033] mb-1 group-hover:text-[#0066CC] transition ${styles.fonts.heading}`}>
+                                                    {article.title}
+                                                </h4>
+                                                <p className="text-xs text-[#0066CC] line-clamp-1 opacity-80">
+                                                    {article.content ? article.content.replace(/<[^>]*>/g, '').replace(/&nbsp;/g, ' ') : 'Chi tiết thông tin...'}
+                                                </p>
+                                            </div>
+                                            <ArrowRight size={18} className="text-gray-300 group-hover:text-[#0066CC] transform group-hover:translate-x-1 transition" />
+                                        </div>
+                                    ))
+                                )}
+                            </div>
                         </div>
                     </div>
                 )}
