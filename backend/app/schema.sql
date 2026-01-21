@@ -4,7 +4,8 @@ CREATE TABLE IF NOT EXISTS admins (
     id TEXT PRIMARY KEY,
     username TEXT UNIQUE NOT NULL,
     hashed_password TEXT NOT NULL,
-    role TEXT DEFAULT 'admin'
+    role TEXT DEFAULT 'admin',
+    email TEXT DEFAULT NULL
 );
 
 CREATE TABLE IF NOT EXISTS bio_buddies (

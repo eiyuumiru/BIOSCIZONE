@@ -223,18 +223,21 @@ export interface AdminUser {
     id: string;
     username: string;
     role: 'admin' | 'superadmin';
+    email: string | null;
 }
 
 export interface AdminCreateData {
     username: string;
     password: string;
     role: 'admin' | 'superadmin';
+    email?: string;
 }
 
 export interface AdminUpdateData {
     username?: string;
     password?: string;
     role?: 'admin' | 'superadmin';
+    email?: string | null;
 }
 
 export interface SystemSetting {

@@ -2,7 +2,7 @@ import { useState, useEffect, type FC } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
     Users, FileText, MessageSquare, LogOut, Check, Trash2,
-    Plus, Mail, Calendar, Eye, Dna, Settings, UserCog, Shield, Clock, Edit, LogIn
+    Plus, Mail, Calendar, Eye, Dna, Settings, UserCog, Shield, Clock, Edit, LogIn, X
 } from 'lucide-react';
 import {
     isLoggedIn, logout, getPendingBuddies, approveBuddy, deleteBuddy,
@@ -51,6 +51,7 @@ const AdminDashboardView: FC = () => {
     const [auditLogs, setAuditLogs] = useState<AuditLog[]>([]);
     const [showAdminModal, setShowAdminModal] = useState(false);
     const [editingAdmin, setEditingAdmin] = useState<AdminUser | null>(null);
+    const [selectedFeedback, setSelectedFeedback] = useState<FeedbackAPI | null>(null);
 
     // Check auth on mount and get role
     useEffect(() => {
@@ -464,8 +465,9 @@ const AdminDashboardView: FC = () => {
                                     feedbacks.map(feedback => (
                                         <div
                                             key={feedback.id}
-                                            className={`border rounded-2xl p-6 transition-all hover:shadow-lg ${feedback.is_read
-                                                ? 'bg-white border-gray-100'
+                                            onClick={() => setSelectedFeedback(feedback)}
+                                            className={`border rounded-2xl p-6 transition-all hover:shadow-lg cursor-pointer ${feedback.is_read
+                                                ? 'bg-white border-gray-100 hover:border-[#0099FF]/30'
                                                 : 'bg-[#0099FF]/5 border-[#0099FF]/30'
                                                 }`}
                                         >
@@ -477,7 +479,7 @@ const AdminDashboardView: FC = () => {
                                                             <span className="px-2 py-0.5 text-xs bg-[#0099FF] text-white rounded-full font-medium">Mới</span>
                                                         )}
                                                     </div>
-                                                    <p className="text-gray-500 text-sm flex items-center gap-2 mt-1">
+                                                    <p className="text-gray-500 text-sm flex items-center gap-2 mt-1 flex-wrap">
                                                         <Mail size={14} />
                                                         {feedback.email}
                                                         {feedback.student_id && (
@@ -491,9 +493,9 @@ const AdminDashboardView: FC = () => {
                                                         {feedback.created_at?.split('T')[0]}
                                                     </p>
                                                     <p className="text-[#0066CC] font-semibold mt-3">{feedback.subject}</p>
-                                                    <p className="text-gray-600 mt-2">{feedback.message}</p>
+                                                    <p className="text-gray-600 mt-2 line-clamp-2">{feedback.message}</p>
                                                 </div>
-                                                <div className="flex gap-2 ml-4">
+                                                <div className="flex gap-2 ml-4" onClick={e => e.stopPropagation()}>
                                                     {!feedback.is_read && (
                                                         <button
                                                             onClick={() => handleMarkRead(feedback.id)}
@@ -548,9 +550,19 @@ const AdminDashboardView: FC = () => {
                                                     </div>
                                                     <div>
                                                         <h3 className={`text-lg font-bold text-[#000033] ${styles.fonts.heading}`}>{admin.username}</h3>
-                                                        <span className={`px-2 py-0.5 text-[10px] font-bold rounded-full uppercase ${admin.role === 'superadmin' ? 'bg-amber-100 text-amber-700' : 'bg-[#0099FF]/10 text-[#0066CC]'}`}>
-                                                            {admin.role}
-                                                        </span>
+                                                        <div className="flex items-center gap-2 mt-1">
+                                                            <span className={`px-2 py-0.5 text-[10px] font-bold rounded-full uppercase ${admin.role === 'superadmin' ? 'bg-amber-100 text-amber-700' : 'bg-[#0099FF]/10 text-[#0066CC]'}`}>
+                                                                {admin.role}
+                                                            </span>
+                                                            {admin.email ? (
+                                                                <span className="flex items-center gap-1 text-xs text-gray-500">
+                                                                    <Mail size={12} />
+                                                                    {admin.email}
+                                                                </span>
+                                                            ) : (
+                                                                <span className="text-xs text-gray-400 italic">Chưa có email thông báo</span>
+                                                            )}
+                                                        </div>
                                                     </div>
                                                 </div>
                                                 <div className="flex gap-2">
@@ -730,6 +742,113 @@ const AdminDashboardView: FC = () => {
                         setEditingAdmin(null);
                     }}
                 />
+            )}
+
+            {/* Feedback Detail Modal */}
+            {selectedFeedback && (
+                <div className="fixed inset-0 bg-black/30 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+                    <div className="bg-white rounded-2xl w-full max-w-2xl shadow-2xl max-h-[90vh] overflow-hidden flex flex-col">
+                        {/* Header */}
+                        <div className="flex items-center justify-between p-6 bg-[#000033]">
+                            <div>
+                                <h2 className={`text-xl font-bold text-white ${styles.fonts.heading}`}>
+                                    Chi tiết Phản hồi
+                                </h2>
+                                <p className="text-gray-400 text-sm mt-1">
+                                    Từ {selectedFeedback.sender_name}
+                                </p>
+                            </div>
+                            <button
+                                onClick={() => setSelectedFeedback(null)}
+                                className="p-2 text-gray-400 hover:text-white hover:bg-white/10 rounded-lg transition-all"
+                            >
+                                <X size={20} />
+                            </button>
+                        </div>
+
+                        {/* Content */}
+                        <div className="p-6 overflow-y-auto flex-1">
+                            {/* Sender Info */}
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                                <div className="bg-[#EDEDED] p-4 rounded-xl">
+                                    <p className="text-xs font-bold text-gray-400 uppercase mb-1">Người gửi</p>
+                                    <p className="font-semibold text-[#000033]">{selectedFeedback.sender_name}</p>
+                                </div>
+                                <div className="bg-[#EDEDED] p-4 rounded-xl">
+                                    <p className="text-xs font-bold text-gray-400 uppercase mb-1">Email</p>
+                                    <a href={`mailto:${selectedFeedback.email}`} className="font-semibold text-[#0066CC] hover:underline">
+                                        {selectedFeedback.email}
+                                    </a>
+                                </div>
+                                {selectedFeedback.student_id && (
+                                    <div className="bg-[#EDEDED] p-4 rounded-xl">
+                                        <p className="text-xs font-bold text-gray-400 uppercase mb-1">MSSV</p>
+                                        <p className="font-semibold text-[#000033]">{selectedFeedback.student_id}</p>
+                                    </div>
+                                )}
+                                <div className="bg-[#EDEDED] p-4 rounded-xl">
+                                    <p className="text-xs font-bold text-gray-400 uppercase mb-1">Thời gian</p>
+                                    <p className="font-semibold text-[#000033]">
+                                        {selectedFeedback.created_at?.split('T')[0]} {selectedFeedback.created_at?.split('T')[1]?.split('.')[0]}
+                                    </p>
+                                </div>
+                            </div>
+
+                            {/* Subject */}
+                            <div className="mb-4">
+                                <p className="text-xs font-bold text-gray-400 uppercase mb-2">Chủ đề</p>
+                                <p className="text-lg font-bold text-[#0066CC]">{selectedFeedback.subject}</p>
+                            </div>
+
+                            {/* Message */}
+                            <div>
+                                <p className="text-xs font-bold text-gray-400 uppercase mb-2">Nội dung</p>
+                                <div className="bg-[#EDEDED] p-4 rounded-xl">
+                                    <p className="text-[#000033] whitespace-pre-wrap leading-relaxed">{selectedFeedback.message}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Footer Actions */}
+                        <div className="flex items-center justify-between p-6 border-t border-gray-100 bg-gray-50">
+                            <div className="flex items-center gap-2">
+                                {!selectedFeedback.is_read && (
+                                    <span className="px-3 py-1 text-xs bg-[#0099FF] text-white rounded-full font-medium">Chưa đọc</span>
+                                )}
+                            </div>
+                            <div className="flex gap-3">
+                                {!selectedFeedback.is_read && (
+                                    <button
+                                        onClick={() => {
+                                            handleMarkRead(selectedFeedback.id);
+                                            setSelectedFeedback({ ...selectedFeedback, is_read: 1 });
+                                        }}
+                                        className="flex items-center gap-2 px-4 py-2.5 bg-[#EDEDED] text-[#000033] font-medium rounded-xl hover:bg-gray-200 transition-all"
+                                    >
+                                        <Eye size={18} />
+                                        Đánh dấu đã đọc
+                                    </button>
+                                )}
+                                <button
+                                    onClick={() => {
+                                        handleDeleteFeedback(selectedFeedback.id);
+                                        setSelectedFeedback(null);
+                                    }}
+                                    className="flex items-center gap-2 px-4 py-2.5 bg-red-50 text-red-600 font-medium rounded-xl hover:bg-red-100 transition-all"
+                                >
+                                    <Trash2 size={18} />
+                                    Xóa
+                                </button>
+                                <button
+                                    onClick={() => setSelectedFeedback(null)}
+                                    className="px-4 py-2.5 bg-[#0066CC] text-white font-bold rounded-xl hover:bg-[#0055AA] transition-all"
+                                >
+                                    Đóng
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             )}
         </div>
     );

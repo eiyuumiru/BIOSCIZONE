@@ -12,6 +12,12 @@ class Settings(BaseSettings):
     ADMIN_PASSWORD: Optional[str] = None
     # CORS: comma-separated list of allowed origins (e.g., "https://example.vercel.app,http://localhost:5173")
     CORS_ORIGINS: str = "http://localhost:5173,http://localhost:3000"
+    # SMTP Configuration for email notifications (Gmail)
+    SMTP_HOST: str = "smtp.gmail.com"
+    SMTP_PORT: int = 587
+    SMTP_USER: Optional[str] = None
+    SMTP_PASSWORD: Optional[str] = None
+    SMTP_FROM_NAME: str = "BIOSCIZONE"
 
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding='utf-8')
 

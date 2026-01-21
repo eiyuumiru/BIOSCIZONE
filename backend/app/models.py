@@ -85,6 +85,7 @@ class LabResponse(BaseModel):
 class AdminBase(BaseModel):
     username: str
     role: str = "admin"
+    email: Optional[str] = None
 
 class AdminCreate(AdminBase):
     password: str
@@ -99,6 +100,7 @@ class AdminUpdate(BaseModel):
     username: Optional[str] = None
     password: Optional[str] = None
     role: Optional[str] = None
+    email: Optional[str] = None
 
 # System Settings Models (Superadmin)
 class SystemSettingResponse(BaseModel):

@@ -143,7 +143,7 @@ def update_setting(key: str, data: SystemSettingUpdate, db: libsql.Connection = 
 
 @router.get("/admins", response_model=List[AdminResponse])
 def list_admins(db: libsql.Connection = Depends(get_db), current_user: dict = Depends(require_superadmin)):
-    rs = db.execute("SELECT id, username, role FROM admins ORDER BY username")
+    rs = db.execute("SELECT id, username, role, email FROM admins ORDER BY username")
     columns = [col[0] for col in rs.description]
     return [dict(zip(columns, row)) for row in rs.fetchall()]
 
@@ -157,12 +157,12 @@ def create_admin(admin: AdminCreate, db: libsql.Connection = Depends(get_db), cu
     admin_id = str(uuid.uuid4())
     hashed_password = get_password_hash(admin.password)
     db.execute(
-        "INSERT INTO admins (id, username, hashed_password, role) VALUES (?, ?, ?, ?)",
-        [admin_id, admin.username, hashed_password, admin.role]
+        "INSERT INTO admins (id, username, hashed_password, role, email) VALUES (?, ?, ?, ?, ?)",
+        [admin_id, admin.username, hashed_password, admin.role, admin.email]
     )
     db.commit()
     log_audit(db, current_user["username"], "create", "admin", admin_id, {"username": admin.username, "role": admin.role})
-    return {"id": admin_id, "username": admin.username, "role": admin.role}
+    return {"id": admin_id, "username": admin.username, "role": admin.role, "email": admin.email}
 
 @router.patch("/admins/{id}")
 def update_admin(id: str, admin: AdminUpdate, db: libsql.Connection = Depends(get_db), current_user: dict = Depends(require_superadmin)):
@@ -194,6 +194,11 @@ def update_admin(id: str, admin: AdminUpdate, db: libsql.Connection = Depends(ge
         updates.append("role = ?")
         params.append(admin.role)
         audit_details["role"] = admin.role
+    
+    if admin.email is not None:  # Allow setting email to empty string or null
+        updates.append("email = ?")
+        params.append(admin.email if admin.email else None)
+        audit_details["email"] = admin.email or "[removed]"
     
     if updates:
         params.append(id)

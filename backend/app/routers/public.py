@@ -1,8 +1,10 @@
 from fastapi import APIRouter, Depends, HTTPException
 from typing import List
 import libsql
+import threading
 from ..database import get_db
 from ..models import BioBuddyResponse, BioBuddyCreate, ArticleResponse, FeedbackCreate, LabResponse
+from ..email_service import is_smtp_configured, send_email_async, create_feedback_notification_email
 
 router = APIRouter()
 
@@ -91,7 +93,8 @@ def get_registration_status(db: libsql.Connection = Depends(get_db)):
     return {"enabled": enabled}
 
 @router.post("/feedback")
-def submit_feedback(feedback: FeedbackCreate, db: libsql.Connection = Depends(get_db)):
+async def submit_feedback(feedback: FeedbackCreate, db: libsql.Connection = Depends(get_db)):
+    # Save feedback to database
     query = """
     INSERT INTO feedbacks (sender_name, email, student_id, subject, message)
     VALUES (?, ?, ?, ?, ?)
@@ -101,4 +104,35 @@ def submit_feedback(feedback: FeedbackCreate, db: libsql.Connection = Depends(ge
         feedback.subject, feedback.message
     ])
     db.commit()
+    
+    # Send email notification to admins (if SMTP is configured)
+    if is_smtp_configured():
+        try:
+            # Get all admin emails (where email is not null)
+            admin_rs = db.execute("SELECT email FROM admins WHERE email IS NOT NULL AND email != ''")
+            admin_emails = [row[0] for row in admin_rs.fetchall()]
+            
+            if admin_emails:
+                # Create email content
+                email_subject, html_content, text_content = create_feedback_notification_email(
+                    sender_name=feedback.sender_name,
+                    sender_email=feedback.email,
+                    student_id=feedback.student_id,
+                    subject=feedback.subject,
+                    message=feedback.message
+                )
+                
+                # Send email asynchronously
+                await send_email_async(
+                    to_emails=admin_emails,
+                    subject=email_subject,
+                    html_content=html_content,
+                    text_content=text_content
+                )
+        except Exception as e:
+            # Log error but don't fail the feedback submission
+            import logging
+            logging.getLogger(__name__).error(f"Failed to send notification email: {e}")
+    
     return {"message": "Feedback submitted successfully"}
+

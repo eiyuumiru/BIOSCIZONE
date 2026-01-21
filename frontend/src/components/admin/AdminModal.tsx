@@ -1,5 +1,5 @@
 import { useState, type FC } from 'react';
-import { X, Key } from 'lucide-react';
+import { X, Key, Mail } from 'lucide-react';
 import { createAdmin, updateAdmin, type AdminUser } from '../../services/adminApi';
 import { styles } from '../../data';
 
@@ -14,6 +14,7 @@ const AdminModal: FC<AdminModalProps> = ({ admin, onClose, onSuccess }) => {
         username: admin?.username || '',
         password: '',
         role: admin?.role || 'admin' as 'admin' | 'superadmin',
+        email: admin?.email || '',
     });
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState('');
@@ -26,10 +27,14 @@ const AdminModal: FC<AdminModalProps> = ({ admin, onClose, onSuccess }) => {
         try {
             if (admin) {
                 // Update existing admin
-                const updateData: { username?: string; password?: string; role?: 'admin' | 'superadmin' } = {};
+                const updateData: { username?: string; password?: string; role?: 'admin' | 'superadmin'; email?: string | null } = {};
                 if (formData.username !== admin.username) updateData.username = formData.username;
                 if (formData.password) updateData.password = formData.password;
                 if (formData.role !== admin.role) updateData.role = formData.role;
+                // Handle email update (allow clearing email)
+                if (formData.email !== (admin.email || '')) {
+                    updateData.email = formData.email || null;
+                }
 
                 if (Object.keys(updateData).length > 0) {
                     await updateAdmin(admin.id, updateData);
@@ -45,6 +50,7 @@ const AdminModal: FC<AdminModalProps> = ({ admin, onClose, onSuccess }) => {
                     username: formData.username,
                     password: formData.password,
                     role: formData.role,
+                    email: formData.email || undefined,
                 });
             }
             onSuccess();
@@ -113,6 +119,27 @@ const AdminModal: FC<AdminModalProps> = ({ admin, onClose, onSuccess }) => {
                             <option value="admin">Admin</option>
                             <option value="superadmin">Superadmin</option>
                         </select>
+                    </div>
+
+                    {/* Email for notifications */}
+                    <div>
+                        <label className="block text-sm font-medium text-[#000033] mb-2">
+                            Email nhận thông báo
+                            <span className="text-gray-400 font-normal ml-1">(tùy chọn)</span>
+                        </label>
+                        <div className="relative">
+                            <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                            <input
+                                type="email"
+                                value={formData.email}
+                                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                                className="w-full pl-12 pr-4 py-3 bg-[#EDEDED] border border-gray-200 rounded-xl text-[#000033] focus:outline-none focus:border-[#0099FF] focus:ring-2 focus:ring-[#0099FF]/20"
+                                placeholder="admin@gmail.com"
+                            />
+                        </div>
+                        <p className="text-xs text-gray-400 mt-1.5 ml-1">
+                            Nhận email thông báo khi có feedback mới
+                        </p>
                     </div>
 
                     {/* Submit */}
