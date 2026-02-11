@@ -39,7 +39,7 @@ const Footer: FC<FooterProps> = ({ setCurrentView }) => (
                 <h5 className={`text-white font-bold mb-4 md:mb-6 uppercase text-xs tracking-widest ${styles.fonts.heading}`}>Hỗ trợ</h5>
                 <ul className="space-y-3 text-sm">
                     <li><a href="/article/5" className="hover:text-[#0099FF] transition">Công cụ hỗ trợ nghiên cứu khoa học</a></li>
-                    <li><button onClick={() => setCurrentView('resources')} className="hover:text-[#0099FF] transition">Hướng dẫn trích nguồn tài liệu</button></li>
+                    <li><a href="https://bioscizone.id.vn/article/33" className="hover:text-[#0099FF] transition">Hướng dẫn trích nguồn tài liệu</a></li>
                 </ul>
             </div>
 
