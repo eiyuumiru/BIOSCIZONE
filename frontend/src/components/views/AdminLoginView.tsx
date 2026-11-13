@@ -1,6 +1,6 @@
 import { useState, useEffect, memo, type FC, type FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Lock, User, AlertCircle, Dna, Send, UserPlus, CheckCircle } from 'lucide-react';
+import { Lock, User, AlertCircle, BookOpen, Send, UserPlus, CheckCircle } from 'lucide-react';
 import { login, isLoggedIn } from '../../services/adminApi';
 import { getRegistrationStatus } from '../../services/api';
 import { styles } from '../../data';
@@ -133,11 +133,11 @@ const AdminLoginView: FC = () => {
                     <div className="bg-[#000033] p-6 text-white">
                         <div className="flex items-center gap-3">
                             <div className="w-10 h-10 bg-[#0099FF] rounded-lg flex items-center justify-center">
-                                <Dna size={24} />
+                                <BookOpen size={24} className="text-[#0099FF]" />
                             </div>
                             <div>
                                 <h3 className={`text-xl font-bold ${styles.fonts.heading}`}>Admin Panel</h3>
-                                <p className="text-xs text-[#0099FF] font-medium uppercase tracking-wider">BIOSCIZONE Management</p>
+                                <p className="text-xs text-[#0099FF] font-medium uppercase tracking-wider">UNIGUIDE Management</p>
                             </div>
                         </div>
                     </div>

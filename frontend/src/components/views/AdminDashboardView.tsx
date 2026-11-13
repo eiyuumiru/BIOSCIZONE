@@ -2,7 +2,7 @@ import { useState, useEffect, type FC } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
     Users, FileText, MessageSquare, LogOut, Check, Trash2,
-    Plus, Mail, Calendar, Eye, Dna, Settings, UserCog, Shield, Clock, Edit, LogIn, X
+    Plus, Mail, Calendar, Eye, BookOpen, Settings, UserCog, Shield, Clock, Edit, LogIn, X
 } from 'lucide-react';
 import {
     isLoggedIn, logout, getPendingBuddies, approveBuddy, deleteBuddy,
@@ -24,8 +24,8 @@ type BuddySubTab = 'pending' | 'approved';
 type ArticleCategory = 'achievement' | 'magazine' | 'science_corner' | 'resource' | 'bio_info';
 
 const ARTICLE_CATEGORIES: { value: ArticleCategory; label: string }[] = [
-    { value: 'bio_info', label: 'Bio-Information' },
-    { value: 'magazine', label: 'Bio-Magazine' },
+    { value: 'bio_info', label: 'Uni-Information' },
+    { value: 'magazine', label: 'UNI-MAGAZINE' },
     { value: 'science_corner', label: 'Science Corner' },
     { value: 'achievement', label: 'Thành tích' },
     { value: 'resource', label: 'Tài nguyên' },
@@ -208,7 +208,7 @@ const AdminDashboardView: FC = () => {
                 <div className="container mx-auto px-8 md:px-12 lg:px-20 flex items-center justify-between">
                     <div className="flex items-center gap-2 md:gap-3">
                         <div className="relative w-8 h-8 md:w-10 md:h-10 flex items-center justify-center">
-                            <Dna className="text-[#0099FF] w-6 h-6 md:w-8 h-8 animate-[spin_10s_linear_infinite]" />
+                            <BookOpen className="text-[#0099FF] w-6 h-6 md:w-8 h-8" />
                         </div>
                         <div>
                             <div className="flex items-center gap-2">
@@ -219,7 +219,7 @@ const AdminDashboardView: FC = () => {
                                     </span>
                                 )}
                             </div>
-                            <p className="text-[10px] md:text-xs text-gray-400 uppercase tracking-widest font-medium">BIOSCIZONE Management</p>
+                            <p className="text-[10px] md:text-xs text-gray-400 uppercase tracking-widest font-medium">UNIGUIDE Management</p>
                         </div>
                     </div>
                     <button
@@ -344,7 +344,7 @@ const AdminDashboardView: FC = () => {
                                         approvedBuddies.length === 0 ? (
                                             <div className="text-center py-20 text-gray-400 bg-white rounded-2xl border border-gray-100">
                                                 <Users className="w-12 h-12 mx-auto mb-4 opacity-50" />
-                                                <p className="text-[#000033] font-medium">Chưa có Bio-Buddy nào được duyệt</p>
+                                                <p className="text-[#000033] font-medium">Chưa có Uni-Buddy nào được duyệt</p>
                                             </div>
                                         ) : (
                                             approvedBuddies.map(buddy => (

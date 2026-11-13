@@ -108,3 +108,74 @@ async def require_superadmin(current_user: dict = Depends(get_current_user_with_
             detail="Superadmin access required"
         )
     return current_user
+
+
+# ============ User (Student / Lecturer) Authentication ============
+
+def get_user_from_db(email: str):
+    """Get a student/lecturer user from database by email."""
+    conn = libsql.connect(
+        settings.TURSO_DATABASE_URL,
+        auth_token=settings.TURSO_AUTH_TOKEN
+    )
+    cursor = conn.execute(
+        "SELECT id, email, hashed_password, full_name, role, student_id, course, academic_title, academic_degree, workplace FROM users WHERE email = ?",
+        [email]
+    )
+    row = cursor.fetchone()
+    conn.close()
+    return row  # (id, email, hash, full_name, role, student_id, course, academic_title, academic_degree, workplace) or None
+
+
+def authenticate_email_user(email: str, password: str):
+    """Authenticate a student/lecturer user by email and password."""
+    row = get_user_from_db(email)
+    if not row:
+        return None
+    if verify_password(password, row[2]):
+        return {
+            "id": row[0],
+            "email": row[1],
+            "full_name": row[3],
+            "role": row[4],
+            "student_id": row[5],
+            "course": row[6],
+            "academic_title": row[7],
+            "academic_degree": row[8],
+            "workplace": row[9],
+        }
+    return None
+
+
+def require_role(*allowed_roles: str):
+    """Dependency factory: returns a dependency enforcing one of the allowed roles."""
+    async def role_checker(token: str = Depends(oauth2_scheme)):
+        credentials_exception = HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Could not validate credentials",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+        try:
+            payload = jwt.decode(token, settings.JWT_SECRET, algorithms=[settings.ALGORITHM])
+            email = payload.get("sub")
+            role = payload.get("role")
+            if email is None or role is None:
+                raise credentials_exception
+        except JWTError:
+            raise credentials_exception
+        if role not in allowed_roles:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail=f"Access requires one of roles: {', '.join(allowed_roles)}"
+            )
+        return {"email": email, "role": role}
+    return role_checker
+
+
+# Ready-made dependencies
+require_student = require_role("student")
+require_lecturer = require_role("lecturer")
+require_any_user = require_role("student", "lecturer")
+
+
+

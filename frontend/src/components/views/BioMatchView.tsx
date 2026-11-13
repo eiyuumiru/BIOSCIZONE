@@ -16,14 +16,16 @@ import { useNavigate } from 'react-router-dom';
 import LoadingSpinner from '../layout/LoadingSpinner';
 import { styles } from '../../data';
 import { getBuddies, getArticles, type BioBuddyAPI, type ArticleAPI } from '../../services/api';
+import { ALL_YEARS, RESEARCH_FIELDS, YEAR_LEVELS, directionsOf } from '../../data/taxonomy';
 
 type TabType = 'buddy' | 'info';
 
 const BioMatchView: FC = () => {
     const navigate = useNavigate();
     const [activeTab, setActiveTab] = useState<TabType>('buddy');
-    const [selectedCourse, setSelectedCourse] = useState<string>('All');
-    const [selectedFields, setSelectedFields] = useState<string[]>([]);
+    const [selectedCourse, setSelectedCourse] = useState<string>(ALL_YEARS);
+    const [selectedField, setSelectedField] = useState<string>('');
+    const [selectedDirections, setSelectedDirections] = useState<string[]>([]);
     const [selectedBuddyForContact, setSelectedBuddyForContact] = useState<BioBuddyAPI | null>(null);
     const [isContactModalAnimating, setIsContactModalAnimating] = useState(false);
     const [copiedField, setCopiedField] = useState<string | null>(null);
@@ -39,10 +41,10 @@ const BioMatchView: FC = () => {
     const [error, setError] = useState<string | null>(null);
     const [searchInfo, setSearchInfo] = useState('');
 
-    const courseOptions = ['All', 'K20', 'K21', 'K22', 'K23', 'K24', 'K25', 'Khác'];
-    const fieldOptions = ['Di truyền', 'Sinh học phân tử', 'Sinh hóa', 'Vi sinh', 'Sinh lý thực vật', 'Sinh lý động vật', 'Sinh thái - Tiến hóa', 'Khác'];
+    const yearOptions = [{ value: ALL_YEARS, label: 'Tất cả' }, ...YEAR_LEVELS.map((year) => ({ value: year, label: year }))];
+    const directionOptions = selectedField ? directionsOf(selectedField) : [];
 
-    // Fetch buddies when course filter changes
+    // Fetch buddies when year filter changes
     useEffect(() => {
         setLoadingBuddies(true);
         setError(null);
@@ -61,24 +63,26 @@ const BioMatchView: FC = () => {
             .finally(() => setLoadingArticles(false));
     }, []);
 
-    const toggleField = (field: string): void => {
-        if (selectedFields.includes(field)) {
-            setSelectedFields(selectedFields.filter(f => f !== field));
+    const toggleDirection = (direction: string): void => {
+        if (selectedDirections.includes(direction)) {
+            setSelectedDirections(selectedDirections.filter(item => item !== direction));
         } else {
-            setSelectedFields([...selectedFields, field]);
+            setSelectedDirections([...selectedDirections, direction]);
         }
     };
 
-    // Filter buddies by fields and search query
+    // Filter buddies by field, direction, and search query. Year is applied by the API.
     const filteredBuddies = buddies.filter(b => {
-        const matchesField = selectedFields.length === 0 || (b.research_field && selectedFields.includes(b.research_field));
-        if (!matchesField) return false;
+        const matchesField = !selectedField || b.research_field === selectedField;
+        const matchesDirection = selectedDirections.length === 0 || (b.research_subject != null && selectedDirections.includes(b.research_subject));
+        if (!matchesField || !matchesDirection) return false;
         if (!searchBuddy.trim()) return true;
         const query = searchBuddy.toLowerCase();
         return (
             b.full_name?.toLowerCase().includes(query) ||
             b.research_topic?.toLowerCase().includes(query) ||
             b.research_field?.toLowerCase().includes(query) ||
+            b.research_subject?.toLowerCase().includes(query) ||
             b.course?.toLowerCase().includes(query)
         );
     });
@@ -160,7 +164,7 @@ const BioMatchView: FC = () => {
                                         <h3 className={`text-xl font-bold text-white ${styles.fonts.heading}`}>
                                             Thông tin liên hệ
                                         </h3>
-                                        <p className="text-sm text-blue-200/70 font-medium mt-0.5">Bio-Buddy: {selectedBuddyForContact.full_name}</p>
+                                        <p className="text-sm text-blue-200/70 font-medium mt-0.5">Uni-Buddy: {selectedBuddyForContact.full_name}</p>
                                     </div>
                                 </div>
                                 <button
@@ -322,14 +326,14 @@ const BioMatchView: FC = () => {
                             className={`px-8 py-3 rounded-full font-bold text-sm transition-all duration-300 ${styles.fonts.body}
                 ${activeTab === 'buddy' ? 'bg-[#000033] text-white shadow-md' : 'text-gray-500 hover:text-[#0066CC]'}`}
                         >
-                            Bio-Buddy
+                            Uni-Buddy
                         </button>
                         <button
                             onClick={() => setActiveTab('info')}
                             className={`px-8 py-3 rounded-full font-bold text-sm transition-all duration-300 ${styles.fonts.body}
                 ${activeTab === 'info' ? 'bg-[#000033] text-white shadow-md' : 'text-gray-500 hover:text-[#0066CC]'}`}
                         >
-                            Bio-Information
+                            Uni-Information
                         </button>
                     </div>
                 </div>
@@ -354,57 +358,75 @@ const BioMatchView: FC = () => {
                                 </div>
                                 <div className="space-y-8">
                                     <div>
-                                        <label className="text-xs font-bold text-gray-400 uppercase mb-3 block tracking-wider">Khóa sinh viên</label>
+                                        <label className="text-xs font-bold text-gray-400 uppercase mb-3 block tracking-wider">Năm học</label>
                                         <div className="flex flex-wrap gap-2">
-                                            {courseOptions.map(k => (
-                                                <label key={k} className="cursor-pointer">
+                                            {yearOptions.map(option => (
+                                                <label key={option.value} className="cursor-pointer">
                                                     <input
                                                         type="radio"
                                                         name="course"
                                                         className="peer sr-only"
-                                                        checked={selectedCourse === k}
-                                                        onChange={() => setSelectedCourse(k)}
+                                                        checked={selectedCourse === option.value}
+                                                        onChange={() => setSelectedCourse(option.value)}
                                                     />
                                                     <span className="px-3 py-1 rounded-md text-sm border border-gray-200 text-gray-600 peer-checked:bg-[#0066CC] peer-checked:text-white peer-checked:border-[#0066CC] transition hover:border-[#0066CC]">
-                                                        {k}
+                                                        {option.label}
                                                     </span>
                                                 </label>
                                             ))}
                                         </div>
                                     </div>
                                     <div>
-                                        <label className="text-xs font-bold text-gray-400 uppercase mb-3 block tracking-wider">Hướng nghiên cứu</label>
-                                        <div className="space-y-3">
-                                            {fieldOptions.map(k => (
-                                                <label key={k} className="flex items-center gap-3 text-sm text-gray-700 cursor-pointer hover:text-[#0066CC] group">
-                                                    <div className={`w-4 h-4 rounded border flex items-center justify-center transition ${selectedFields.includes(k) ? 'border-[#0066CC] bg-[#E6F4FF]' : 'border-gray-300 group-hover:border-[#0066CC]'}`}>
-                                                        <input
-                                                            type="checkbox"
-                                                            className="sr-only"
-                                                            checked={selectedFields.includes(k)}
-                                                            onChange={() => toggleField(k)}
-                                                        />
-                                                        <div className={`w-2 h-2 rounded bg-[#0066CC] transition ${selectedFields.includes(k) ? 'opacity-100 scale-100' : 'opacity-0 scale-50 group-hover:opacity-30'}`}></div>
-                                                    </div>
-                                                    {k}
-                                                </label>
+                                        <label className="text-xs font-bold text-gray-400 uppercase mb-3 block tracking-wider">Lĩnh vực</label>
+                                        <select
+                                            value={selectedField}
+                                            onChange={(e) => {
+                                                setSelectedField(e.target.value);
+                                                setSelectedDirections([]);
+                                            }}
+                                            className="w-full px-3 py-2.5 rounded-lg border border-gray-200 bg-gray-50 text-sm text-gray-700 focus:border-[#0066CC] focus:bg-white focus:ring-2 focus:ring-[#0066CC]/20 outline-none"
+                                        >
+                                            <option value="">Tất cả lĩnh vực</option>
+                                            {RESEARCH_FIELDS.map(field => (
+                                                <option key={field.name} value={field.name}>{field.name}</option>
                                             ))}
-                                        </div>
+                                        </select>
                                     </div>
+                                    {selectedField && (
+                                        <div>
+                                            <label className="text-xs font-bold text-gray-400 uppercase mb-3 block tracking-wider">Hướng nghiên cứu</label>
+                                            <div className="space-y-3 max-h-56 overflow-y-auto pr-1">
+                                                {directionOptions.map(direction => (
+                                                    <label key={direction} className="flex items-start gap-3 text-sm text-gray-700 cursor-pointer hover:text-[#0066CC] group">
+                                                        <div className={`mt-0.5 w-4 h-4 rounded border flex items-center justify-center shrink-0 transition ${selectedDirections.includes(direction) ? 'border-[#0066CC] bg-[#E6F4FF]' : 'border-gray-300 group-hover:border-[#0066CC]'}`}>
+                                                            <input
+                                                                type="checkbox"
+                                                                className="sr-only"
+                                                                checked={selectedDirections.includes(direction)}
+                                                                onChange={() => toggleDirection(direction)}
+                                                            />
+                                                            <div className={`w-2 h-2 rounded bg-[#0066CC] transition ${selectedDirections.includes(direction) ? 'opacity-100 scale-100' : 'opacity-0 scale-50 group-hover:opacity-30'}`}></div>
+                                                        </div>
+                                                        {direction}
+                                                    </label>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                         </aside>
 
                         <div className="flex-1 relative pb-12">
                             {loadingBuddies ? (
-                                <LoadingSpinner fullScreen={false} message="Đang tìm kiếm Bio-Buddy..." />
+                                <LoadingSpinner fullScreen={false} message="Đang tìm kiếm Uni-Buddy..." />
                             ) : error ? (
                                 <div className="text-center py-20 text-red-500">
                                     <p>Đã xảy ra lỗi: {error}</p>
                                 </div>
                             ) : filteredBuddies.length === 0 ? (
                                 <div className="text-center py-20 text-gray-500">
-                                    <p>{searchBuddy || selectedFields.length > 0 ? 'Không tìm thấy kết quả phù hợp.' : 'Chưa có dữ liệu Bio-Buddy nào.'}</p>
+                                    <p>{searchBuddy || selectedField || selectedDirections.length > 0 ? 'Không tìm thấy kết quả phù hợp.' : 'Chưa có dữ liệu Uni-Buddy nào.'}</p>
                                 </div>
                             ) : (
                                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
@@ -463,10 +485,10 @@ const BioMatchView: FC = () => {
                     </div>
                 ) : (
                     <div className="max-w-4xl mx-auto">
-                        {/* Bio-Information Articles Section */}
+                        {/* Uni-Information Articles Section */}
                         <div className="mb-12">
                             <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-6">
-                                <h3 className={`text-xl font-bold text-[#000033] ${styles.fonts.heading}`}>Bio-Information</h3>
+                                <h3 className={`text-xl font-bold text-[#000033] ${styles.fonts.heading}`}>Uni-Information</h3>
                                 <div className="relative w-full md:w-72">
                                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
                                     <input
@@ -481,7 +503,7 @@ const BioMatchView: FC = () => {
 
                             <div className="space-y-4">
                                 {loadingArticles ? (
-                                    <LoadingSpinner fullScreen={false} message="Đang tải Bio-Information..." />
+                                    <LoadingSpinner fullScreen={false} message="Đang tải Uni-Information..." />
                                 ) : filteredArticles.length === 0 ? (
                                     <div className="text-center py-10 bg-white rounded-xl border border-dashed border-gray-300 text-gray-400 text-sm">
                                         Không tìm thấy bài viết nào.

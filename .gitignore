@@ -40,6 +40,10 @@ Thumbs.db
 
 # Backend
 .venv
+venv/
 __pycache__
 *.pyc
+
+# Local SQLite DB
+*.db
 

@@ -17,7 +17,10 @@ class Settings(BaseSettings):
     SMTP_PORT: int = 587
     SMTP_USER: Optional[str] = None
     SMTP_PASSWORD: Optional[str] = None
-    SMTP_FROM_NAME: str = "BIOSCIZONE"
+    SMTP_FROM_NAME: str = "UNIGUIDE"
+    # Gemini chatbot
+    GEMINI_API_KEY: Optional[str] = None
+    GEMINI_MODEL: str = "gemini-3.1-flash-lite"
 
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding='utf-8')
 

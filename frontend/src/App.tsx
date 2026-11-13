@@ -6,6 +6,7 @@ import { CheckCircle } from 'lucide-react';
 import Navigation from './components/layout/Navigation';
 import Footer from './components/layout/Footer';
 import IdeaModal from './components/layout/IdeaModal';
+import ChatbotWidget from './components/layout/ChatbotWidget';
 import LoadingSpinner from './components/layout/LoadingSpinner';
 
 // View Components (lazy loaded)
@@ -19,10 +20,12 @@ const ContactView = lazy(() => import('./components/views/ContactView'));
 const ArticleDetailView = lazy(() => import('./components/views/ArticleDetailView'));
 
 // Admin Views (lazy loaded)
+const AuthView = lazy(() => import('./components/views/AuthView'));
 const AdminLoginView = lazy(() => import('./components/views/AdminLoginView'));
 const AdminDashboardView = lazy(() => import('./components/views/AdminDashboardView'));
 
 import { styles } from './data';
+import { AuthProvider } from './context/AuthContext';
 
 
 // Scroll to top on route change
@@ -48,7 +51,7 @@ const AppContent: FC = () => {
     const handleSubmitSuccess = () => {
         setSuccessMessage({
             title: 'Đã gửi ý tưởng thành công!',
-            desc: 'Cảm ơn bạn đã chia sẻ với BIOSCIZONE'
+            desc: 'Cảm ơn bạn đã chia sẻ với UNIGUIDE'
         });
         setIsIdeaModalOpen(false);
         setShowSuccessToast(true);
@@ -124,6 +127,9 @@ const AppContent: FC = () => {
 
             <Footer setCurrentView={setCurrentView} />
 
+            {/* AI Chatbot (Gemini) */}
+            <ChatbotWidget />
+
             <IdeaModal
                 isOpen={isIdeaModalOpen}
                 onClose={() => setIsIdeaModalOpen(false)}
@@ -149,6 +155,7 @@ const AppContent: FC = () => {
 // App wrapper with Router
 const App: FC = () => {
     return (
+        <AuthProvider>
         <BrowserRouter>
             <Routes>
                 {/* Admin Routes - No Navigation/Footer */}
@@ -162,10 +169,18 @@ const App: FC = () => {
                         <AdminDashboardView />
                     </Suspense>
                 } />
+                {/* Auth Routes (student / lecturer) - No Navigation/Footer */}
+                <Route path="/login" element={
+                    <Suspense fallback={<LoadingSpinner />}><AuthView /></Suspense>
+                } />
+                <Route path="/register" element={
+                    <Suspense fallback={<LoadingSpinner />}><AuthView /></Suspense>
+                } />
                 {/* Main App Routes */}
                 <Route path="/*" element={<AppContent />} />
             </Routes>
         </BrowserRouter>
+        </AuthProvider>
     );
 };
 

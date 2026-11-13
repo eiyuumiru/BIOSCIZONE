@@ -93,7 +93,7 @@ export function logout(): void {
 }
 
 /**
- * Get pending bio-buddy submissions
+ * Get pending Uni-Buddy submissions
  */
 export async function getPendingBuddies(): Promise<BioBuddyAPI[]> {
     const response = await fetch(`${API_BASE_URL}/api/admin/pending`, {
@@ -112,7 +112,7 @@ export async function getPendingBuddies(): Promise<BioBuddyAPI[]> {
 }
 
 /**
- * Approve a bio-buddy submission
+ * Approve a Uni-Buddy submission
  */
 export async function approveBuddy(id: number): Promise<{ message: string }> {
     const response = await fetch(`${API_BASE_URL}/api/admin/approve-buddy/${id}`, {
@@ -125,7 +125,7 @@ export async function approveBuddy(id: number): Promise<{ message: string }> {
 }
 
 /**
- * Delete a bio-buddy submission
+ * Delete a Uni-Buddy submission
  */
 export async function deleteBuddy(id: number): Promise<{ message: string }> {
     const response = await fetch(`${API_BASE_URL}/api/admin/buddies/${id}`, {

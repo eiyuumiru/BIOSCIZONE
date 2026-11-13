@@ -1,5 +1,5 @@
 import { type FC } from 'react';
-import { Dna } from 'lucide-react';
+import { BookOpen } from 'lucide-react';
 
 interface LoadingSpinnerProps {
     fullScreen?: boolean;
@@ -17,7 +17,7 @@ const LoadingSpinner: FC<LoadingSpinnerProps> = ({
     return (
         <div className={containerClasses}>
             <div className="text-center">
-                <Dna className="w-12 h-12 text-[#0099FF] animate-spin mx-auto mb-4" />
+                <BookOpen className="w-12 h-12 text-[#0099FF] mx-auto mb-4" />
                 <p className="text-gray-500 font-medium">{message}</p>
             </div>
         </div>

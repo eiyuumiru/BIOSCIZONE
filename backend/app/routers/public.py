@@ -5,6 +5,7 @@ import threading
 from ..database import get_db
 from ..models import BioBuddyResponse, BioBuddyCreate, ArticleResponse, FeedbackCreate, LabResponse
 from ..email_service import is_smtp_configured, send_email_async, create_feedback_notification_email
+from ..taxonomy import is_valid_direction, is_valid_year
 
 router = APIRouter()
 
@@ -22,13 +23,19 @@ def get_approved_buddies(course: str = None, db: libsql.Connection = Depends(get
 
 @router.post("/buddies/submit")
 def submit_buddy(buddy: BioBuddyCreate, db: libsql.Connection = Depends(get_db)):
+    # Validate year only for students (course is optional for lecturers)
+    if buddy.course and not is_valid_year(buddy.course):
+        raise HTTPException(status_code=400, detail="Năm học không hợp lệ")
+    if not buddy.research_field or not buddy.research_subject or not is_valid_direction(buddy.research_field, buddy.research_subject):
+        raise HTTPException(status_code=400, detail="Lĩnh vực hoặc hướng nghiên cứu không hợp lệ")
     query = """
-    INSERT INTO bio_buddies (full_name, student_id, course, email, phone, research_topic, research_field, research_subject, description)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+    INSERT INTO bio_buddies (full_name, student_id, course, academic_title, academic_degree, workplace, email, phone, research_topic, research_field, research_subject, description)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     """
     db.execute(query, [
-        buddy.full_name, buddy.student_id, buddy.course, buddy.email, 
-        buddy.phone, buddy.research_topic, buddy.research_field, 
+        buddy.full_name, buddy.student_id, buddy.course,
+        buddy.academic_title, buddy.academic_degree, buddy.workplace,
+        buddy.email, buddy.phone, buddy.research_topic, buddy.research_field,
         buddy.research_subject, buddy.description
     ])
     db.commit()

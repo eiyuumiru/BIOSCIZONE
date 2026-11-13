@@ -1,18 +1,24 @@
 import type { FC } from 'react';
 import {
-    Dna,
     X,
     Menu,
-    Lightbulb
+    Lightbulb,
+    LogIn,
+    LogOut,
+    GraduationCap,
+    BookOpen
 } from 'lucide-react';
 import { styles } from '../../data';
 import type { NavigationProps, NavItem } from '../../types';
+import { useAuth } from '../../context/AuthContext';
 
 const Navigation: FC<NavigationProps> = ({ currentView, setCurrentView, isMenuOpen, setIsMenuOpen, scrolled, onIdeaClick }) => {
+    const { user, logout } = useAuth();
+
     const desktopNavItems: NavItem[] = [
         { id: 'home', label: 'Trang chủ' },
-        { id: 'bio-match', label: 'Bio-Match' },
-        { id: 'bio-magazine', label: 'Bio-Magazine' },
+        { id: 'bio-match', label: 'UNI-MATCH' },
+        { id: 'bio-magazine', label: 'UNI-MAGAZINE' },
         { id: 'science-corner', label: 'SCIENCE CORNER' },
         { id: 'achievements', label: 'Thành tích' },
         { id: 'resources', label: 'Tài nguyên' },
@@ -21,8 +27,8 @@ const Navigation: FC<NavigationProps> = ({ currentView, setCurrentView, isMenuOp
 
     const mobileNavItems: NavItem[] = [
         { id: 'home', label: 'Trang chủ' },
-        { id: 'bio-match', label: 'Bio-Match' },
-        { id: 'bio-magazine', label: 'Bio-Magazine' },
+        { id: 'bio-match', label: 'UNI-MATCH' },
+        { id: 'bio-magazine', label: 'UNI-MAGAZINE' },
         { id: 'science-corner', label: 'SCIENCE CORNER' },
         { id: 'achievements', label: 'Thành tích' },
         { id: 'resources', label: 'Tài nguyên' },
@@ -37,21 +43,21 @@ const Navigation: FC<NavigationProps> = ({ currentView, setCurrentView, isMenuOp
                     : 'bg-[#000033] py-4'}
     `}
         >
-            <div className="container mx-auto px-8 md:px-12 lg:px-20">
+            <div className="container mx-auto px-4 md:px-6">
                 <div className="flex justify-between items-center">
-                    {/* Logo Section */}
+                    {/* Logo Section - pinned to the far left */}
                     <div
-                        className="flex items-center space-x-2 md:space-x-3 cursor-pointer group"
+                        className="flex items-center space-x-2 md:space-x-3 cursor-pointer group shrink-0"
                         onClick={() => { setCurrentView('home'); setIsMenuOpen(false); }}
                     >
                         <div className="relative w-7 h-7 md:w-9 md:h-9 flex items-center justify-center">
-                            <Dna className="text-[#0099FF] w-5 h-5 md:w-7 md:h-7 animate-[spin_10s_linear_infinite]" />
+                            <BookOpen className="text-[#0099FF] w-5 h-5 md:w-7 md:h-7" />
                         </div>
-                        <span className={`font-bold text-base md:text-xl tracking-tight text-white ${styles.fonts.heading}`}>BIOSCIZONE</span>
+                        <span className={`font-bold text-base md:text-xl tracking-tight text-white ${styles.fonts.heading}`}>UNIGUIDE</span>
                     </div>
 
                     {/* Desktop Nav */}
-                    <div className="hidden lg:flex items-center space-x-6 xl:space-x-8">
+                    <div className="hidden lg:flex items-center gap-4 xl:gap-6 ml-auto pl-4">
                         {desktopNavItems.map((item) => (
                             <button
                                 key={item.id}
@@ -70,6 +76,32 @@ const Navigation: FC<NavigationProps> = ({ currentView, setCurrentView, isMenuOp
                         >
                             <Lightbulb size={12} /> Ý tưởng
                         </button>
+
+                        {user ? (
+                            <div className="flex items-center gap-2">
+                                <div className="flex items-center gap-2 text-white max-w-[160px]">
+                                    {user.role === 'student'
+                                        ? <GraduationCap size={16} className="text-[#0099FF] shrink-0" />
+                                        : <BookOpen size={16} className="text-[#0099FF] shrink-0" />}
+                                    <span className="text-xs truncate" title={user.full_name}>{user.full_name}</span>
+                                    <span className="text-[10px] text-[#0099FF] font-bold uppercase shrink-0">{user.role === 'student' ? 'SV' : 'GV'}</span>
+                                </div>
+                                <button
+                                    onClick={() => { logout(); }}
+                                    title="Đăng xuất"
+                                    className="text-gray-300 hover:text-white p-2 rounded-full hover:bg-white/10 transition"
+                                >
+                                    <LogOut size={16} />
+                                </button>
+                            </div>
+                        ) : (
+                            <button
+                                onClick={() => setCurrentView('login')}
+                                className="border border-[#0099FF]/60 hover:bg-[#0099FF]/10 text-white px-4 py-2 rounded-full text-[10px] xl:text-xs font-bold flex items-center gap-2 whitespace-nowrap transition -mt-1"
+                            >
+                                <LogIn size={12} /> Đăng nhập
+                            </button>
+                        )}
                     </div>
 
                     {/* Mobile Menu Toggle */}
@@ -98,6 +130,21 @@ const Navigation: FC<NavigationProps> = ({ currentView, setCurrentView, isMenuOp
                         >
                             Gửi ý tưởng nghiên cứu
                         </button>
+                        {user ? (
+                            <button
+                                onClick={() => { logout(); setIsMenuOpen(false); }}
+                                className="w-full border border-gray-600 text-gray-200 py-3 rounded-full font-bold text-center flex items-center justify-center gap-2"
+                            >
+                                <LogOut size={16} /> Đăng xuất ({user.full_name})
+                            </button>
+                        ) : (
+                            <button
+                                onClick={() => { setCurrentView('login'); setIsMenuOpen(false); }}
+                                className="w-full border border-[#0099FF] text-white py-3 rounded-full font-bold text-center flex items-center justify-center gap-2"
+                            >
+                                <LogIn size={16} /> Đăng nhập
+                            </button>
+                        )}
                     </div>
                 </div>
             )}

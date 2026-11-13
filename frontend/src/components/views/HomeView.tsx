@@ -4,7 +4,7 @@ import {
     Microscope,
     Beaker,
     Share2,
-    Dna,
+    BookOpen,
     Video,
     FileBadge,
     Users,
@@ -16,8 +16,8 @@ import type { HomeViewProps, QuickAccessCard } from '../../types';
 const HomeView: FC<HomeViewProps> = ({ setCurrentView, onIdeaClick }) => {
     const quickAccessCards: QuickAccessCard[] = [
         { title: "Science Corner", icon: <Video />, desc: "Video ngắn và bài chia sẻ kinh nghiệm Nghiên cứu khoa học." },
-        { title: "Bio-Magazine", icon: <FileBadge />, desc: "Cập nhật các bài báo khoa học đã công bố." },
-        { title: "Bio-Match", icon: <Users />, desc: "Tìm kiếm bạn đồng hành và giảng viên hướng dẫn." }
+        { title: "UNI-MAGAZINE", icon: <FileBadge />, desc: "Cập nhật các bài báo khoa học đã công bố." },
+        { title: "UNI-MATCH", icon: <Users />, desc: "Tìm kiếm bạn đồng hành và giảng viên hướng dẫn." }
     ];
 
     return (
@@ -63,7 +63,7 @@ const HomeView: FC<HomeViewProps> = ({ setCurrentView, onIdeaClick }) => {
                             <span className="text-[#0099FF]">Kết nối Đam mê</span>
                         </h1>
                         <p className={`text-gray-600 text-sm md:text-base mb-8 max-w-md mx-auto md:mx-0 leading-relaxed ${styles.fonts.body}`}>
-                            Mạng lưới kết nối sinh viên, giảng viên và các nguồn lực nghiên cứu khoa học hàng đầu tại Khoa Sinh học - Công nghệ Sinh học, Trường Đại học Khoa học tự nhiên, ĐHQG-HCM.
+                            Mạng lưới kết nối sinh viên, giảng viên và các nguồn lực nghiên cứu khoa học tại Thành phố Hồ Chí Minh.
                         </p>
 
                         <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
@@ -88,17 +88,17 @@ const HomeView: FC<HomeViewProps> = ({ setCurrentView, onIdeaClick }) => {
                         </div>
                     </div>
 
-                    {/* Right Column: DNA Orbital Animation - 2.5x larger */}
+                    {/* Right Column: Trang sách mở Animation - 2.5x larger */}
                     <div className="relative h-[350px] md:h-[500px] flex items-center justify-center overflow-visible">
                         <div className="scale-[0.4] md:scale-[0.7] lg:scale-90 flex items-center justify-center relative">
-                            {/* DNA Axis / Central Hub */}
+                            {/* Trang sách mở Axis / Central Hub */}
                             <div className="w-[500px] h-[500px] rounded-full border-2 border-dashed border-[#000080]/40 flex items-center justify-center relative animate-[spin_20s_linear_infinite]">
                                 <div className="absolute w-full h-full rounded-full border border-[#33CCFF] opacity-30 scale-125"></div>
                             </div>
 
                             {/* Central Logo */}
                             <div className="absolute bg-white p-8 rounded-full border border-[#0099FF]/40 shadow-[0_0_20px_rgba(0,153,255,0.3)] z-20">
-                                <Dna className="text-[#0099FF] w-16 h-16" />
+                                <BookOpen className="text-[#0099FF] w-16 h-16" />
                             </div>
 
                             {/* Orbiting Icons */}
@@ -121,22 +121,22 @@ const HomeView: FC<HomeViewProps> = ({ setCurrentView, onIdeaClick }) => {
                 </div>
             </section>
 
-            {/* VỀ BIOSCIZONE Section */}
+            {/* VỀ UNIGUIDE Section */}
             <section className="py-20 bg-white">
                 <div className="container mx-auto px-8 md:px-12 lg:px-20 max-w-4xl text-center">
                     <h2 className={`text-3xl md:text-4xl font-extrabold mb-8 ${styles.fonts.heading}`}>
                         <span className="text-[#000033]">VỀ </span>
-                        <span className="text-[#0099FF]">BIOSCIZONE</span>
+                        <span className="text-[#0099FF]">UNIGUIDE</span>
                     </h2>
                     <div className={`text-gray-700 text-base md:text-lg leading-relaxed mb-10 text-justify ${styles.fonts.body}`}>
                         <p className="mb-4">
-                            Nằm trong khuôn khổ công trình thanh niên “BIO-RESEARCH” của Đoàn khoa Sinh học - Công nghệ Sinh học nhiệm kỳ 2025 - 2027, BIOSCIZONE ra đời với sứ mệnh tiên phong số hóa toàn diện hành trình nghiên cứu của sinh viên Khoa Sinh học – Công nghệ Sinh học, Trường Đại học Khoa học tự nhiên, ĐHQG-HCM.
+                            UNIGUIDE ra đời với sứ mệnh tiên phong số hóa toàn diện hành trình nghiên cứu của sinh viên, giảng viên tại Thành phố Hồ Chí Minh.
                         </p>
                         <p className="mb-4">
-                            Chúng tôi kiến tạo một hệ sinh thái học thuật trực tuyến, nơi công nghệ trở thành đòn bẩy cho trí tuệ. Tại BIOSCIZONE, mọi rào cản thông tin được xóa bỏ nhờ kho dữ liệu mở về quy trình và kỹ năng chuyên sâu. Đặc biệt, với tính năng Bio-Match, chúng tôi thiết lập một mạng lưới kết nối đa chiều: từ sự cộng hưởng giữa sinh viên với sinh viên, đến sự bảo trợ chuyên môn từ Giảng viên và Cựu sinh viên.
+                            Chúng tôi kiến tạo một hệ sinh thái học thuật trực tuyến, nơi công nghệ trở thành đòn bẩy cho trí tuệ. Tại UNIGUIDE, mọi rào cản thông tin được xóa bỏ nhờ kho dữ liệu mở về quy trình và kỹ năng chuyên sâu. Đặc biệt, với tính năng UNI-MATCH, chúng tôi thiết lập một mạng lưới kết nối đa chiều: từ sự cộng hưởng giữa sinh viên với sinh viên, đến sự bảo trợ chuyên môn từ Giảng viên và Cựu sinh viên.
                         </p>
                         <p>
-                            Hơn cả một công cụ, BIOSCIZONE là lời khẳng định về thế hệ sinh viên Khoa học tự nhiên hiện đại: Làm chủ công nghệ - Vững vàng chuyên môn - Sẵn sàng kết nối. Đây chính là bệ phóng để những ý tưởng từ phòng thí nghiệm vươn mình trở thành giải pháp thực tiễn cho cuộc sống.
+                            Hơn cả một công cụ, UNIGUIDE là lời khẳng định về thế hệ sinh viên hiện đại tại TP Hồ Chí Minh: Làm chủ công nghệ - Vững vàng chuyên môn - Sẵn sàng kết nối. Đây chính là bệ phóng để những ý tưởng từ phòng thí nghiệm vươn mình trở thành giải pháp thực tiễn cho cuộc sống.
                         </p>
                     </div>
                     <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -168,7 +168,7 @@ const HomeView: FC<HomeViewProps> = ({ setCurrentView, onIdeaClick }) => {
                                 key={idx}
                                 onClick={() => {
                                     if (card.title === "Science Corner") setCurrentView('science-corner');
-                                    else if (card.title === "Bio-Magazine") setCurrentView('bio-magazine');
+                                    else if (card.title === "UNI-MAGAZINE") setCurrentView('bio-magazine');
                                     else setCurrentView('bio-match');
                                 }}
                                 className="bg-white p-8 rounded-2xl hover:bg-white border border-transparent hover:border-[#0099FF]/30 hover:shadow-xl transition-all duration-300 group cursor-pointer"

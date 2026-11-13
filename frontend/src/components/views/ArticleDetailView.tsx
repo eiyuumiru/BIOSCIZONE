@@ -70,9 +70,9 @@ const ArticleDetailView: FC = () => {
                         <div className="flex items-center gap-3 mb-4">
                             <span className="px-2 py-0.5 bg-blue-50 text-[#0066CC] rounded text-[10px] font-bold uppercase tracking-widest">
                                 {article.category === 'resource' ? 'Tài nguyên' :
-                                    article.category === 'magazine' ? 'Bio-Magazine' :
+                                    article.category === 'magazine' ? 'UNI-MAGAZINE' :
                                         article.category === 'achievement' ? 'Thành tích' :
-                                            article.category === 'bio_info' ? 'Bio-Information' : 'Science Corner'}
+                                            article.category === 'bio_info' ? 'Uni-Information' : 'Science Corner'}
                             </span>
                             <div className="h-1 w-1 bg-gray-300 rounded-full"></div>
                             <span className="text-xs text-gray-400 font-medium">

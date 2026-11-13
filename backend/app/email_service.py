@@ -1,5 +1,5 @@
 """
-Email Service Module for BiosciZone
+Email Service Module for UniGuide
 Handles sending email notifications via SMTP (Gmail)
 """
 
@@ -117,7 +117,7 @@ def create_feedback_notification_email(
     Returns:
         Tuple of (email_subject, html_content, text_content)
     """
-    email_subject = f"[BiosciZone] Feedback mới từ {sender_name}"
+    email_subject = f"[UniGuide] Feedback mới từ {sender_name}"
     
     html_content = f"""
     <!DOCTYPE html>
@@ -167,7 +167,7 @@ def create_feedback_notification_email(
                 </div>
             </div>
             <div class="footer">
-                Email này được gửi tự động từ hệ thống BiosciZone.<br>
+                Email này được gửi tự động từ hệ thống UNIGUIDE.<br>
                 Vui lòng đăng nhập vào Admin Panel để phản hồi.
             </div>
         </div>
@@ -176,7 +176,7 @@ def create_feedback_notification_email(
     """
     
     text_content = f"""
-[BiosciZone] Có Feedback Mới!
+[UniGuide] Có Feedback Mới!
 
 Họ tên: {sender_name}
 Email: {sender_email}
@@ -187,7 +187,7 @@ Nội dung:
 {message}
 
 ---
-Email này được gửi tự động từ hệ thống BiosciZone.
+Email này được gửi tự động từ hệ thống UNIGUIDE.
 Vui lòng đăng nhập vào Admin Panel để phản hồi.
     """
     

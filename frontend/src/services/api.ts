@@ -65,7 +65,10 @@ export async function getBuddies(course?: string): Promise<BioBuddyAPI[]> {
 export async function submitBuddy(data: {
     full_name: string;
     student_id?: string;
-    course: string;
+    course?: string;
+    academic_title?: string;
+    academic_degree?: string;
+    workplace?: string;
     email: string;
     phone?: string;
     research_topic: string;
@@ -78,7 +81,16 @@ export async function submitBuddy(data: {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
     });
-    if (!response.ok) throw new Error('Failed to submit buddy');
+    if (!response.ok) {
+        let message = 'Failed to submit buddy';
+        try {
+            const body = await response.json();
+            if (typeof body.detail === 'string') message = body.detail;
+        } catch {
+            // Keep the default message when the body is not JSON.
+        }
+        throw new Error(message);
+    }
     return response.json();
 }
 

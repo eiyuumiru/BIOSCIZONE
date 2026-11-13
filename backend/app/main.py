@@ -1,10 +1,10 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from .routers import public, admin
+from .routers import public, admin, users, chatbot
 from .database import init_db
 from .config import settings
 
-app = FastAPI(title="BiosciZone API", version="1.0.0")
+app = FastAPI(title="UniGuide API", version="1.0.0")
 
 # CORS Configuration - origins read from environment variable
 origins = [origin.strip() for origin in settings.CORS_ORIGINS.split(",")]
@@ -20,13 +20,15 @@ app.add_middleware(
 # Root endpoint
 @app.get("/")
 def read_root():
-    return {"message": "Welcome to BiosciZone API"}
+    return {"message": "Welcome to UniGuide API"}
 
 # Include routers
 app.include_router(public.router, prefix="/api", tags=["Public"])
 app.include_router(admin.router, prefix="/api/admin", tags=["Admin"])
+app.include_router(users.router, prefix="/api/auth", tags=["Auth"])
+app.include_router(chatbot.router, prefix="/api/chatbot", tags=["Chatbot"])
 
-# Command to initialize DB schema
+# Command to initialize DB schema (creates tables incl. users)
 @app.post("/api/init-db", tags=["System"])
 def initialize_database():
     try:

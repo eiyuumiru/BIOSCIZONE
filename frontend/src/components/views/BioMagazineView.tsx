@@ -39,8 +39,8 @@ const BioMagazineView: FC = () => {
         <div className="min-h-screen pt-28 pb-20 bg-[#EDEDED]">
             <div className="container mx-auto px-8 md:px-12 lg:px-20 max-w-5xl">
                 <div className="text-center mb-10">
-                    <h2 className={`text-3xl font-extrabold text-[#000033] ${styles.fonts.heading}`}>BIO-MAGAZINE</h2>
-                    <p className="text-gray-600 mt-2">Tổng hợp bài báo, tạp chí Nghiên cứu khoa học của Giảng viên & Sinh viên.</p>
+                    <h2 className={`text-3xl font-extrabold text-[#000033] ${styles.fonts.heading}`}>UNI-MAGAZINE</h2>
+                    <p className="text-gray-600 mt-2">Tổng hợp bài báo, tạp chí Nghiên cứu khoa học của Giảng viên & Sinh viên tại TP Hồ Chí Minh.</p>
                 </div>
 
                 {/* Search Bar */}
@@ -58,14 +58,14 @@ const BioMagazineView: FC = () => {
                 </div>
 
                 {loading ? (
-                    <LoadingSpinner fullScreen={false} message="Đang tải Bio-Magazine..." />
+                    <LoadingSpinner fullScreen={false} message="Đang tải UNI-MAGAZINE..." />
                 ) : error ? (
                     <div className="text-center py-20 text-red-500">
                         <p>Đã xảy ra lỗi: {error}</p>
                     </div>
                 ) : filteredArticles.length === 0 ? (
                     <div className="text-center py-20 text-gray-500">
-                        <p>{searchQuery ? 'Không tìm thấy kết quả phù hợp.' : 'Chưa có bài báo nào trong Bio-Magazine.'}</p>
+                        <p>{searchQuery ? 'Không tìm thấy kết quả phù hợp.' : 'Chưa có bài báo nào trong UNI-MAGAZINE.'}</p>
                     </div>
                 ) : (
                     <div className="space-y-4">

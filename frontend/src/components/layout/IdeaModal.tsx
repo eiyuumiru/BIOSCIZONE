@@ -8,25 +8,33 @@ import {
 import { styles } from '../../data';
 import { submitBuddy } from '../../services/api';
 import type { IdeaModalProps } from '../../types';
+import { DEFAULT_FIELD, RESEARCH_FIELDS, YEAR_LEVELS, directionsOf } from '../../data/taxonomy';
+import { useAuth } from '../../context/AuthContext';
+
+const emptyForm = () => ({
+    full_name: '',
+    student_id: '',
+    course: YEAR_LEVELS[0],
+    academic_title: '',
+    academic_degree: '',
+    workplace: '',
+    email: '',
+    phone: '',
+    research_topic: '',
+    research_field: DEFAULT_FIELD,
+    research_subject: directionsOf(DEFAULT_FIELD)[0],
+    description: ''
+});
 
 const IdeaModal: FC<IdeaModalProps> = ({ isOpen, onClose, onSubmitSuccess }) => {
     const [isVisible, setIsVisible] = useState(false);
     const [isAnimating, setIsAnimating] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const { user } = useAuth();
 
     // Form state
-    const [formData, setFormData] = useState({
-        full_name: '',
-        student_id: '',
-        course: 'K20',
-        email: '',
-        phone: '',
-        research_topic: '',
-        research_field: 'Di truyền',
-        research_subject: '',
-        description: ''
-    });
+    const [formData, setFormData] = useState(emptyForm);
 
     useEffect(() => {
         if (isOpen && !isVisible) {
@@ -51,7 +59,12 @@ const IdeaModal: FC<IdeaModalProps> = ({ isOpen, onClose, onSubmitSuccess }) => 
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
-        setFormData(prev => ({ ...prev, [name]: value }));
+        setFormData(prev => {
+            if (name === 'research_field') {
+                return { ...prev, research_field: value, research_subject: directionsOf(value)[0] ?? '' };
+            }
+            return { ...prev, [name]: value };
+        });
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -60,10 +73,14 @@ const IdeaModal: FC<IdeaModalProps> = ({ isOpen, onClose, onSubmitSuccess }) => 
         setIsSubmitting(true);
 
         try {
+            const isLecturer = user?.role === 'lecturer';
             await submitBuddy({
                 full_name: formData.full_name,
-                student_id: formData.student_id || undefined,
-                course: formData.course,
+                student_id: isLecturer ? undefined : (formData.student_id || undefined),
+                course: isLecturer ? undefined : formData.course,
+                academic_title: isLecturer ? formData.academic_title : undefined,
+                academic_degree: isLecturer ? formData.academic_degree : undefined,
+                workplace: isLecturer ? formData.workplace : undefined,
                 email: formData.email,
                 phone: formData.phone || undefined,
                 research_topic: formData.research_topic,
@@ -73,17 +90,7 @@ const IdeaModal: FC<IdeaModalProps> = ({ isOpen, onClose, onSubmitSuccess }) => 
             });
 
             // Reset form
-            setFormData({
-                full_name: '',
-                student_id: '',
-                course: 'K20',
-                email: '',
-                phone: '',
-                research_topic: '',
-                research_field: 'Di truyền',
-                research_subject: '',
-                description: ''
-            });
+            setFormData(emptyForm());
 
             onSubmitSuccess();
             setIsAnimating(false);
@@ -114,7 +121,7 @@ const IdeaModal: FC<IdeaModalProps> = ({ isOpen, onClose, onSubmitSuccess }) => 
                         </div>
                         <div>
                             <h3 className={`text-xl font-bold ${styles.fonts.heading}`}>Gửi Ý Tưởng Nghiên Cứu</h3>
-                            <p className="text-xs text-[#0099FF] font-medium uppercase tracking-wider">Chia sẻ đam mê với BIOSCIZONE</p>
+                            <p className="text-xs text-[#0099FF] font-medium uppercase tracking-wider">Chia sẻ đam mê với UNIGUIDE</p>
                         </div>
                     </div>
                     <button
@@ -150,35 +157,68 @@ const IdeaModal: FC<IdeaModalProps> = ({ isOpen, onClose, onSubmitSuccess }) => 
                                     />
                                 </div>
                                 <div className="grid grid-cols-2 gap-4">
-                                    <div className="space-y-2">
-                                        <label className="text-xs font-bold text-gray-500 uppercase ml-1">MSSV</label>
-                                        <input
-                                            type="text"
-                                            name="student_id"
-                                            value={formData.student_id}
-                                            onChange={handleInputChange}
-                                            placeholder="Nhập mã số sinh viên"
-                                            className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0099FF]/20 focus:bg-white transition"
-                                        />
-                                    </div>
-                                    <div className="space-y-2">
-                                        <label className="text-xs font-bold text-gray-500 uppercase ml-1">Khóa <span className="text-red-500">*</span></label>
-                                        <select
-                                            name="course"
-                                            value={formData.course}
-                                            onChange={handleInputChange}
-                                            required
-                                            className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0099FF]/20 focus:bg-white transition"
-                                        >
-                                            <option>K20</option>
-                                            <option>K21</option>
-                                            <option>K22</option>
-                                            <option>K23</option>
-                                            <option>K24</option>
-                                            <option>K25</option>
-                                            <option>Khác</option>
-                                        </select>
-                                    </div>
+                                    {user?.role === 'lecturer' ? (
+                                        <>
+                                            {/* Academic Title (Học hàm) */}
+                                            <div className="space-y-2">
+                                                <label className="text-xs font-bold text-gray-500 uppercase ml-1">Học hàm <span className="text-red-500">*</span></label>
+                                                <input
+                                                    type="text"
+                                                    name="academic_title"
+                                                    value={formData.academic_title}
+                                                    onChange={handleInputChange}
+                                                    required
+                                                    placeholder="Nhập học hàm (ví dụ: Giáo sư, Phó giáo sư...)"
+                                                    className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0099FF]/20 focus:bg-white transition"
+                                                />
+                                            </div>
+
+                                            {/* Academic Degree (Học vị) */}
+                                            <div className="space-y-2">
+                                                <label className="text-xs font-bold text-gray-500 uppercase ml-1">Học vị <span className="text-red-500">*</span></label>
+                                                <input
+                                                    type="text"
+                                                    name="academic_degree"
+                                                    value={formData.academic_degree}
+                                                    onChange={handleInputChange}
+                                                    required
+                                                    placeholder="Nhập học vị (ví dụ: Tiến sĩ, Thạc sĩ...)"
+                                                    className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0099FF]/20 focus:bg-white transition"
+                                                />
+                                            </div>
+                                        </>
+                                    ) : (
+                                        <>
+                                            {/* Student ID (MSSV) */}
+                                            <div className="space-y-2">
+                                                <label className="text-xs font-bold text-gray-500 uppercase ml-1">MSSV</label>
+                                                <input
+                                                    type="text"
+                                                    name="student_id"
+                                                    value={formData.student_id}
+                                                    onChange={handleInputChange}
+                                                    placeholder="Nhập mã số sinh viên"
+                                                    className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0099FF]/20 focus:bg-white transition"
+                                                />
+                                            </div>
+
+                                            {/* Academic Year (NIÊN HỌC) */}
+                                            <div className="space-y-2">
+                                                <label className="text-xs font-bold text-gray-500 uppercase ml-1">Năm học <span className="text-red-500">*</span></label>
+                                                <select
+                                                    name="course"
+                                                    value={formData.course}
+                                                    onChange={handleInputChange}
+                                                    required
+                                                    className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0099FF]/20 focus:bg-white transition"
+                                                >
+                                                    {YEAR_LEVELS.map(year => (
+                                                        <option key={year} value={year}>{year}</option>
+                                                    ))}
+                                                </select>
+                                            </div>
+                                        </>
+                                    )}
                                 </div>
                                 <div className="space-y-2">
                                     <label className="text-xs font-bold text-gray-500 uppercase ml-1">Email <span className="text-red-500">*</span></label>
@@ -225,33 +265,32 @@ const IdeaModal: FC<IdeaModalProps> = ({ isOpen, onClose, onSubmitSuccess }) => 
 
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div className="space-y-2">
-                                        <label className="text-xs font-bold text-gray-500 uppercase ml-1">Lĩnh vực</label>
+                                        <label className="text-xs font-bold text-gray-500 uppercase ml-1">Lĩnh vực <span className="text-red-500">*</span></label>
                                         <select
                                             name="research_field"
                                             value={formData.research_field}
                                             onChange={handleInputChange}
+                                            required
                                             className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0099FF]/20 focus:bg-white transition"
                                         >
-                                            <option>Di truyền</option>
-                                            <option>Sinh học phân tử</option>
-                                            <option>Sinh hóa</option>
-                                            <option>Vi sinh</option>
-                                            <option>Sinh lý thực vật</option>
-                                            <option>Sinh lý động vật</option>
-                                            <option>Sinh thái - Tiến hóa</option>
-                                            <option>Khác</option>
+                                            {RESEARCH_FIELDS.map(field => (
+                                                <option key={field.name} value={field.name}>{field.name}</option>
+                                            ))}
                                         </select>
                                     </div>
                                     <div className="space-y-2">
-                                        <label className="text-xs font-bold text-gray-500 uppercase ml-1">Đối tượng nghiên cứu</label>
-                                        <input
-                                            type="text"
+                                        <label className="text-xs font-bold text-gray-500 uppercase ml-1">Hướng nghiên cứu <span className="text-red-500">*</span></label>
+                                        <select
                                             name="research_subject"
                                             value={formData.research_subject}
                                             onChange={handleInputChange}
-                                            placeholder="VD: Vi khuẩn, Nấm..."
+                                            required
                                             className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0099FF]/20 focus:bg-white transition"
-                                        />
+                                        >
+                                            {directionsOf(formData.research_field).map(direction => (
+                                                <option key={direction} value={direction}>{direction}</option>
+                                            ))}
+                                        </select>
                                     </div>
                                 </div>
 
