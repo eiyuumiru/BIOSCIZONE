@@ -1,4 +1,3 @@
-run_backend
 #!/usr/bin/env bash
 set -e
 

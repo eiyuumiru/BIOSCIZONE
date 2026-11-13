@@ -220,6 +220,21 @@ const IdeaModal: FC<IdeaModalProps> = ({ isOpen, onClose, onSubmitSuccess }) => 
                                         </>
                                     )}
                                 </div>
+                                {/* Workplace (Nơi công tác) - only for lecturers */}
+                                {user?.role === 'lecturer' && (
+                                    <div className="space-y-2">
+                                        <label className="text-xs font-bold text-gray-500 uppercase ml-1">Nơi công tác <span className="text-red-500">*</span></label>
+                                        <input
+                                            type="text"
+                                            name="workplace"
+                                            value={formData.workplace}
+                                            onChange={handleInputChange}
+                                            required
+                                            placeholder="Nhập đơn vị công tác (ví dụ: Khoa Sinh học, ĐHKHTN...)"
+                                            className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0099FF]/20 focus:bg-white transition"
+                                        />
+                                    </div>
+                                )}
                                 <div className="space-y-2">
                                     <label className="text-xs font-bold text-gray-500 uppercase ml-1">Email <span className="text-red-500">*</span></label>
                                     <input

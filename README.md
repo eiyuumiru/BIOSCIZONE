@@ -54,7 +54,7 @@ ADMIN_USERNAME=admin
 ADMIN_PASSWORD=admin123
 CORS_ORIGINS=http://localhost:5173,http://localhost:3000
 GEMINI_API_KEY=                          # cho chatbot
-GEMINI_MODEL=gemini-3.1-flash-lite
+GEMINI_MODEL=gemini-1.5-flash
 SMTP_USER=                               # tùy chọn, gửi email feedback
 SMTP_PASSWORD=
 ```

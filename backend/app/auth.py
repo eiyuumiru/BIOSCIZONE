@@ -118,31 +118,51 @@ def get_user_from_db(email: str):
         settings.TURSO_DATABASE_URL,
         auth_token=settings.TURSO_AUTH_TOKEN
     )
+    # Ensure new columns exist (migration-safe)
+    try:
+        conn.execute("ALTER TABLE users ADD COLUMN academic_title TEXT")
+        conn.commit()
+    except Exception:
+        pass
+    try:
+        conn.execute("ALTER TABLE users ADD COLUMN academic_degree TEXT")
+        conn.commit()
+    except Exception:
+        pass
+    try:
+        conn.execute("ALTER TABLE users ADD COLUMN workplace TEXT")
+        conn.commit()
+    except Exception:
+        pass
+
     cursor = conn.execute(
         "SELECT id, email, hashed_password, full_name, role, student_id, course, academic_title, academic_degree, workplace FROM users WHERE email = ?",
         [email]
     )
+    columns = [col[0] for col in cursor.description]
     row = cursor.fetchone()
     conn.close()
-    return row  # (id, email, hash, full_name, role, student_id, course, academic_title, academic_degree, workplace) or None
+    if row is None:
+        return None
+    return dict(zip(columns, row))
 
 
 def authenticate_email_user(email: str, password: str):
     """Authenticate a student/lecturer user by email and password."""
-    row = get_user_from_db(email)
-    if not row:
+    user = get_user_from_db(email)
+    if not user:
         return None
-    if verify_password(password, row[2]):
+    if verify_password(password, user["hashed_password"]):
         return {
-            "id": row[0],
-            "email": row[1],
-            "full_name": row[3],
-            "role": row[4],
-            "student_id": row[5],
-            "course": row[6],
-            "academic_title": row[7],
-            "academic_degree": row[8],
-            "workplace": row[9],
+            "id": user["id"],
+            "email": user["email"],
+            "full_name": user["full_name"],
+            "role": user["role"],
+            "student_id": user.get("student_id"),
+            "course": user.get("course"),
+            "academic_title": user.get("academic_title"),
+            "academic_degree": user.get("academic_degree"),
+            "workplace": user.get("workplace"),
         }
     return None
 

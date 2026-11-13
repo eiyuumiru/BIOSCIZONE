@@ -59,30 +59,46 @@ function authHeaders(): HeadersInit {
     };
 }
 
+// ============ Error Handler ============
+
+async function handleFetchError(error: unknown, defaultMessage: string): Promise<never> {
+    if (error instanceof TypeError && error.message.includes('fetch')) {
+        throw new Error('Không thể kết nối đến server. Vui lòng kiểm tra xem backend có đang chạy không.');
+    }
+    if (error instanceof Error) {
+        throw error;
+    }
+    throw new Error(defaultMessage);
+}
+
 // ============ API Functions ============
 
 /**
  * Login with username and password
  */
 export async function login(username: string, password: string): Promise<LoginResponse> {
-    const formData = new URLSearchParams();
-    formData.append('username', username);
-    formData.append('password', password);
+    try {
+        const formData = new URLSearchParams();
+        formData.append('username', username);
+        formData.append('password', password);
 
-    const response = await fetch(`${API_BASE_URL}/api/admin/login`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: formData,
-    });
+        const response = await fetch(`${API_BASE_URL}/api/admin/login`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: formData,
+        });
 
-    if (!response.ok) {
-        const error = await response.json().catch(() => ({ detail: 'Login failed' }));
-        throw new Error(error.detail || 'Login failed');
+        if (!response.ok) {
+            const error = await response.json().catch(() => ({ detail: 'Đăng nhập thất bại' }));
+            throw new Error(error.detail || 'Đăng nhập thất bại');
+        }
+
+        const data = await response.json();
+        setToken(data.access_token);
+        return data;
+    } catch (error) {
+        return handleFetchError(error, 'Đăng nhập thất bại');
     }
-
-    const data = await response.json();
-    setToken(data.access_token);
-    return data;
 }
 
 /**

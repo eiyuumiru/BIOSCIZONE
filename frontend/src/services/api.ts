@@ -54,9 +54,16 @@ export async function getBuddies(course?: string): Promise<BioBuddyAPI[]> {
         params.append('course', course);
     }
     const url = `${API_BASE_URL}/api/buddies${params.toString() ? `?${params}` : ''}`;
-    const response = await fetch(url);
-    if (!response.ok) throw new Error('Failed to fetch buddies');
-    return response.json();
+    try {
+        const response = await fetch(url);
+        if (!response.ok) throw new Error('Không thể tải danh sách ý tưởng');
+        return response.json();
+    } catch (error) {
+        if (error instanceof TypeError && error.message.includes('fetch')) {
+            throw new Error('Không thể kết nối đến server. Vui lòng kiểm tra xem backend có đang chạy không.');
+        }
+        throw error;
+    }
 }
 
 /**
@@ -76,22 +83,29 @@ export async function submitBuddy(data: {
     research_subject?: string;
     description: string;
 }): Promise<{ message: string }> {
-    const response = await fetch(`${API_BASE_URL}/api/buddies/submit`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
-    });
-    if (!response.ok) {
-        let message = 'Failed to submit buddy';
+    try {
+        const response = await fetch(`${API_BASE_URL}/api/buddies/submit`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data),
+        });
+        if (!response.ok) {
+            let message = 'Không thể gửi ý tưởng';
         try {
-            const body = await response.json();
-            if (typeof body.detail === 'string') message = body.detail;
-        } catch {
-            // Keep the default message when the body is not JSON.
+                const body = await response.json();
+              if (typeof body.detail === 'string') message = body.detail;
+            } catch {
+                // Keep the default message when the body is not JSON.
+          }
+            throw new Error(message);
         }
-        throw new Error(message);
+        return response.json();
+    } catch (error) {
+        if (error instanceof TypeError && error.message.includes('fetch')) {
+            throw new Error('Không thể kết nối đến server. Vui lòng kiểm tra xem backend có đang chạy không.');
+        }
+        throw error;
     }
-    return response.json();
 }
 
 /**
@@ -103,39 +117,67 @@ export async function getArticles(category?: string): Promise<ArticleAPI[]> {
         params.append('category', category);
     }
     const url = `${API_BASE_URL}/api/articles${params.toString() ? `?${params}` : ''}`;
-    const response = await fetch(url);
-    if (!response.ok) throw new Error('Failed to fetch articles');
-    return response.json();
+    try {
+        const response = await fetch(url);
+        if (!response.ok) throw new Error('Không thể tải danh sách bài viết');
+        return response.json();
+    } catch (error) {
+        if (error instanceof TypeError && error.message.includes('fetch')) {
+            throw new Error('Không thể kết nối đến server. Vui lòng kiểm tra xem backend có đang chạy không.');
+        }
+        throw error;
+    }
 }
 
 /**
  * Fetch a single article by ID
  */
 export async function getArticle(id: number): Promise<ArticleAPI> {
-    const response = await fetch(`${API_BASE_URL}/api/articles/${id}`);
-    if (!response.ok) {
-        if (response.status === 404) throw new Error('Article not found');
-        throw new Error('Failed to fetch article');
+    try {
+        const response = await fetch(`${API_BASE_URL}/api/articles/${id}`);
+        if (!response.ok) {
+            if (response.status === 404) throw new Error('Không tìm thấy bài viết');
+            throw new Error('Không thể tải bài viết');
+        }
+        return response.json();
+    } catch (error) {
+        if (error instanceof TypeError && error.message.includes('fetch')) {
+            throw new Error('Không thể kết nối đến server. Vui lòng kiểm tra xem backend có đang chạy không.');
+        }
+        throw error;
     }
-    return response.json();
 }
 
 /**
  * Fetch all labs/departments
  */
 export async function getLabs(): Promise<LabAPI[]> {
-    const response = await fetch(`${API_BASE_URL}/api/labs`);
-    if (!response.ok) throw new Error('Failed to fetch labs');
-    return response.json();
+    try {
+        const response = await fetch(`${API_BASE_URL}/api/labs`);
+        if (!response.ok) throw new Error('Không thể tải danh sách phòng lab');
+        return response.json();
+    } catch (error) {
+        if (error instanceof TypeError && error.message.includes('fetch')) {
+            throw new Error('Không thể kết nối đến server. Vui lòng kiểm tra xem backend có đang chạy không.');
+        }
+        throw error;
+    }
 }
 
 /**
  * Global search across buddies and articles
  */
 export async function globalSearch(query: string): Promise<SearchResultAPI> {
-    const response = await fetch(`${API_BASE_URL}/api/search?q=${encodeURIComponent(query)}`);
-    if (!response.ok) throw new Error('Search failed');
-    return response.json();
+    try {
+        const response = await fetch(`${API_BASE_URL}/api/search?q=${encodeURIComponent(query)}`);
+        if (!response.ok) throw new Error('Tìm kiếm thất bại');
+        return response.json();
+    } catch (error) {
+        if (error instanceof TypeError && error.message.includes('fetch')) {
+            throw new Error('Không thể kết nối đến server. Vui lòng kiểm tra xem backend có đang chạy không.');
+        }
+        throw error;
+    }
 }
 
 /**
@@ -148,13 +190,20 @@ export async function submitFeedback(data: {
     subject: string;
     message: string;
 }): Promise<{ message: string }> {
-    const response = await fetch(`${API_BASE_URL}/api/feedback`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
-    });
-    if (!response.ok) throw new Error('Failed to submit feedback');
-    return response.json();
+    try {
+        const response = await fetch(`${API_BASE_URL}/api/feedback`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data),
+        });
+        if (!response.ok) throw new Error('Không thể gửi phản hồi');
+        return response.json();
+    } catch (error) {
+        if (error instanceof TypeError && error.message.includes('fetch')) {
+            throw new Error('Không thể kết nối đến server. Vui lòng kiểm tra xem backend có đang chạy không.');
+        }
+        throw error;
+    }
 }
 
 /**

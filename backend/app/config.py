@@ -20,7 +20,7 @@ class Settings(BaseSettings):
     SMTP_FROM_NAME: str = "UNIGUIDE"
     # Gemini chatbot
     GEMINI_API_KEY: Optional[str] = None
-    GEMINI_MODEL: str = "gemini-3.1-flash-lite"
+    GEMINI_MODEL: str = "gemini-1.5-flash"
 
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding='utf-8')
 

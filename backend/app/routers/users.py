@@ -71,11 +71,11 @@ def login_user(credentials: UserLogin, db: libsql.Connection = Depends(get_db)):
             "email": user["email"],
             "full_name": user["full_name"],
             "role": user["role"],
-            "student_id": user["student_id"],
-            "course": user["course"],
-            "academic_title": user["academic_title"],
-            "academic_degree": user["academic_degree"],
-            "workplace": user["workplace"],
+            "student_id": user.get("student_id"),
+            "course": user.get("course"),
+            "academic_title": user.get("academic_title"),
+            "academic_degree": user.get("academic_degree"),
+            "workplace": user.get("workplace"),
         },
     }
 

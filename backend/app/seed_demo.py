@@ -1,5 +1,6 @@
 """Seed demo articles into the local database (idempotent: skip if data exists)."""
 import libsql
+from .config import settings
 
 ARTICLES = [
     # ---- Uni_Information (giống Bio-Information, đổi tên theo UNIGUIDE) ----
@@ -55,7 +56,7 @@ ARTICLES = [
 
 
 def main() -> None:
-    conn = libsql.connect("uniguide_local.db", auth_token="")
+    conn = libsql.connect(settings.TURSO_DATABASE_URL, auth_token=settings.TURSO_AUTH_TOKEN)
     count = conn.execute("SELECT COUNT(*) FROM articles").fetchone()[0]
     if count > 0:
         print(f"Database already has {count} articles, skipping seed.")

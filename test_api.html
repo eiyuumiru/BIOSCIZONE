@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test API Connection</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            white-space: pre-wrap;
+        }
+        .success {
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        .error {
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 5px;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            background-color: #007bff;
+            color: white;
+            font-size: 14px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <h1>Test API Connection</h1>
+    <p>API URL: <strong>http://localhost:8000</strong></p>
+    
+    <div>
+        <button onclick="testRootEndpoint()">Test Root Endpoint</button>
+        <button onclick="testSubmitBuddy()">Test Submit Buddy</button>
+        <button onclick="testGetBuddies()">Test Get Buddies</button>
+    </div>
+    
+    <div id="result"></div>
+
+    <script>
+        const API_BASE_URL = 'http://localhost:8000';
+        
+        function showResult(message, isError = false) {
+            const resultDiv = document.getElementById('result');
+            resultDiv.className = 'result ' + (isError ? 'error' : 'success');
+            resultDiv.textContent = message;
+        }
+        
+        async function testRootEndpoint() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/`);
+                const data = await response.json();
+                showResult('Root endpoint OK:\n' + JSON.stringify(data, null, 2));
+            } catch (error) {
+                showResult('Root endpoint ERROR:\n' + error.message, true);
+            }
+        }
+        
+        async function testGetBuddies() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/buddies`);
+                const data = await response.json();
+             showResult('Get buddies OK:\n' + JSON.stringify(data, null, 2));
+            } catch (error) {
+                showResult('Get buddies ERROR:\n' + error.message, true);
+            }
+        }
+        
+        async function testSubmitBuddy() {
+            try {
+                const data = {
+                full_name: "Test User",
+                email: "test@example.com",
+                    research_topic: "Test Topic",
+                    research_field: "Sinh học",
+                    research_subject: "Sinh học lý thuyết",
+                    description: "Test description",
+                    course: "Năm 1"
+                };
+                
+                const response = await fetch(`${API_BASE_URL}/api/buddies/submit`, {
+                    method: 'POST',
+                    headers: {
+                     'Content-Type': 'application/json',
+            },
+                    body: JSON.stringify(data),
+                });
+                
+                if (!response.ok) {
+                    const errorData = await response.json();
+            throw new Error(`HTTP ${response.status}: ${JSON.stringify(errorData)}`);
+                }
+                
+                const result = await response.json();
+                showResult('Submit buddy OK:\n' + JSON.stringify(result, null, 2));
+            } catch (error) {
+                showResult('Submit buddy ERROR:\n' + error.message, true);
+            }
+        }
+    </script>
+</body>
+</html>
